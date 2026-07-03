@@ -179,6 +179,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
         setValue("price", product.price);
 
         setValue("discountPrice", product.discountPrice);
+        setValue("discountPercent", product.discountPercent);
 
         setValue("categoryId", product.categoryId);
 
@@ -1075,12 +1076,32 @@ export default function ProductForm({ onSuccess, productId }: Props) {
           className={inputClass}
         />
 
-        <input
-          type="number"
-          {...register("discountPrice")}
-          placeholder="Discount Price"
-          className={inputClass}
-        />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            {...register("discountPercent", {
+              onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                const price = Number(getValues("price"));
+                const percent = Number(event.target.value);
+                if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(percent)) return;
+                if (percent < 0 || percent > 100) return;
+                setValue("discountPrice", Number((price - (price * percent) / 100).toFixed(2)) as any);
+              },
+            })}
+            placeholder="Product Discount (%)"
+            className={inputClass}
+          />
+
+          <input
+            type="number"
+            {...register("discountPrice")}
+            placeholder="Discount Price"
+            className={inputClass}
+          />
+        </div>
       </div>
 
       {/* FLAGS */}
@@ -1271,6 +1292,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     </form>
   );
 }
+
 
 
 
