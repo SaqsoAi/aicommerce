@@ -60,7 +60,7 @@ type CategoryResponse = {
 };
 
 export default function ProductForm({ onSuccess, productId }: Props) {
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  const API = process.env.NEXT_PUBLIC_API_URL || "/api";
 
   const { register, handleSubmit, reset, setValue, getValues, watch } =
     useForm<ProductFormData>();
@@ -1267,6 +1267,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     </form>
   );
 }
+
 
 
 
