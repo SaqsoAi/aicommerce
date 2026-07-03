@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -1222,7 +1222,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
             {existingImages.map((url) => (
               <div key={url} className="relative overflow-hidden rounded-xl border dark:border-zinc-800">
                 <img
-                  src={url.startsWith("/uploads/") ? `http://localhost:5000${url}` : url}
+                  src={url.startsWith("/uploads/") ? `${process.env.NEXT_PUBLIC_SERVER_URL || ""}${url}` : url}
                   alt="Product"
                   className="h-36 w-full bg-white object-contain p-2 dark:bg-zinc-950"
                 />
@@ -1267,6 +1267,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     </form>
   );
 }
+
 
 
 
