@@ -117,7 +117,8 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    try {      const token =
+    try {
+      const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
       const res = await fetch(`${API}/upload/product`, {
@@ -1270,6 +1271,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     </form>
   );
 }
+
 
 
 
