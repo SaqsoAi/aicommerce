@@ -1,0 +1,198 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
+
+type HeroItem = {
+  id?: string | number;
+  type?: "image" | "video";
+  src?: string;
+  desktopSrc?: string;
+  laptopSrc?: string;
+  tabletSrc?: string;
+  mobileSrc?: string;
+  videoSrc?: string;
+  alt?: string;
+  headline?: string;
+  subheadline?: string;
+  primaryCtaLabel?: string;
+  primaryCtaLink?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaLink?: string;
+  sliderEffect?: string;
+  active?: boolean;
+  sortOrder?: number;
+};
+
+const ENV_API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "";
+
+const fallbackHeroes: HeroItem[] = [{
+  id: "fallback-1",
+  type: "image",
+  src: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=2400&q=90",
+  headline: "Premium AI commerce experience.",
+  subheadline: "Discover curated fashion, smart recommendations, and a cinematic shopping journey built for every device.",
+  primaryCtaLabel: "Shop Collection",
+  primaryCtaLink: "/shop",
+  secondaryCtaLabel: "Try AI Fit",
+  secondaryCtaLink: "/virtual-tryon",
+  sliderEffect: "kenburns",
+  active: true,
+  sortOrder: 1
+}];
+
+function joinUrl(base: string, path: string) {
+  return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+}
+
+function normalizeAsset(src?: string) {
+  if (!src) return "";
+  if (src.startsWith("http") || src.startsWith("data:")) return src;
+  if (src.startsWith("/api/backend/")) return src;
+  if (src.startsWith("/api/asset/")) return `/api/backend${src.replace(/^\/api/, "")}`;
+  if (src.startsWith("/uploads/")) return `/api/backend/asset${src}`;
+  if (src.startsWith("uploads/")) return `/api/backend/asset/${src}`;
+  if (src.startsWith("/")) return src;
+  return `/${src}`;
+}
+
+function getDeviceSrc(hero: HeroItem) {
+  const base = hero.src || hero.desktopSrc || hero.laptopSrc || hero.tabletSrc || hero.mobileSrc || "";
+  return {
+    desktop: normalizeAsset(hero.desktopSrc || base),
+    laptop: normalizeAsset(hero.laptopSrc || hero.desktopSrc || base),
+    tablet: normalizeAsset(hero.tabletSrc || hero.laptopSrc || hero.desktopSrc || base),
+    mobile: normalizeAsset(hero.mobileSrc || hero.tabletSrc || hero.laptopSrc || hero.desktopSrc || base)
+  };
+}
+
+function normalizeHeroList(data: unknown): HeroItem[] {
+  const maybe = data as { data?: unknown; heroes?: unknown; items?: unknown };
+  const list =
+    Array.isArray(data) ? data :
+    Array.isArray(maybe?.data) ? maybe.data :
+    Array.isArray(maybe?.heroes) ? maybe.heroes :
+    Array.isArray(maybe?.items) ? maybe.items :
+    [];
+
+  return list
+    .filter((item): item is HeroItem => Boolean(item && typeof item === "object"))
+    .filter((item) => item.active !== false)
+    .sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+}
+
+async function readJson(url: string) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("Hero API failed");
+  return res.json();
+}
+
+export default function SaqsoHeroPro() {
+  const [heroes, setHeroes] = useState<HeroItem[]>(fallbackHeroes);
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const activeHero = heroes[index] || fallbackHeroes[0];
+
+  useEffect(() => {
+    let alive = true;
+
+    async function loadHeroes() {
+      const endpoints = [
+        "/api/backend/homepage-hero",
+        ...(ENV_API_BASE ? [joinUrl(ENV_API_BASE, "/homepage-hero")] : [])
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const active = normalizeHeroList(await readJson(endpoint));
+          if (alive && active.length) {
+            setHeroes(active);
+            setIndex(0);
+            return;
+          }
+        } catch {}
+      }
+
+      if (alive) setHeroes(fallbackHeroes);
+    }
+
+    loadHeroes();
+    window.addEventListener("focus", loadHeroes);
+    return () => {
+      alive = false;
+      window.removeEventListener("focus", loadHeroes);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (paused || heroes.length <= 1) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % heroes.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [heroes.length, paused]);
+
+  const asset = useMemo(() => getDeviceSrc(activeHero), [activeHero]);
+  const isVideo = activeHero.type === "video" || Boolean(activeHero.videoSrc);
+  const effectClass =
+    activeHero.sliderEffect === "zoom" || activeHero.sliderEffect === "kenburns"
+      ? "scale-[1.08]"
+      : activeHero.sliderEffect === "parallax"
+        ? "scale-[1.04]"
+        : "scale-100";
+
+  const headline = activeHero.headline || "Premium AI commerce experience.";
+  const subheadline = activeHero.subheadline || "A cinematic, responsive and AI-powered shopping experience built for SAQSO.";
+  const primaryLabel = activeHero.primaryCtaLabel || "Shop Now";
+  const primaryLink = activeHero.primaryCtaLink || "/shop";
+  const secondaryLabel = activeHero.secondaryCtaLabel || "Explore AI";
+  const secondaryLink = activeHero.secondaryCtaLink || "/virtual-tryon";
+
+  return (
+    <section className="relative min-h-[65vh] overflow-hidden bg-slate-950 pt-16 text-white sm:pt-20 md:min-h-[75vh] lg:min-h-[88vh] 2xl:min-h-[96vh]">
+      <div className="absolute inset-0">
+        {isVideo ? (
+          <video className="h-full w-full object-cover" src={normalizeAsset(activeHero.videoSrc || activeHero.src)} autoPlay muted loop playsInline />
+        ) : (
+          <picture>
+            <source media="(max-width: 640px)" srcSet={asset.mobile} />
+            <source media="(max-width: 1024px)" srcSet={asset.tablet} />
+            <source media="(max-width: 1440px)" srcSet={asset.laptop} />
+            <img src={asset.desktop} alt={activeHero.alt || headline} className={`h-full w-full object-cover opacity-95 transition duration-[2400ms] ${effectClass}`} />
+          </picture>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/25" />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-[calc(65vh-4rem)] max-w-[1680px] items-center px-4 py-14 sm:min-h-[calc(75vh-5rem)] sm:px-6 md:py-20 lg:min-h-[calc(88vh-5rem)] lg:px-10 2xl:min-h-[calc(96vh-5rem)]">
+        <div className="max-w-4xl">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[.25em] text-amber-200 backdrop-blur-xl">
+            <Sparkles size={15} /> Admin Controlled Hero
+          </div>
+          <h1 className="max-w-5xl text-4xl font-black leading-[.9] tracking-[-.09em] text-white drop-shadow-2xl sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl">{headline}</h1>
+          <p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/72 sm:text-base sm:leading-8 md:text-lg">{subheadline}</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href={primaryLink} className="rounded-full bg-white px-8 py-4 text-center text-xs font-black uppercase tracking-[.2em] text-slate-950 shadow-2xl transition hover:-translate-y-1 sm:px-10 sm:py-5">{primaryLabel}</Link>
+            <Link href={secondaryLink} className="rounded-full border border-white/25 bg-white/10 px-8 py-4 text-center text-xs font-black uppercase tracking-[.2em] text-white backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/20 sm:px-10 sm:py-5">{secondaryLabel}</Link>
+          </div>
+        </div>
+      </div>
+
+      {heroes.length > 1 && (
+        <>
+          <button type="button" onClick={() => setIndex((i) => (i - 1 + heroes.length) % heroes.length)} className="absolute bottom-6 right-24 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-xl"><ChevronLeft size={20} /></button>
+          <button type="button" onClick={() => setIndex((i) => (i + 1) % heroes.length)} className="absolute bottom-6 right-10 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-xl"><ChevronRight size={20} /></button>
+        </>
+      )}
+
+      <button type="button" onClick={() => setPaused((v) => !v)} className="absolute bottom-6 left-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-xl sm:left-6 lg:left-10">
+        {paused ? <Play size={18} /> : <Pause size={18} />}
+      </button>
+    </section>
+  );
+}

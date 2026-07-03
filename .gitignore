@@ -1,0 +1,34 @@
+﻿# env/secrets
+.env
+.env.*
+!.env.example
+
+server/.env
+server/.env.*
+client/.env
+client/.env.*
+admin/.env
+admin/.env.*
+
+# dependencies/build
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+
+# temp/audit/local
+PROJECT_AUDIT/
+Agent/
+tests/
+*.log
+*.tmp
+*.zip
+*.bak
+*.backup
+
+# editor/os
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

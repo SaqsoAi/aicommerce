@@ -1,0 +1,143 @@
+"use client";
+
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { loginWithFacebook, loginWithGoogle } from "@/services/auth.service";
+import { useAuth } from "@/providers/AuthProvider";
+
+declare global {
+  interface Window {
+    FB?: any;
+    fbAsyncInit?: () => void;
+  }
+}
+
+const loadFacebookSdk = (appId: string) => {
+  return new Promise<void>((resolve, reject) => {
+    if (typeof window === "undefined") return reject();
+
+    if (window.FB) {
+      resolve();
+      return;
+    }
+
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId,
+        cookie: true,
+        xfbml: false,
+        version: "v19.0",
+      });
+      resolve();
+    };
+
+    if (document.getElementById("facebook-jssdk")) return;
+
+    const script = document.createElement("script");
+    script.id = "facebook-jssdk";
+    script.src = "https://connect.facebook.net/en_US/sdk.js";
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => reject();
+
+    document.body.appendChild(script);
+  });
+};
+
+export default function SocialLoginButtons() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [error, setError] = useState("");
+
+  const completeLogin = (data: any) => {
+    const token = data?.token || data?.data?.token;
+    const user = data?.user || data?.data?.user;
+
+    if (!token) {
+      setError("Social login failed");
+      return;
+    }
+
+    login(user, token);
+    router.push("/dashboard");
+  };
+
+  const handleFacebook = async () => {
+    try {
+      setError("");
+      const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+
+      if (!appId) {
+        setError("Facebook App ID missing");
+        return;
+      }
+
+      await loadFacebookSdk(appId);
+
+      window.FB.login(
+        async (response: any) => {
+          const accessToken = response?.authResponse?.accessToken;
+
+          if (!accessToken) {
+            setError("Facebook login cancelled");
+            return;
+          }
+
+          const data = await loginWithFacebook(accessToken);
+          completeLogin(data);
+        },
+        { scope: "email,public_profile" }
+      );
+    } catch {
+      setError("Facebook login failed");
+    }
+  };
+
+  return (
+    <div className="mt-5 space-y-3">
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+          or continue with
+        </span>
+        <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+      </div>
+
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+        <div className="flex justify-center">
+        <GoogleLogin
+          onSuccess={async (response) => {
+            try {
+              setError("");
+              if (!response.credential) {
+                setError("Google login failed");
+                return;
+              }
+
+              const data = await loginWithGoogle(response.credential);
+              completeLogin(data);
+            } catch {
+              setError("Google login failed");
+            }
+          }}
+          onError={() => setError("Google login failed")}
+          useOneTap={false}
+        />
+      </div>
+      </GoogleOAuthProvider>
+
+      <button
+        type="button"
+        onClick={handleFacebook}
+        className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+      >
+        Continue with Facebook
+      </button>
+
+      {error && (
+        <p className="text-center text-xs font-medium text-red-500">{error}</p>
+      )}
+    </div>
+  );
+}
