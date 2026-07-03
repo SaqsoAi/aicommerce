@@ -1,4 +1,4 @@
-
+﻿
 // PHASE_12_3B_TOKEN_EXPIRY_HANDLER
 const handleAuthExpiry = () => {
   if (typeof window === "undefined") return;
@@ -101,6 +101,7 @@ export type ProductPayload = {
 
   price: number;
   discountPrice?: number;
+  discountPercent?: number;
 
   featured?: boolean;
   trending?: boolean;
@@ -177,3 +178,4 @@ export const scheduleProduct = async (id: string, publishAt?: string, unpublishA
   const response = await api.post(`/products/${id}/schedule`, { publishAt, unpublishAt }, getAuthConfig());
   return response.data;
 };
+

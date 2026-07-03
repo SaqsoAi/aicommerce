@@ -43,6 +43,7 @@ export type ProductFormData = {
 
   price: number;
   discountPrice?: number;
+  discountPercent?: number;
 
   featured?: boolean;
   trending?: boolean;
@@ -86,4 +87,5 @@ export type ProductMasterResponse = {
     }[];
   };
 };
+
 
