@@ -760,3 +760,47 @@ button, a, input, select, textarea {
 .account-real-data-dashboard-hide-old .account-real-data-dashboard-hide-old ~ section {
   display: none;
 }
+
+/* CLIENT CART THEME FIX — 20260704-051917 */
+html:not(.dark) .cart-page,
+html:not(.dark) [data-page="cart"] {
+  background: #f7f7f4 !important;
+  color: #111 !important;
+}
+
+html:not(.dark) .cart-page .cart-shell,
+html:not(.dark) .cart-page .cart-card,
+html:not(.dark) .cart-page .cart-empty-card,
+html:not(.dark) [data-page="cart"] .cart-shell,
+html:not(.dark) [data-page="cart"] .cart-card,
+html:not(.dark) [data-page="cart"] .cart-empty-card {
+  background: #ffffff !important;
+  color: #111 !important;
+  border: 1px solid rgba(0,0,0,.14) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,.10) !important;
+}
+
+html:not(.dark) .cart-page .cart-hero,
+html:not(.dark) .cart-page .cart-banner,
+html:not(.dark) [data-page="cart"] .cart-hero,
+html:not(.dark) [data-page="cart"] .cart-banner {
+  background: #080808 !important;
+  color: #ffffff !important;
+}
+
+html.dark .cart-page,
+html.dark [data-page="cart"] {
+  background: #050505 !important;
+  color: #f5f5f5 !important;
+}
+
+html.dark .cart-page .cart-shell,
+html.dark .cart-page .cart-card,
+html.dark .cart-page .cart-empty-card,
+html.dark [data-page="cart"] .cart-shell,
+html.dark [data-page="cart"] .cart-card,
+html.dark [data-page="cart"] .cart-empty-card {
+  background: #09090b !important;
+  color: #f5f5f5 !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+}
