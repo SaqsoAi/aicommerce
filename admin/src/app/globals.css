@@ -748,3 +748,23 @@ button, a, input, select, textarea {
 }
 /* === AI-COMMERCE RESPONSIVE FOUNDATION END === */
 
+
+/* PRODUCT_FORM_SELECT_DARK_FIX */
+select,
+select option,
+select optgroup {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+}
+
+select option:checked,
+select option:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"] {
+  color-scheme: dark;
+}

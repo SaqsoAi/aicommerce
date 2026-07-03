@@ -23,7 +23,7 @@ const attachAuthExpiryInterceptor = (instance: any) => {
     (error: any) => {
       const status = error?.response?.status;
 
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         handleAuthExpiry();
       }
 
@@ -178,4 +178,5 @@ export const scheduleProduct = async (id: string, publishAt?: string, unpublishA
   const response = await api.post(`/products/${id}/schedule`, { publishAt, unpublishAt }, getAuthConfig());
   return response.data;
 };
+
 

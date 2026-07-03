@@ -1,4 +1,4 @@
-import { normalizeAssetFields } from "@/utils/resolveAssetUrl";
+﻿import { normalizeAssetFields } from "@/utils/resolveAssetUrl";
 
 // PHASE_12_3B_TOKEN_EXPIRY_HANDLER
 const handleAuthExpiry = () => {
@@ -24,7 +24,7 @@ const attachAuthExpiryInterceptor = (instance: any) => {
     (error: any) => {
       const status = error?.response?.status;
 
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         handleAuthExpiry();
       }
 
