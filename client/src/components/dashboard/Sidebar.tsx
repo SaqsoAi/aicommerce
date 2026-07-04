@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 
@@ -6,6 +6,7 @@ import { useAuth } from "@/providers/AuthProvider";
 
 export default function Sidebar() {
 const { role } = useAuth();
+const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3001";
 
 return ( <aside className="w-64 min-h-screen bg-white border-r p-6"> <h2 className="text-xl font-bold mb-6">
 Dashboard </h2>
@@ -19,28 +20,28 @@ Dashboard </h2>
     {(role === "SUPER_ADMIN" ||
       role === "ADMIN") && (
       <>
-        <Link href="/admin/products">
+        <a href={`${adminUrl}/products`}>
           Products
-        </Link>
+        </a>
 
-        <Link href="/admin/orders">
+        <a href={`${adminUrl}/orders`}>
           Orders
-        </Link>
+        </a>
 
-        <Link href="/admin/analytics">
+        <a href={`${adminUrl}/analytics`}>
           Analytics
-        </Link>
+        </a>
       </>
     )}
 
     {role === "SUPER_ADMIN" && (
-      <Link href="/admin/users">
+      <a href={`${adminUrl}/super-admin/users`}>
         Users
-      </Link>
+      </a>
     )}
 
     {role === "CUSTOMER" && (
-      <Link href="/customer/orders">
+      <Link href="/orders">
         My Orders
       </Link>
     )}

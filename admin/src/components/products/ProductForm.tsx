@@ -1,4 +1,6 @@
-﻿"use client";
+﻿// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -826,7 +828,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
       }}
       className="space-y-8"
     >
-      <div className="grid gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-sm font-black text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40">
+      <div className="grid gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-sm font-black text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 transition-colors duration-200 motion-reduce:transition-none">
         <div>Next Style No: {serialInfo?.nextStyleNo || "Loading..."}</div>
         <div>Next Barcode: {serialInfo?.nextBarcode || "Loading..."}</div>
         <div className="text-xs font-bold opacity-80">
@@ -836,7 +838,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
       <div className={`${panelClass} space-y-4`}>
         <h2 className="font-bold text-lg">Product Lookup</h2>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4 enterprise-mobile-stack">
           <input
             value={lookupBarcode}
             onChange={(e) => setLookupBarcode(e.target.value)}
@@ -873,7 +875,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
 
       {/* BASIC INFO */}
 
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-5 enterprise-mobile-stack">
         <input
           {...register("name")}
           placeholder="Product Name"
@@ -897,7 +899,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
 
       {/* CATEGORY */}
 
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-3 gap-5 enterprise-mobile-stack">
         <select {...register("categoryId")} className={inputClass}>
           <option value="">Category</option>
 
@@ -931,7 +933,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
 
       {/* STATUS & VISIBILITY */}
 
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-5 enterprise-mobile-stack">
         <select {...register("status")} className={inputClass}>
           <option value="DRAFT">Draft</option>
           <option value="ACTIVE">Active</option>
@@ -950,7 +952,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
       <div className={panelClass}>
         <h3 className="mb-4 text-lg font-bold">Product Governance</h3>
 
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3 enterprise-mobile-stack">
           <select {...register("approvalStatus" as any)} className={inputClass} defaultValue="APPROVED">
             <option value="APPROVED">Approved</option>
             <option value="DRAFT">Draft</option>
@@ -1061,7 +1063,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
 
       {/* PRICING */}
 
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-3 gap-5 enterprise-mobile-stack">
         <input
           type="number"
           {...register("costPrice" as any)}
@@ -1118,9 +1120,9 @@ export default function ProductForm({ onSuccess, productId }: Props) {
         </label>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-5">
+      <div className="grid lg:grid-cols-2 gap-5 enterprise-mobile-stack">
         <div className={`${panelClass} space-y-4`}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between enterprise-mobile-stack">
             <h3 className="font-semibold">Specifications</h3>
 
             <button
@@ -1133,7 +1135,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
           </div>
 
           {specifications.map((row, index) => (
-            <div key={index} className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
+            <div key={index} className="grid md:grid-cols-[1fr_1fr_auto] gap-3 enterprise-mobile-stack">
               <input
                 value={row.name}
                 onChange={(e) =>
@@ -1169,7 +1171,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
                 onClick={() =>
                   removeMetaRow(specifications, setSpecifications, index)
                 }
-                className="rounded-xl border border-zinc-300 px-4 py-2 text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 motion-reduce:transition-none"
               >
                 Remove
               </button>
@@ -1178,7 +1180,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
         </div>
 
         <div className={`${panelClass} space-y-4`}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between enterprise-mobile-stack">
             <h3 className="font-semibold">Attributes</h3>
 
             <button
@@ -1191,7 +1193,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
           </div>
 
           {attributes.map((row, index) => (
-            <div key={index} className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
+            <div key={index} className="grid md:grid-cols-[1fr_1fr_auto] gap-3 enterprise-mobile-stack">
               <input
                 value={row.name}
                 onChange={(e) =>
@@ -1225,7 +1227,7 @@ export default function ProductForm({ onSuccess, productId }: Props) {
               <button
                 type="button"
                 onClick={() => removeMetaRow(attributes, setAttributes, index)}
-                className="rounded-xl border border-zinc-300 px-4 py-2 text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                className="rounded-xl border border-zinc-300 px-4 py-2 text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 motion-reduce:transition-none"
               >
                 Remove
               </button>
@@ -1243,9 +1245,9 @@ export default function ProductForm({ onSuccess, productId }: Props) {
         <div className={panelClass}>
           <h3 className="mb-3 font-semibold">Existing Uploaded Images</h3>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+          <div className="enterprise-responsive-guard grid grid-cols-2 gap-4 md:grid-cols-6 enterprise-mobile-stack">
             {existingImages.map((url) => (
-              <div key={url} className="relative overflow-hidden rounded-xl border dark:border-zinc-800">
+              <div key={url} className="relative overflow-hidden rounded-xl border dark:border-zinc-800 transition-colors duration-200 motion-reduce:transition-none">
                 <img
                   src={url.startsWith("/uploads/") ? `${process.env.NEXT_PUBLIC_SERVER_URL || ""}${url}` : url}
                   alt="Product"
@@ -1292,9 +1294,6 @@ export default function ProductForm({ onSuccess, productId }: Props) {
     </form>
   );
 }
-
-
-
 
 
 

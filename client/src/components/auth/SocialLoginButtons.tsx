@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import { ChevronRight, Phone } from "lucide-react";
+import { ChevronRight, MessageCircle, Phone } from "lucide-react";
 import { useRef, useState } from "react";
 import { loginWithFacebook, loginWithGoogle } from "@/services/auth.service";
 import { useAuth } from "@/providers/AuthProvider";
@@ -14,7 +14,7 @@ declare global {
 }
 
 const btn =
-  "group flex h-[54px] w-full items-center justify-between rounded-[22px] border px-5 text-[14px] font-black shadow-[0_18px_45px_rgba(0,0,0,.28)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60";
+  "group flex h-[52px] w-full items-center justify-between rounded-full border border-white/15 bg-[#202020] px-5 text-[14px] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2a2a2a] active:translate-y-0 disabled:opacity-60";
 
 const loadFacebookSdk = (appId: string) =>
   new Promise<void>((resolve, reject) => {
@@ -22,12 +22,7 @@ const loadFacebookSdk = (appId: string) =>
     if (window.FB) return resolve();
 
     window.fbAsyncInit = () => {
-      window.FB.init({
-        appId,
-        cookie: true,
-        xfbml: true,
-        version: "v19.0",
-      });
+      window.FB.init({ appId, cookie: true, xfbml: true, version: "v19.0" });
       resolve();
     };
 
@@ -57,7 +52,13 @@ const loadFacebookSdk = (appId: string) =>
     document.body.appendChild(script);
   });
 
-export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: () => void }) {
+export default function SocialLoginButtons({
+  onPhoneClick,
+  onWhatsappClick,
+}: {
+  onPhoneClick?: () => void;
+  onWhatsappClick?: () => void;
+}) {
   const { login } = useAuth();
   const googleBoxRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState("");
@@ -100,6 +101,7 @@ export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: ()
       const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
       if (!appId) {
         setError("Facebook App ID missing");
+        setBusy("");
         return;
       }
 
@@ -108,14 +110,9 @@ export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: ()
       window.FB.login(
         function (response: any) {
           const accessToken = response?.authResponse?.accessToken;
-
           if (!accessToken) {
             setBusy("");
-            setError(
-              window.location.protocol === "http:"
-                ? "Facebook login needs HTTPS or valid localhost app setup."
-                : "Facebook login cancelled or blocked."
-            );
+            setError("Facebook login cancelled or blocked.");
             return;
           }
 
@@ -127,11 +124,7 @@ export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: ()
             })
             .finally(() => setBusy(""));
         },
-        {
-          scope: "public_profile,email",
-          return_scopes: true,
-          auth_type: "rerequest",
-        }
+        { scope: "public_profile,email", return_scopes: true, auth_type: "rerequest" }
       );
     } catch (err: any) {
       console.error(err);
@@ -163,20 +156,15 @@ export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: ()
             }}
             onError={() => {
               setBusy("");
-              setError("Google OAuth origin not allowed. Add localhost:3000 in Google Cloud Console.");
+              setError("Google OAuth origin not allowed.");
             }}
             useOneTap={false}
           />
         </div>
 
-        <button
-          type="button"
-          disabled={busy === "google"}
-          onClick={clickHiddenGoogle}
-          className={`${btn} border-white/20 bg-gradient-to-r from-white to-zinc-100 text-black hover:shadow-[0_18px_55px_rgba(255,255,255,.16)]`}
-        >
+        <button type="button" disabled={busy === "google"} onClick={clickHiddenGoogle} className={btn}>
           <span className="flex items-center gap-3">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-white shadow-inner">
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white">
               <span className="text-xl font-black text-red-500">G</span>
             </span>
             {busy === "google" ? "Connecting Google..." : "Continue with Google"}
@@ -185,28 +173,31 @@ export default function SocialLoginButtons({ onPhoneClick }: { onPhoneClick?: ()
         </button>
       </GoogleOAuthProvider>
 
-      <button
-        type="button"
-        disabled={busy === "facebook"}
-        onClick={handleFacebook}
-        className={`${btn} border-blue-300/30 bg-gradient-to-r from-[#1877F2] via-[#1167dc] to-[#084bb2] text-white hover:shadow-[0_18px_55px_rgba(24,119,242,.35)]`}
-      >
+      <button type="button" disabled={busy === "facebook"} onClick={handleFacebook} className={btn}>
         <span className="flex items-center gap-3">
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-lg font-black text-[#1877F2]">f</span>
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-[#1877F2] text-lg font-black text-white">f</span>
           {busy === "facebook" ? "Connecting Facebook..." : "Continue with Facebook"}
         </span>
-        <ChevronRight className="h-5 w-5 opacity-80 transition group-hover:translate-x-1" />
+        <ChevronRight className="h-5 w-5 opacity-70 transition group-hover:translate-x-1" />
       </button>
 
-      {onPhoneClick && (
-        <button
-          type="button"
-          onClick={onPhoneClick}
-          className={`${btn} border-white/10 bg-gradient-to-r from-[#242426] to-[#111112] text-white hover:border-emerald-300/35 hover:shadow-[0_18px_55px_rgba(16,185,129,.16)]`}
-        >
+      {onWhatsappClick && (
+        <button type="button" onClick={onWhatsappClick} className={btn}>
           <span className="flex items-center gap-3">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-400/10">
-              <Phone className="h-5 w-5 text-emerald-400" />
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-500/15">
+              <MessageCircle className="h-5 w-5 text-emerald-400" />
+            </span>
+            Continue with WhatsApp
+          </span>
+          <ChevronRight className="h-5 w-5 opacity-70 transition group-hover:translate-x-1" />
+        </button>
+      )}
+
+      {onPhoneClick && (
+        <button type="button" onClick={onPhoneClick} className={btn}>
+          <span className="flex items-center gap-3">
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10">
+              <Phone className="h-5 w-5 text-white" />
             </span>
             Continue with Phone
           </span>

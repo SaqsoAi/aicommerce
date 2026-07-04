@@ -1,4 +1,4 @@
-﻿export default function StyleDiscovery({
+export default function StyleDiscovery({
   data,
 }: {
   data?: {
@@ -25,7 +25,7 @@
           </p>
 
           <a
-            href='/style-quiz'
+            href='/shop?style=discovery'
             className='mt-8 inline-block rounded-full bg-zinc-950 px-7 py-4 font-semibold text-white dark:bg-white dark:text-black'
           >
             Start Style Quiz

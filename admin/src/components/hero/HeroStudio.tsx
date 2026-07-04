@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -83,8 +85,8 @@ function HeroVersionTimelinePanel() {
   };
 
   return (
-    <section className="mt-6 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 text-white shadow-2xl">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <section className="mt-6 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 text-white shadow-2xl transition-colors duration-200 motion-reduce:transition-none">
+      <div className="enterprise-responsive-guard flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-300">
             Version Control
@@ -97,12 +99,12 @@ function HeroVersionTimelinePanel() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-3 text-sm font-black text-cyan-100">
+        <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-3 text-sm font-black text-cyan-100 transition-colors duration-200 motion-reduce:transition-none">
           Active: {activeVersion.id}
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_360px]">
+      <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_360px] enterprise-mobile-stack">
         <div className="space-y-3">
           {versions.map((version) => (
             <div
@@ -113,13 +115,13 @@ function HeroVersionTimelinePanel() {
                   : "border-white/10 bg-slate-950/55"
               }`}
             >
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div className="enterprise-responsive-guard flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-950">
                       {version.id}
                     </span>
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-black text-slate-300">
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-black text-slate-300 transition-colors duration-200 motion-reduce:transition-none">
                       {version.status}
                     </span>
                     <span className="text-xs font-bold text-slate-400">{version.createdAt}</span>
@@ -136,7 +138,7 @@ function HeroVersionTimelinePanel() {
                   <button
                     type="button"
                     onClick={() => setActiveVersion(version)}
-                    className="rounded-xl border border-white/10 px-4 py-3 text-xs font-black"
+                    className="rounded-xl border border-white/10 px-4 py-3 text-xs font-black transition-colors duration-200 motion-reduce:transition-none"
                   >
                     Compare
                   </button>
@@ -153,7 +155,7 @@ function HeroVersionTimelinePanel() {
           ))}
         </div>
 
-        <aside className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+        <aside className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 transition-colors duration-200 motion-reduce:transition-none">
           <p className="text-xs font-black uppercase tracking-[0.25em] text-violet-300">
             Snapshot Compare
           </p>
@@ -175,7 +177,7 @@ function HeroVersionTimelinePanel() {
           </div>
 
           {restoreMessage ? (
-            <p className="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-bold text-emerald-200">
+            <p className="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-bold text-emerald-200 transition-colors duration-200 motion-reduce:transition-none">
               {restoreMessage}
             </p>
           ) : null}
@@ -405,8 +407,8 @@ export default function HeroStudio({
 
   return (
     <section className="space-y-5">
-      <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/[0.04]">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
+        <div className="enterprise-responsive-guard flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between enterprise-mobile-stack">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-400">
               Enterprise Hero Studio V3 · {mode === "edit" ? "Edit Hero" : "Create Hero"}
@@ -421,7 +423,7 @@ export default function HeroStudio({
 
           <div className="flex flex-wrap gap-2">
             {tabs.map((item) => (
-              <button
+              <button type="button"
                 key={item}
                 onClick={() => setTab(item)}
                 className={tab === item ? "rounded-2xl bg-slate-950 px-4 py-2 text-sm font-black capitalize text-white dark:bg-white dark:text-slate-950" : "rounded-2xl border border-slate-200 px-4 py-2 text-sm font-black capitalize dark:border-white/10"}
@@ -432,13 +434,13 @@ export default function HeroStudio({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button onClick={generateAI} disabled={aiLoading} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" onClick={generateAI} disabled={aiLoading} className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
               {aiLoading ? "Generating..." : "Generate AI"}
             </button>
-            <button onClick={() => save(false)} disabled={saving} className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-black dark:border-white/10">
+            <button type="button" onClick={() => save(false)} disabled={saving} className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
               {saving ? "Saving..." : "Save Draft"}
             </button>
-            <button onClick={() => save(true)} disabled={saving} className="rounded-2xl bg-yellow-400 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-50">
+            <button type="button" onClick={() => save(true)} disabled={saving} className="rounded-2xl bg-yellow-400 px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-50">
               Publish
             </button>
           </div>
@@ -451,17 +453,17 @@ export default function HeroStudio({
         ) : null}
       </div>
 
-      <div className="grid gap-5 2xl:grid-cols-[1fr_390px]">
+      <div className="grid gap-5 2xl:grid-cols-[1fr_390px] enterprise-mobile-stack">
         <div className="space-y-5">
-          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 enterprise-mobile-stack">
               <div>
                 <h3 className="text-xl font-black text-slate-950 dark:text-white">Device Preview</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{devices[device].label} · {devices[device].size}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {(Object.keys(devices) as Device[]).map((item) => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => setDevice(item)}
                     className={device === item ? "rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-black text-slate-950" : "rounded-2xl border border-slate-200 px-4 py-2 text-sm font-black dark:border-white/10"}
@@ -488,19 +490,19 @@ export default function HeroStudio({
               )}
 
               {safeZone ? (
-                <div className="pointer-events-none absolute inset-y-[10%] left-[9%] right-[9%] rounded-3xl border-2 border-dashed border-yellow-300 bg-yellow-300/10">
+                <div className="pointer-events-none absolute inset-y-[10%] left-[9%] right-[9%] rounded-3xl border-2 border-dashed border-yellow-300 bg-yellow-300/10 transition-colors duration-200 motion-reduce:transition-none">
                   <span className="absolute left-4 top-4 rounded-full bg-yellow-300 px-3 py-1 text-[10px] font-black text-slate-950">SAFE ZONE</span>
                 </div>
               ) : null}
 
               {focusPoint ? (
-                <div className="pointer-events-none absolute left-1/2 top-1/3 h-24 w-24 -translate-x-1/2 rounded-full border-4 border-rose-500/80 bg-rose-500/10">
+                <div className="pointer-events-none absolute left-1/2 top-1/3 h-24 w-24 -translate-x-1/2 rounded-full border-4 border-rose-500/80 bg-rose-500/10 transition-colors duration-200 motion-reduce:transition-none">
                   <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black text-white">FOCUS</span>
                 </div>
               ) : null}
 
               <div
-                className="pointer-events-none absolute rounded-2xl border-2 border-cyan-300 bg-cyan-300/10 shadow-[0_0_0_9999px_rgba(0,0,0,0.24)]"
+                className="pointer-events-none absolute rounded-2xl border-2 border-cyan-300 bg-cyan-300/10 shadow-[0_0_0_9999px_rgba(0,0,0,0.24)] transition-colors duration-200 motion-reduce:transition-none"
                 style={{
                   left: `${crop.boxX}%`,
                   top: `${crop.boxY}%`,
@@ -515,28 +517,28 @@ export default function HeroStudio({
                   {draft.shortDescription || draft.subheadline || "Short description"}
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <button className="rounded-full bg-white px-5 py-3 text-sm font-black text-slate-950">{draft.primaryCtaLabel || "Shop Now"}</button>
-                  <button className="rounded-full border border-white/50 px-5 py-3 text-sm font-black text-white">{draft.secondaryCtaLabel || "Explore"}</button>
+                  <button type="button" className="rounded-full bg-white px-5 py-3 text-sm font-black text-slate-950">{draft.primaryCtaLabel || "Shop Now"}</button>
+                  <button type="button" className="rounded-full border border-white/50 px-5 py-3 text-sm font-black text-white transition-colors duration-200 motion-reduce:transition-none">{draft.secondaryCtaLabel || "Explore"}</button>
                 </div>
               </div>
             </div>
           </div>
 
           {(tab === "content" || tab === "creative") && (
-            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-slate-950 dark:text-white">Content Studio</h3>
               <div className="mt-5 grid gap-4">
-                <input value={draft.headline || ""} onChange={(e) => update({ headline: e.target.value })} placeholder="Headline" className="rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10" />
-                <textarea value={draft.shortDescription || ""} onChange={(e) => update({ shortDescription: e.target.value, subheadline: e.target.value })} placeholder="Short Description" className="min-h-24 rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10" />
-                <textarea value={draft.longDescription || ""} onChange={(e) => update({ longDescription: e.target.value, seoDescription: e.target.value })} placeholder="Long Description" className="min-h-32 rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10" />
+                <input value={draft.headline || ""} onChange={(e) => update({ headline: e.target.value })} placeholder="Headline" className="rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none" />
+                <textarea value={draft.shortDescription || ""} onChange={(e) => update({ shortDescription: e.target.value, subheadline: e.target.value })} placeholder="Short Description" className="min-h-24 rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none" />
+                <textarea value={draft.longDescription || ""} onChange={(e) => update({ longDescription: e.target.value, seoDescription: e.target.value })} placeholder="Long Description" className="min-h-32 rounded-2xl border border-slate-200 bg-transparent p-4 text-sm font-bold outline-none dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none" />
               </div>
             </div>
           )}
 
           {(tab === "crop" || tab === "creative") && (
-            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-slate-950 dark:text-white">Crop Studio · {devices[device].label}</h3>
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="mt-5 grid gap-4 md:grid-cols-2 enterprise-mobile-stack">
                 <Range label="Image X" value={crop.x} min={0} max={100} onChange={(v) => updateCrop({ x: v })} />
                 <Range label="Image Y" value={crop.y} min={0} max={100} onChange={(v) => updateCrop({ y: v })} />
                 <Range label="Zoom" value={crop.zoom} min={1} max={3} step={0.05} onChange={(v) => updateCrop({ zoom: v })} />
@@ -549,9 +551,9 @@ export default function HeroStudio({
           )}
 
           {tab === "publish" && (
-            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-slate-950 dark:text-white">Publish Workflow</h3>
-              <div className="mt-5 grid gap-3 md:grid-cols-4">
+              <div className="mt-5 grid gap-3 md:grid-cols-4 enterprise-mobile-stack">
                 {["Draft", "Preview", "Publish", "Version"].map((item) => (
                   <div key={item} className="rounded-2xl bg-slate-100 p-5 text-sm font-black dark:bg-white/[0.06]">{item}</div>
                 ))}
@@ -560,9 +562,9 @@ export default function HeroStudio({
           )}
 
           {tab === "analytics" && (
-            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-slate-950 dark:text-white">Hero Analytics</h3>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 enterprise-mobile-stack">
                 {["Views: Ready", "CTR: Ready", "Device CTR: Ready", "A/B: Future Ready", "Winner: Pending", `Published: ${draft.active ? "Yes" : "No"}`].map((item) => (
                   <div key={item} className="rounded-2xl bg-slate-100 p-5 text-sm font-black dark:bg-white/[0.06]">{item}</div>
                 ))}
@@ -572,7 +574,7 @@ export default function HeroStudio({
         </div>
 
         <aside className="space-y-5">
-          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="text-xl font-black text-slate-950 dark:text-white">Studio Settings</h3>
             <div className="mt-5 space-y-4">
               <Select label="Effect Option" value={draft.sliderEffect || "cinematic"} onChange={(v) => update({ sliderEffect: v })} options={effects} />
@@ -584,14 +586,14 @@ export default function HeroStudio({
               <Input label="Tablet Image URL" value={draft.tabletSrc || ""} onChange={(v) => update({ tabletSrc: v })} />
               <Input label="Mobile Image URL" value={draft.mobileSrc || ""} onChange={(v) => update({ mobileSrc: v })} />
 
-              <div className="grid gap-2 sm:grid-cols-2">
-                <button onClick={() => setSafeZone((v) => !v)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black dark:border-white/10">Safe Zone {safeZone ? "On" : "Off"}</button>
-                <button onClick={() => setFocusPoint((v) => !v)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black dark:border-white/10">Focus {focusPoint ? "On" : "Off"}</button>
+              <div className="grid gap-2 sm:grid-cols-2 enterprise-mobile-stack">
+                <button type="button" onClick={() => setSafeZone((v) => !v)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">Safe Zone {safeZone ? "On" : "Off"}</button>
+                <button type="button" onClick={() => setFocusPoint((v) => !v)} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">Focus {focusPoint ? "On" : "Off"}</button>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-400">AI Quality Score</p>
             <p className="mt-4 text-5xl font-black text-slate-950 dark:text-white">{score}/100</p>
             <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
@@ -599,7 +601,7 @@ export default function HeroStudio({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="text-xl font-black text-slate-950 dark:text-white">AI Recommendations</h3>
             <div className="mt-4 space-y-3">
               {["Keep CTA inside safe zone.", "Use mobile-specific image for best conversion.", "Add alt text for accessibility.", "Check crop on all devices before publish."].map((item) => (
@@ -608,7 +610,7 @@ export default function HeroStudio({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+          <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="text-xl font-black text-slate-950 dark:text-white">Version Timeline</h3>
             <div className="mt-4 space-y-3">
               {["Draft", "AI Generated", "Preview Checked", "Publish Ready"].map((item) => (
@@ -636,7 +638,7 @@ function Input({ label, value, onChange, type = "text" }: { label: string; value
   return (
     <label className="block text-xs font-black uppercase tracking-[0.18em] text-slate-400">
       {label}
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-transparent p-3 text-sm font-bold normal-case tracking-normal outline-none dark:border-white/10" />
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-transparent p-3 text-sm font-bold normal-case tracking-normal outline-none dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none" />
     </label>
   );
 }
@@ -645,7 +647,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
   return (
     <label className="block text-xs font-black uppercase tracking-[0.18em] text-slate-400">
       {label}
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-transparent p-3 text-sm font-bold normal-case tracking-normal outline-none dark:border-white/10">
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-transparent p-3 text-sm font-bold normal-case tracking-normal outline-none dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
         {options.map((item) => <option key={item} value={item}>{item}</option>)}
       </select>
     </label>

@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -88,8 +90,8 @@ export default function EnterpriseProductWorkspace() {
 
   return (
     <main className="space-y-5">
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-sm md:p-8">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-sm md:p-8 transition-colors duration-200 motion-reduce:transition-none">
+        <div className="enterprise-responsive-guard flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.32em] text-cyan-300">
               Enterprise Product Workspace
@@ -104,7 +106,7 @@ export default function EnterpriseProductWorkspace() {
 
           <div className="flex flex-wrap gap-2">
             {["studio","media","variants","ai","publish"].map((x) => (
-              <button
+              <button type="button"
                 key={x}
                 onClick={() => setTab(x as any)}
                 className={tab === x ? "rounded-2xl bg-white px-4 py-2 text-sm font-black capitalize text-slate-950" : "rounded-2xl border border-white/10 px-4 py-2 text-sm font-black capitalize text-white/70"}
@@ -116,14 +118,14 @@ export default function EnterpriseProductWorkspace() {
         </div>
       </section>
 
-      <section className="grid gap-5 2xl:grid-cols-[380px_1fr_380px]">
-        <aside className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
-          <div className="flex items-center justify-between gap-3">
+      <section className="grid gap-5 2xl:grid-cols-[380px_1fr_380px] enterprise-mobile-stack">
+        <aside className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
+          <div className="flex items-center justify-between gap-3 enterprise-mobile-stack">
             <div>
               <h2 className="text-xl font-black text-white">Product Library</h2>
               <p className="mt-1 text-sm text-white/45">Select product to edit.</p>
             </div>
-            <button onClick={loadProducts} className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-black">
+            <button type="button" onClick={loadProducts} className="rounded-2xl border border-white/10 px-4 py-2 text-sm font-black transition-colors duration-200 motion-reduce:transition-none">
               Refresh
             </button>
           </div>
@@ -132,12 +134,12 @@ export default function EnterpriseProductWorkspace() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search product, SKU, barcode..."
-            className="mt-4 h-11 w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 text-sm font-bold outline-none"
+            className="mt-4 h-11 w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 text-sm font-bold outline-none transition-colors duration-200 motion-reduce:transition-none"
           />
 
           <div className="mt-5 max-h-[780px] space-y-3 overflow-y-auto pr-1">
             {filtered.map((p) => (
-              <button
+              <button type="button"
                 key={p.id}
                 onClick={() => setSelected(p)}
                 className={selected?.id === p.id ? "flex w-full gap-3 rounded-3xl border border-cyan-400 bg-cyan-400/10 p-3 text-left" : "flex w-full gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-3 text-left"}
@@ -162,8 +164,8 @@ export default function EnterpriseProductWorkspace() {
         </aside>
 
         <section className="space-y-5">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
+            <div className="flex flex-wrap items-center justify-between gap-3 enterprise-mobile-stack">
               <div>
                 <h2 className="text-2xl font-black text-white">{getName(selected)}</h2>
                 <p className="mt-1 text-sm text-white/45">
@@ -172,7 +174,7 @@ export default function EnterpriseProductWorkspace() {
               </div>
               <div className="flex gap-2">
                 {["desktop","tablet","mobile"].map((x) => (
-                  <button
+                  <button type="button"
                     key={x}
                     onClick={() => setDevice(x as any)}
                     className={device === x ? "rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-black text-slate-950" : "rounded-2xl border border-white/10 px-4 py-2 text-sm font-black"}
@@ -185,7 +187,7 @@ export default function EnterpriseProductWorkspace() {
 
             <div className="mt-5 flex justify-center rounded-[2rem] bg-black p-6">
               <div className={device === "mobile" ? "w-[360px]" : device === "tablet" ? "w-[720px]" : "w-full max-w-5xl"}>
-                <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950">
+                <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950 transition-colors duration-200 motion-reduce:transition-none">
                   <div className="aspect-[16/10] bg-slate-900">
                     {getImage(selected) ? (
                       <img src={getImage(selected)} alt={getName(selected)} className="h-full w-full object-cover" />
@@ -203,7 +205,7 @@ export default function EnterpriseProductWorkspace() {
           </div>
 
           {tab === "studio" && (
-            <div className="grid gap-5 xl:grid-cols-2">
+            <div className="grid gap-5 xl:grid-cols-2 enterprise-mobile-stack">
               <Panel title="Product Details" rows={[
                 ["Name", getName(selected)],
                 ["Category", selected?.category?.name || selected?.category || "-"],
@@ -232,19 +234,19 @@ export default function EnterpriseProductWorkspace() {
           )}
 
           {tab === "media" && (
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-white">Enterprise Media Manager</h3>
               <p className="mt-2 text-sm text-white/45">
                 Drag & drop gallery, variant-wise images, crop per image, WebP and responsive generation foundation.
               </p>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 enterprise-mobile-stack">
                 {media.length ? media.map((img: any, i) => (
-                  <div key={i} className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900">
+                  <div key={i} className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900 transition-colors duration-200 motion-reduce:transition-none">
                     <img src={resolveAssetUrl(String(img))} alt={`Media ${i + 1}`} className="aspect-square w-full object-cover" />
                     <div className="p-3 text-xs font-black text-white/60">Image {i + 1}</div>
                   </div>
                 )) : (
-                  <div className="rounded-3xl border border-dashed border-white/10 p-8 text-sm font-bold text-white/45">
+                  <div className="rounded-3xl border border-dashed border-white/10 p-8 text-sm font-bold text-white/45 transition-colors duration-200 motion-reduce:transition-none">
                     No media found.
                   </div>
                 )}
@@ -253,10 +255,10 @@ export default function EnterpriseProductWorkspace() {
           )}
 
           {tab === "variants" && (
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-white">Variant Manager</h3>
-              <div className="mt-5 overflow-x-auto">
-                <table className="w-full min-w-[760px] text-left text-sm">
+              <div className="mt-5 enterprise-table-guard overflow-x-auto data-table-wrap">
+                <table className="w-full min-w-[760px] text-left text-sm min-w-max">
                   <thead className="text-xs uppercase tracking-[0.18em] text-white/35">
                     <tr>
                       <th className="p-3">Variant</th>
@@ -288,9 +290,9 @@ export default function EnterpriseProductWorkspace() {
           )}
 
           {tab === "ai" && (
-            <div className="grid gap-5 xl:grid-cols-2">
+            <div className="grid gap-5 xl:grid-cols-2 enterprise-mobile-stack">
               <ScoreCard score={aiScore} />
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
                 <h3 className="text-xl font-black text-white">AI Product Panel</h3>
                 <div className="mt-4 space-y-3">
                   {["AI Description", "AI SEO", "AI Tags", "AI Alt Text", "AI Variant Suggestion", "AI Pricing Suggestion"].map((x) => (
@@ -302,9 +304,9 @@ export default function EnterpriseProductWorkspace() {
           )}
 
           {tab === "publish" && (
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black text-white">Publish Workflow</h3>
-              <div className="mt-5 grid gap-3 md:grid-cols-4">
+              <div className="mt-5 grid gap-3 md:grid-cols-4 enterprise-mobile-stack">
                 {["Draft", "Preview", "Approval", "Publish"].map((x) => (
                   <div key={x} className="rounded-2xl bg-white/[0.06] p-5 text-sm font-black text-white/70">{x}</div>
                 ))}
@@ -315,7 +317,7 @@ export default function EnterpriseProductWorkspace() {
 
         <aside className="space-y-5">
           <ScoreCard score={aiScore} />
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="text-xl font-black text-white">AI Recommendations</h3>
             <div className="mt-4 space-y-3">
               {[
@@ -336,7 +338,7 @@ export default function EnterpriseProductWorkspace() {
 
 function Panel({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
       <h3 className="text-xl font-black text-white">{title}</h3>
       <div className="mt-4 space-y-3">
         {rows.map(([a,b]) => (
@@ -352,7 +354,7 @@ function Panel({ title, rows }: { title: string; rows: [string, string][] }) {
 
 function ScoreCard({ score }: { score: number }) {
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5">
+    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-200 motion-reduce:transition-none">
       <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">AI Product Score</p>
       <p className="mt-4 text-5xl font-black text-white">{score}/100</p>
       <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/10">

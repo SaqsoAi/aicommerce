@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import ProductCard from "@/components/products/ProductCard";
@@ -142,11 +144,11 @@ export default function ProductCatalogClient() {
       <section className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 px-3 py-10 sm:px-4 sm:py-14 dark:border-white/10 dark:from-[#081221] dark:via-[#0f172a] dark:to-[#020617]">
         <div className="absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="mx-auto max-w-[1500px]">
-          <div className="rounded-[2rem] border border-neutral-200 bg-white/80 p-5 shadow-xl backdrop-blur dark:border-white/10 dark:bg-white/5 sm:p-8">
+          <div className="rounded-[2rem] border border-neutral-200 bg-white/80 p-5 shadow-xl backdrop-blur dark:border-white/10 dark:bg-white/5 sm:p-8 transition-colors duration-200 motion-reduce:transition-none">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#d4af37]">
               RoshniTemp Product Catalog
             </p>
-            <div className="mt-4 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div className="mt-4 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end enterprise-mobile-stack">
               <div>
                 <h1 className="text-4xl font-black tracking-tight md:text-6xl">
                   Discover Your Style
@@ -156,7 +158,7 @@ export default function ProductCatalogClient() {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-neutral-200 bg-neutral-50 p-4 dark:border-white/10 dark:bg-black/20">
+              <div className="rounded-3xl border border-neutral-200 bg-neutral-50 p-4 dark:border-white/10 dark:bg-black/20 transition-colors duration-200 motion-reduce:transition-none">
                 <label className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500 dark:text-white/50">
                   Smart Search
                 </label>
@@ -168,15 +170,15 @@ export default function ProductCatalogClient() {
                       if (event.key === "Enter") loadAll();
                     }}
                     placeholder="Search product, SKU, style no..."
-                    className="min-w-0 flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-[#081221]"
+                    className="min-w-0 flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-[#081221] transition-colors duration-200 motion-reduce:transition-none"
                   />
-                  <button onClick={() => loadAll()} className="rounded-2xl bg-[#d4af37] px-5 py-3 font-bold text-black">
+                  <button type="button" onClick={() => loadAll()} className="rounded-2xl bg-[#d4af37] px-5 py-3 font-bold text-black">
                     Search
                   </button>
                 </div>
-                <button
+                <button type="button"
                   onClick={() => alert("✨ AI Style It will connect to AI recommendation workflow.")}
-                  className="mt-3 w-full rounded-2xl border border-blue-400/40 px-4 py-3 text-sm font-bold text-blue-600 hover:bg-blue-500/10 dark:text-blue-300"
+                  className="mt-3 w-full rounded-2xl border border-blue-400/40 px-4 py-3 text-sm font-bold text-blue-600 hover:bg-blue-500/10 dark:text-blue-300 transition-colors duration-200 motion-reduce:transition-none"
                 >
                   ✨ AI Style It
                 </button>
@@ -186,23 +188,23 @@ export default function ProductCatalogClient() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1500px] gap-6 px-3 py-8 sm:px-4 lg:grid-cols-[300px_1fr] lg:gap-8">
+      <section className="mx-auto grid max-w-[1500px] gap-6 px-3 py-8 sm:px-4 lg:grid-cols-[300px_1fr] lg:gap-8 enterprise-mobile-stack">
         <aside className="hidden lg:block lg:sticky lg:top-[112px] lg:self-start">
           {filterPanel}
         </aside>
 
         <div className="min-w-0">
-          <div className="sticky top-[92px] z-30 mb-5 rounded-3xl border border-neutral-200 bg-white/85 p-3 shadow-xl backdrop-blur-2xl dark:border-white/10 dark:bg-[#081221]/80">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="sticky top-[92px] z-30 mb-5 rounded-3xl border border-neutral-200 bg-white/85 p-3 shadow-xl backdrop-blur-2xl dark:border-white/10 dark:bg-[#081221]/80 transition-colors duration-200 motion-reduce:transition-none">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between enterprise-mobile-stack">
               <div>
                 <p className="text-sm text-neutral-500">Showing {products.length} products</p>
                 <h2 className="text-2xl font-black">Luxury Product Catalog</h2>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <button
+                <button type="button"
                   onClick={() => setFilterOpen(true)}
-                  className="rounded-2xl border border-neutral-200 px-4 py-3 text-sm font-black lg:hidden dark:border-white/10"
+                  className="rounded-2xl border border-neutral-200 px-4 py-3 text-sm font-black lg:hidden dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none"
                 >
                   Filters ({activeFilterCount})
                 </button>
@@ -210,7 +212,7 @@ export default function ProductCatalogClient() {
                 <select
                   value={filters.sort}
                   onChange={(event) => updateFilter("sort", event.target.value)}
-                  className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-[#081221]"
+                  className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-[#081221] transition-colors duration-200 motion-reduce:transition-none"
                 >
                   <option value="latest">Latest</option>
                   <option value="trending">Trending</option>
@@ -222,21 +224,21 @@ export default function ProductCatalogClient() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
               {Array.from({ length: 10 }).map((_, index) => (
-                <div key={index} className="h-72 animate-pulse rounded-3xl bg-neutral-100 sm:h-96 dark:bg-white/10" />
+                <div key={index} className="h-72 animate-pulse motion-reduce:animate-none rounded-3xl bg-neutral-100 sm:h-96 dark:bg-white/10" />
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-neutral-300 p-12 text-center dark:border-white/10">
+            <div className="rounded-3xl border border-dashed border-neutral-300 p-12 text-center dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
               <h3 className="text-xl font-black">No products found</h3>
               <p className="mt-2 text-neutral-500">Try clearing filters or searching another keyword.</p>
-              <button onClick={clearFilters} className="mt-5 rounded-xl bg-[#d4af37] px-5 py-3 font-bold text-black">
+              <button type="button" onClick={clearFilters} className="mt-5 rounded-xl bg-[#d4af37] px-5 py-3 font-bold text-black">
                 Reset Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -247,9 +249,9 @@ export default function ProductCatalogClient() {
             {stylistPicks.length === 0 ? (
               <EmptyMini text="No stylist picks found yet." />
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2 enterprise-mobile-stack">
                 {stylistPicks.slice(0, 4).map((item: any) => (
-                  <div key={item.id} className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-white/5">
+                  <div key={item.id} className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
                     <h3 className="font-black">{item.title || item.name || "Lookbook Pick"}</h3>
                     <p className="mt-2 text-sm text-neutral-500">{item.description || "Curated styling inspiration."}</p>
                   </div>
@@ -262,7 +264,7 @@ export default function ProductCatalogClient() {
             {recommended.length === 0 ? (
               <EmptyMini text="No recommended products yet." />
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+              <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
                 {recommended.slice(0, 10).map((product: any) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -274,11 +276,11 @@ export default function ProductCatalogClient() {
 
       {filterOpen ? (
         <div className="fixed inset-0 z-[70] lg:hidden">
-          <button className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setFilterOpen(false)} />
+          <button type="button" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setFilterOpen(false)} />
           <aside className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-[2rem] bg-white p-4 text-neutral-950 shadow-2xl dark:bg-[#081221] dark:text-white">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between enterprise-mobile-stack">
               <h3 className="text-xl font-black">Filters</h3>
-              <button onClick={() => setFilterOpen(false)} className="rounded-2xl border border-neutral-200 px-4 py-2 text-sm font-black dark:border-white/10">
+              <button type="button" onClick={() => setFilterOpen(false)} className="rounded-2xl border border-neutral-200 px-4 py-2 text-sm font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                 Close
               </button>
             </div>
@@ -306,10 +308,10 @@ function FilterPanel({
   setPriceRange,
 }: any) {
   return (
-    <div className="rounded-[1.5rem] border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
-      <div className="mb-5 flex items-center justify-between">
+    <div className="rounded-[1.5rem] border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
+      <div className="mb-5 flex items-center justify-between enterprise-mobile-stack">
         <h2 className="font-black">Filters</h2>
-        <button onClick={clearFilters} className="text-xs font-bold text-[#d4af37]">
+        <button type="button" onClick={clearFilters} className="text-xs font-bold text-[#d4af37]">
           Clear All ({activeFilterCount})
         </button>
       </div>
@@ -321,7 +323,7 @@ function FilterPanel({
               <p className="text-xs text-neutral-500">No active offers</p>
             ) : (
               hotOffers.slice(0, 8).map((offer: any) => (
-                <button key={`${offer.type}-${offer.id}`} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-xs font-semibold hover:border-[#d4af37] dark:border-white/10">
+                <button type="button" key={`${offer.type}-${offer.id}`} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-xs font-semibold hover:border-[#d4af37] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                   {offer.label}
                 </button>
               ))
@@ -332,7 +334,7 @@ function FilterPanel({
         <FilterGroup title="Category">
           <div className="space-y-2">
             {categories.map((cat: any) => (
-              <button
+              <button type="button"
                 key={cat.id}
                 onClick={() => updateFilter("category", cat.slug)}
                 className={cx(
@@ -357,7 +359,7 @@ function FilterPanel({
         <FilterGroup title="Price Range">
           <div className="space-y-2">
             {priceRanges.map((range: any) => (
-              <button key={range.label} onClick={() => setPriceRange(range)} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-sm hover:border-[#d4af37] dark:border-white/10">
+              <button type="button" key={range.label} onClick={() => setPriceRange(range)} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-sm hover:border-[#d4af37] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                 {range.label}
               </button>
             ))}
@@ -384,8 +386,8 @@ function FilterGroup({ title, children }: { title: string; children: ReactNode }
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white/70 dark:border-white/10 dark:bg-white/[0.03]">
-      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left">
+    <section className="rounded-2xl border border-neutral-200 bg-white/70 dark:border-white/10 dark:bg-white/[0.03] transition-colors duration-200 motion-reduce:transition-none">
+      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left enterprise-mobile-stack">
         <span className="text-xs font-black uppercase tracking-[0.22em] text-neutral-600 dark:text-white/60">{title}</span>
         <span className="text-lg font-black text-neutral-500 dark:text-white/60">{open ? "−" : "+"}</span>
       </button>
@@ -400,7 +402,7 @@ function ChipGrid({ items, value, onChange }: { items: string[]; value: string; 
   return (
     <div className="flex flex-wrap gap-2">
       {items.map((item) => (
-        <button
+        <button type="button"
           key={item}
           onClick={() => onChange(value === item ? "" : item)}
           className={cx(
@@ -417,7 +419,7 @@ function ChipGrid({ items, value, onChange }: { items: string[]; value: string; 
 
 function CatalogSection({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
-    <section className="mt-12 rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm sm:p-6 dark:border-white/10 dark:bg-white/5">
+    <section className="mt-12 rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm sm:p-6 dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
       <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4af37]">{subtitle}</p>
       <h2 className="mt-2 text-2xl font-black">{title}</h2>
       <div className="mt-6">{children}</div>
@@ -427,7 +429,7 @@ function CatalogSection({ title, subtitle, children }: { title: string; subtitle
 
 function EmptyMini({ text }: { text: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500 dark:border-white/10">
+    <div className="rounded-2xl border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500 dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
       {text}
     </div>
   );

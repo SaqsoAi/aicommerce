@@ -1,3 +1,4 @@
+/* PHASE_3_1_TABLE_HARDENED */
 "use client"
 
 import * as React from "react"
@@ -8,7 +9,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className="relative w-full enterprise-table-guard overflow-x-auto"
     >
       <table
         data-slot="table"

@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import Link from "next/link";
@@ -128,7 +130,7 @@ function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="inline-flex w-fit items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+          className="inline-flex w-fit items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15 transition-colors duration-200 motion-reduce:transition-none"
         >
           View All
         </Link>
@@ -146,7 +148,7 @@ function ProductTile({ product, index }: { product: Product; index: number }) {
     product.salePrice || product.discountPrice ? product.price : undefined;
 
   return (
-    <article className="group min-w-[250px] overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/10 dark:bg-white/[0.06]">
+    <article className="group min-w-[250px] overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/10 dark:bg-white/[0.06] transition-colors duration-200 motion-reduce:transition-none">
       <Link href={href} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-slate-100 dark:bg-slate-900">
           {image ? (
@@ -189,10 +191,10 @@ function ProductTile({ product, index }: { product: Product; index: number }) {
           )}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="mt-4 enterprise-responsive-guard grid grid-cols-2 gap-2 enterprise-mobile-stack">
           <Link
             href="/virtual-tryon"
-            className="rounded-full border border-slate-200 px-3 py-2 text-center text-xs font-black text-slate-700 transition hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
+            className="rounded-full border border-slate-200 px-3 py-2 text-center text-xs font-black text-slate-700 transition hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
           >
             Try-On
           </Link>
@@ -219,11 +221,11 @@ function ProductRail({
 }) {
   if (loading) {
     return (
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8 enterprise-mobile-stack">
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-[430px] animate-pulse rounded-[2rem] bg-slate-100 dark:bg-white/[0.06]"
+            className="h-[430px] animate-pulse motion-reduce:animate-none rounded-[2rem] bg-slate-100 dark:bg-white/[0.06]"
           />
         ))}
       </div>
@@ -233,7 +235,7 @@ function ProductRail({
   if (!products.length) {
     return (
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-dashed border-slate-300 p-10 text-center text-sm font-bold text-slate-500 dark:border-white/10 dark:text-slate-400">
+        <div className="rounded-[2rem] border border-dashed border-slate-300 p-10 text-center text-sm font-bold text-slate-500 dark:border-white/10 dark:text-slate-400 transition-colors duration-200 motion-reduce:transition-none">
           No products available yet.
         </div>
       </div>
@@ -242,7 +244,7 @@ function ProductRail({
 
   if (mode === "grid") {
     return (
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8 enterprise-mobile-stack">
         {products.slice(0, 8).map((product, index) => (
           <ProductTile key={`${productId(product)}-${index}`} product={product} index={index} />
         ))}
@@ -252,7 +254,7 @@ function ProductRail({
 
   return (
     <div className="mx-auto max-w-7xl overflow-hidden px-4 sm:px-6 lg:px-8">
-      <div className="flex gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-5 enterprise-table-guard overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-table-wrap">
         {products.slice(0, 10).map((product, index) => (
           <ProductTile key={`${productId(product)}-${index}`} product={product} index={index} />
         ))}
@@ -319,7 +321,7 @@ function LifestyleSection() {
         description="Lifestyle-led merchandising inspired by the reference layout: clean image cards, premium copy and direct shopping paths."
       />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:px-6 lg:grid-cols-3 lg:px-8 enterprise-mobile-stack">
         {cards.map((card) => (
           <Link
             key={card.title}
@@ -372,12 +374,12 @@ function CollectionsSection({ products }: { products: Product[] }) {
         href="/shop"
       />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 sm:px-6 md:grid-cols-2 lg:px-8 enterprise-mobile-stack">
         {categories.map((name, i) => (
           <Link
             key={name}
             href={`/shop?category=${encodeURIComponent(name)}`}
-            className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.06]"
+            className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.06] transition-colors duration-200 motion-reduce:transition-none"
           >
             <div className="flex items-end justify-between gap-6">
               <div>
@@ -410,7 +412,7 @@ function MembershipBannerSection() {
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-400/30 blur-3xl" />
           <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-          <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center enterprise-mobile-stack">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.35em] text-amber-300">
                 Membership Banner
@@ -423,21 +425,21 @@ function MembershipBannerSection() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
-                  href="/membership"
+                  href="/dashboard"
                   className="rounded-full bg-amber-400 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-white"
                 >
                   Join Membership
                 </Link>
                 <Link
                   href="/shop"
-                  className="rounded-full border border-white/20 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                  className="rounded-full border border-white/20 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
                 >
                   Shop To Unlock
                 </Link>
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-6 backdrop-blur">
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-6 backdrop-blur transition-colors duration-200 motion-reduce:transition-none">
               <p className="text-sm font-black uppercase tracking-[0.25em] text-white/60">
                 Benefits
               </p>
@@ -446,7 +448,7 @@ function MembershipBannerSection() {
                   (item) => (
                     <div
                       key={item}
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold"
+                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold transition-colors duration-200 motion-reduce:transition-none"
                     >
                       {item}
                     </div>

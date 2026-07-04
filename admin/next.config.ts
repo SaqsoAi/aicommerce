@@ -1,8 +1,12 @@
-﻿import type { NextConfig } from "next";
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
+      {
+        source: "/store-settings",
+        destination: "/enterprise-store-settings",
+      },
       {
         source: "/api/:path*",
         destination: "http://localhost:5000/api/:path*",

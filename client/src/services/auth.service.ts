@@ -77,3 +77,5 @@ export const loginWithFacebook = async (accessToken: string) => {
 
 export const sendPhoneOtp = sendOtp;
 export const verifyPhoneOtp = verifyOtp;
+export const sendWhatsAppOtp = sendPhoneOtp;
+export const verifyWhatsAppOtp = verifyPhoneOtp;

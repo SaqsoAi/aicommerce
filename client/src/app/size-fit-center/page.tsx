@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import SizeFitCenterClient from "@/components/size-fit-center/SizeFitCenterClient";
 
-export default function SizeFitCenterRedirectPage() {
-  redirect("/SizeFitCentre");
+export default function SizeFitCenterPage() {
+  return <SizeFitCenterClient />;
 }

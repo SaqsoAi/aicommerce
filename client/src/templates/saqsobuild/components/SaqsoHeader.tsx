@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -78,12 +80,12 @@ export default function SaqsoHeader() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#030303]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-2xl">
-        <div className="mx-auto flex h-[var(--ai-header-h-mobile)] max-w-[1680px] items-center justify-between gap-2 px-3 sm:h-[var(--ai-header-h-tablet)] sm:px-5 lg:h-[var(--ai-header-h-desktop)] lg:px-14">
+        <div className="mx-auto flex h-[var(--ai-header-h-mobile)] max-w-[1680px] items-center justify-between gap-2 px-3 sm:h-[var(--ai-header-h-tablet)] sm:px-5 lg:h-[var(--ai-header-h-desktop)] lg:px-14 enterprise-mobile-stack">
           <Link href="/" onClick={() => setMobileOpen(false)} className="min-w-0 shrink-0">
             <HeaderLogo />
           </Link>
 
-          <nav className="hidden items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] p-2 text-sm font-black text-white/85 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_18px_44px_rgba(0,0,0,.35)] backdrop-blur-xl lg:flex">
+          <nav className="hidden items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] p-2 text-sm font-black text-white/85 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_18px_44px_rgba(0,0,0,.35)] backdrop-blur-xl lg:flex transition-colors duration-200 motion-reduce:transition-none">
             {nav.map((item, index) => (
               <Link
                 key={item.href}
@@ -103,15 +105,15 @@ export default function SaqsoHeader() {
               <Sparkles size={16} /> Shop
             </Link>
 
-            <Link href="/search" className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:h-11 sm:w-11" aria-label="Search">
+            <Link href="/shop?search=" className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:h-11 sm:w-11 transition-colors duration-200 motion-reduce:transition-none" aria-label="Search">
               <Search size={18} />
             </Link>
 
-            <Link href="/wishlist" className="hidden h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black md:grid" aria-label="Wishlist">
+            <Link href="/wishlist" className="hidden h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black md:grid transition-colors duration-200 motion-reduce:transition-none" aria-label="Wishlist">
               <Heart size={19} />
             </Link>
 
-            <Link href="/account" className="hidden h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:grid" aria-label="Account">
+            <Link href="/account" className="hidden h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:grid transition-colors duration-200 motion-reduce:transition-none" aria-label="Account">
               <UserRound size={19} />
             </Link>
 
@@ -126,7 +128,7 @@ export default function SaqsoHeader() {
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg lg:hidden"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg lg:hidden transition-colors duration-200 motion-reduce:transition-none"
               aria-label="Open menu"
             >
               <Menu size={20} />
@@ -149,28 +151,28 @@ export default function SaqsoHeader() {
           mobileOpen ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 enterprise-mobile-stack">
           <HeaderLogo />
 
-          <button type="button" onClick={() => setMobileOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10" aria-label="Close menu">
+          <button type="button" onClick={() => setMobileOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 transition-colors duration-200 motion-reduce:transition-none" aria-label="Close menu">
             <X size={18} />
           </button>
         </div>
 
         <div className="mt-7 grid gap-3.5">
           {nav.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className="rounded-[1.35rem] border border-white/12 bg-white/[0.075] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_14px_34px_rgba(0,0,0,.28)] backdrop-blur-xl transition hover:bg-white/[0.11]">
+            <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className="rounded-[1.35rem] border border-white/12 bg-white/[0.075] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_14px_34px_rgba(0,0,0,.28)] backdrop-blur-xl transition hover:bg-white/[0.11] transition-colors duration-200 motion-reduce:transition-none">
               <span className="block text-lg font-black">{item.label}</span>
               <span className="mt-1 block text-xs font-bold text-white/50">{item.desc}</span>
             </Link>
           ))}
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3.5">
+        <div className="mt-6 enterprise-responsive-guard grid grid-cols-2 gap-3.5 enterprise-mobile-stack">
           <Link href="/wishlist" onClick={() => setMobileOpen(false)} className="rounded-full bg-white/95 px-4 py-4 shadow-[0_12px_32px_rgba(255,255,255,.12)] text-center text-xs font-black uppercase tracking-[.16em] text-black">
             Wishlist
           </Link>
-          <Link href="/account" onClick={() => setMobileOpen(false)} className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-4 backdrop-blur-xl text-center text-xs font-black uppercase tracking-[.16em]">
+          <Link href="/account" onClick={() => setMobileOpen(false)} className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-4 backdrop-blur-xl text-center text-xs font-black uppercase tracking-[.16em] transition-colors duration-200 motion-reduce:transition-none">
             Account
           </Link>
         </div>

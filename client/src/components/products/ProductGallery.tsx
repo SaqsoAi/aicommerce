@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useMemo, useState } from "react";
 import { normalizeImageUrl } from "@/lib/normalizeImageUrl";
@@ -77,7 +79,7 @@ export default function ProductGallery({
           }}
           onMouseEnter={() => setHoverZoom(true)}
           onMouseLeave={() => setHoverZoom(false)}
-          className="group relative flex aspect-[4/5] max-h-[760px] w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-3xl"
+          className="group relative flex aspect-[4/5] max-h-[760px] w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-3xl transition-colors duration-200 motion-reduce:transition-none"
         >
           <span className="absolute right-3 top-3 z-20 rounded-full bg-black/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white backdrop-blur">
             Click Zoom
@@ -92,7 +94,7 @@ export default function ProductGallery({
           />
         </button>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 sm:gap-3">
+        <div className="flex gap-2 enterprise-table-guard overflow-x-auto pb-2 sm:gap-3 data-table-wrap">
           {safeImages.map((image, index) => (
             <button
               key={`${image}-${index}`}
@@ -134,7 +136,7 @@ export default function ProductGallery({
           <div
             onWheel={handleWheel}
             onDoubleClick={() => setZoomLevel((prev) => (prev > 1 ? 1 : 2))}
-            className="flex h-full w-full cursor-zoom-in items-center justify-center overflow-auto p-6"
+            className="flex h-full w-full cursor-zoom-in items-center justify-center enterprise-table-guard overflow-x-auto overscroll-x-contain p-6 data-table-wrap"
           >
             <img
               src={activeImage}

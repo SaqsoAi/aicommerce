@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 
 
@@ -90,7 +92,7 @@ export default function AccountPage() {
   if (!ready) {
     return (
       <main className="account-real-data-dashboard-hide-old flex min-min-min-h-screen items-center justify-center bg-[#070707] text-white">
-      <div data-account-brand-panel className="mb-6 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-slate-200 dark:border-white/10 dark:bg-white/[0.045]">
+      <div data-account-brand-panel className="mb-6 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-slate-200 dark:border-white/10 dark:bg-white/[0.045] transition-colors duration-200 motion-reduce:transition-none">
         <div className="flex items-center gap-4">
           {brand.logoUrl ? (
             <img src={brand.logoUrl} alt={brand.storeName} className="h-12 w-12 rounded-2xl bg-white object-contain p-1" />
@@ -104,7 +106,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-        <p className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white/[0.05] px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-slate-400 dark:text-white/60">
+        <p className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white/[0.05] px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-slate-400 dark:text-white/60 transition-colors duration-200 motion-reduce:transition-none">
           Loading ${brand.storeName} Account
         </p>
       </main>
@@ -114,10 +116,10 @@ export default function AccountPage() {
   return (
     <main className="account-real-data-dashboard-hide-old min-min-min-h-screen bg-[#070707] pb-24 text-white">
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-8 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-10">
-        <section className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-r from-[#27231e] to-[#8a714c] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.28)] md:p-8">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <section className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-r from-[#27231e] to-[#8a714c] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.28)] md:p-8 transition-colors duration-200 motion-reduce:transition-none">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between enterprise-mobile-stack">
             <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white text-2xl font-black text-black">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white text-2xl font-black text-black transition-colors duration-200 motion-reduce:transition-none">
                 {initials}
               </div>
               <div>
@@ -140,13 +142,13 @@ export default function AccountPage() {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] lg:block">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr] enterprise-mobile-stack">
+          <aside className="hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] lg:block transition-colors duration-200 motion-reduce:transition-none">
             <div className="space-y-1">
               {menu.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <button
+                  <button type="button"
                     key={item.label}
                     className={[
                       "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition",
@@ -158,7 +160,7 @@ export default function AccountPage() {
                   </button>
                 );
               })}
-              <button onClick={logout} className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-slate-600 dark:text-white/70 hover:bg-white/[0.07] hover:text-white">
+              <button type="button" onClick={logout} className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-slate-600 dark:text-white/70 hover:bg-white/[0.07] hover:text-white">
                 <LogOut size={17} />
                 Sign Out
               </button>
@@ -167,17 +169,17 @@ export default function AccountPage() {
           </aside>
 
           <section className="space-y-6">
-            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6">
-              <div className="flex items-center justify-between">
+            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
+              <div className="flex items-center justify-between enterprise-mobile-stack">
                 <h2 className="text-xl font-black">Quick Actions</h2>
                 <Link href="/shop" className="text-sm font-bold text-white/55 hover:text-white">View All</Link>
               </div>
 
-              <div className="mt-5 grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+              <div className="mt-5 enterprise-responsive-guard grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 enterprise-mobile-stack">
                 {quick.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <button key={item.label} className="rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.04] p-4 text-center transition hover:-translate-y-1 hover:bg-white/[0.07]">
+                    <button type="button" key={item.label} className="rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.04] p-4 text-center transition hover:-translate-y-1 hover:bg-white/[0.07] transition-colors duration-200 motion-reduce:transition-none">
                       <div className={["mx-auto flex h-10 w-10 items-center justify-center rounded-xl", item.tone].join(" ")}>
                         <Icon size={20} />
                       </div>
@@ -189,16 +191,16 @@ export default function AccountPage() {
               </div>
             </div>
 
-            <div className="grid gap-6 xl:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2">
-              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6">
-                <div className="flex items-center justify-between">
+            <div className="grid gap-6 xl:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 enterprise-mobile-stack">
+              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
+                <div className="flex items-center justify-between enterprise-mobile-stack">
                   <h2 className="text-xl font-black">Recent Orders</h2>
                   <Link href="/orders" className="text-sm font-bold text-white/55 hover:text-white">View All Orders</Link>
                 </div>
 
                 <div className="mt-5 space-y-3">
                   {[["#SH2024001","Delivered","2 items Ã‚Â· $189.99"],["#SH2024002","Shipped","3 items Ã‚Â· $299.50"],["#SH2024003","Processing","1 item Ã‚Â· $125.00"]].map((order) => (
-                    <div key={order[0]} className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4">
+                    <div key={order[0]} className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4 enterprise-mobile-stack transition-colors duration-200 motion-reduce:transition-none">
                       <div>
                         <p className="font-black">Order {order[0]}</p>
                         <p className="mt-1 text-sm text-slate-400 dark:text-white/60">{order[2]}</p>
@@ -212,18 +214,18 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6">
-                <div className="flex items-center justify-between">
+              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
+                <div className="flex items-center justify-between enterprise-mobile-stack">
                   <div>
                     <h2 className="text-xl font-black">My Wishlists</h2>
                     <p className="text-sm text-white/45">6 items saved</p>
                   </div>
-                  <button className="text-sm font-bold text-slate-600 dark:text-white/70">+ New List</button>
+                  <button type="button" className="text-sm font-bold text-slate-600 dark:text-white/70">+ New List</button>
                 </div>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-5 grid gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 enterprise-mobile-stack">
                   {["Saved Wishlist","Saved Wishlist","Special Occasions"].map((x) => (
-                    <div key={x} className="rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4">
+                    <div key={x} className="rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4 transition-colors duration-200 motion-reduce:transition-none">
                       <Heart size={16} className="ml-auto text-white/70" />
                       <p className="mt-5 font-black">{x}</p>
                       <p className="mt-2 text-xs text-white/45">Real wishlist data will appear here</p>
@@ -233,8 +235,8 @@ export default function AccountPage() {
               </div>
             </div>
 
-            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6">
-              <div className="flex items-center justify-between">
+            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
+              <div className="flex items-center justify-between enterprise-mobile-stack">
                 <div>
                   <h2 className="text-xl font-black">Recommended for You</h2>
                   <p className="text-sm text-white/45">Based on your style profile and purchase history</p>
@@ -242,10 +244,10 @@ export default function AccountPage() {
                 <Link href="/shop" className="text-sm font-bold text-white/55 hover:text-white">View All</Link>
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-5 grid gap-4 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 enterprise-mobile-stack">
                 {["Cashmere Turtleneck","Midi Wrap Dress","Leather Ankle Boots"].map((x) => (
                   <div key={x}>
-                    <div className="aspect-[4/3] rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.07]" />
+                    <div className="aspect-[4/3] rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.07] transition-colors duration-200 motion-reduce:transition-none" />
                     <p className="mt-3 font-black">{x}</p>
                     <p className="text-sm text-white/45">Luxury Essentials</p>
                     <p className="mt-1 font-black">$149.99</p>

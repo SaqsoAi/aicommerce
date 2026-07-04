@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Crown, Headphones } from "lucide-react";
@@ -18,7 +18,7 @@ export default function CustomerAccountSidebarWidgets() {
           Enjoy exclusive perks & rewards.
         </p>
         <Link
-          href="/membership"
+          href="/dashboard"
           className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-rose-600 px-4 py-2 text-xs font-black text-white hover:brightness-110"
         >
           View Benefits
@@ -33,12 +33,12 @@ export default function CustomerAccountSidebarWidgets() {
         <p className="mt-2 text-xs text-white/50">
           We are here to help you.
         </p>
-        <Link
-          href="/contact"
+        <a
+          href="mailto:support@stylehub.com?subject=Customer%20Support"
           className="mt-3 inline-flex w-full items-center justify-center rounded-xl border border-white/10 px-4 py-2 text-xs font-black text-white hover:bg-white/10"
         >
           Contact Support
-        </Link>
+        </a>
       </div>
     </div>
   );

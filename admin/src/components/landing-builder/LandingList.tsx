@@ -1,7 +1,6 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   deleteLandingPage,
   getLandingPages,
@@ -9,6 +8,11 @@ import {
   unpublishLandingPage,
   type LandingPage,
 } from "@/api/landing.api";
+
+const CLIENT_SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_CLIENT_URL ||
+  "http://localhost:3000";
 
 export default function LandingList() {
   const [items, setItems] = useState<LandingPage[]>([]);
@@ -54,12 +58,14 @@ export default function LandingList() {
             Campaign connected landing pages for flash sale, Eid, brand and category campaigns.
           </p>
         </div>
-        <Link
-          href="/landing-builder/new/edit"
-          className="rounded-xl bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black"
+        <button
+          type="button"
+          disabled
+          title="Landing editor route requires approval before a new route page is created."
+          className="rounded-xl bg-neutral-300 px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
         >
-          Create Landing
-        </Link>
+          Create Pending
+        </button>
       </div>
 
       <div className="overflow-hidden rounded-xl border">
@@ -93,10 +99,20 @@ export default function LandingList() {
                   </td>
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2">
-                      <Link className="rounded-lg border px-3 py-1" href={`/landing-builder/${item.id}/edit`}>
-                        Edit
-                      </Link>
-                      <a className="rounded-lg border px-3 py-1" href={`http://localhost:3000/landing/${item.slug}`} target="_blank">
+                      <button
+                        type="button"
+                        disabled
+                        title="Landing editor route requires approval before a new route page is created."
+                        className="rounded-lg border px-3 py-1 text-neutral-400"
+                      >
+                        Edit Pending
+                      </button>
+                      <a
+                        className="rounded-lg border px-3 py-1"
+                        href={`${CLIENT_SITE_URL}/landing/${item.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         View
                       </a>
                       <button className="rounded-lg border px-3 py-1" onClick={() => handlePublish(item.id, item.isPublished)}>

@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -209,8 +211,8 @@ export default function VirtualTryOnClient() {
 
   return (
     <main className="min-h-screen bg-white p-6 text-neutral-950 dark:bg-neutral-950 dark:text-white">
-      <section className="mx-auto max-w-6xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <section className="mx-auto max-w-6xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 transition-colors duration-200 motion-reduce:transition-none">
+        <div className="flex flex-wrap items-center justify-between gap-4 enterprise-mobile-stack">
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
               SAQSO Luxury AR Fitting Room
@@ -226,7 +228,7 @@ export default function VirtualTryOnClient() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-3 enterprise-mobile-stack">
           {[
             ["See the Fit", "Visualize how clothes look on you before buying."],
             ["Instant Try-On", "Camera based instant fitting preview."],
@@ -239,13 +241,13 @@ export default function VirtualTryOnClient() {
           ))}
         </div>
 
-        <div className="mt-8 rounded-2xl border border-neutral-200 p-6 dark:border-neutral-800">
+        <div className="mt-8 rounded-2xl border border-neutral-200 p-6 dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none">
           <h2 className="text-xl font-semibold">Selected Product</h2>
           <p className="mt-2 text-sm text-neutral-500">
             {productId ? `Product ID: ${productId}` : "No product selected"}
           </p>
 
-          <button
+          <button type="button"
             onClick={startTryOn}
             className="mt-5 rounded-xl bg-black px-6 py-3 font-semibold text-white hover:opacity-90 dark:bg-white dark:text-black"
           >
@@ -254,8 +256,8 @@ export default function VirtualTryOnClient() {
         </div>
       </section>
 
-      <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <section className="mx-auto mt-8 max-w-6xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 transition-colors duration-200 motion-reduce:transition-none">
+        <div className="flex flex-wrap items-center justify-between gap-4 enterprise-mobile-stack">
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
               Style Memory
@@ -263,9 +265,9 @@ export default function VirtualTryOnClient() {
             <h2 className="mt-2 text-2xl font-bold">My Try-On History</h2>
           </div>
 
-          <button
+          <button type="button"
             onClick={loadHistory}
-            className="rounded-full border border-neutral-200 px-4 py-2 text-sm font-semibold dark:border-neutral-800"
+            className="rounded-full border border-neutral-200 px-4 py-2 text-sm font-semibold dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none"
           >
             Refresh
           </button>
@@ -274,20 +276,20 @@ export default function VirtualTryOnClient() {
         {historyLoading ? (
           <p className="mt-6 text-neutral-500">Loading try-on history...</p>
         ) : history.length === 0 ? (
-          <div className="mt-6 rounded-2xl border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-800">
+          <div className="mt-6 rounded-2xl border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="font-bold">No try-on history yet</h3>
             <p className="mt-2 text-sm text-neutral-500">
               Try products virtually and your results will appear here.
             </p>
           </div>
         ) : (
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="mt-6 grid gap-5 md:grid-cols-2 enterprise-mobile-stack">
             {history.map((item) => (
               <div
                 key={item.id}
-                className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
+                className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950 transition-colors duration-200 motion-reduce:transition-none"
               >
-                <div className="grid grid-cols-2">
+                <div className="enterprise-responsive-guard grid grid-cols-2 enterprise-mobile-stack">
                   <div
                     className="h-72 bg-neutral-100 bg-cover bg-center dark:bg-neutral-900"
                     style={{
@@ -313,7 +315,7 @@ export default function VirtualTryOnClient() {
                         {new Date(item.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <span className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-bold dark:border-neutral-800">
+                    <span className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-bold dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none">
                       {item.status}
                     </span>
                   </div>
@@ -325,7 +327,7 @@ export default function VirtualTryOnClient() {
                   ) : null}
 
                   <div className="flex flex-wrap gap-2">
-                    <button
+                    <button type="button"
                       onClick={() => retry(item.id)}
                       className="rounded-full bg-black px-4 py-2 text-xs font-bold text-white dark:bg-white dark:text-black"
                     >
@@ -334,14 +336,14 @@ export default function VirtualTryOnClient() {
 
                     <a
                       href={`/product/${item.productId}`}
-                      className="rounded-full border border-neutral-200 px-4 py-2 text-xs font-bold dark:border-neutral-800"
+                      className="rounded-full border border-neutral-200 px-4 py-2 text-xs font-bold dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none"
                     >
                       View Product
                     </a>
 
-                    <button
+                    <button type="button"
                       onClick={() => remove(item.id)}
-                      className="rounded-full border border-neutral-200 px-4 py-2 text-xs font-bold text-red-600 dark:border-neutral-800"
+                      className="rounded-full border border-neutral-200 px-4 py-2 text-xs font-bold text-red-600 dark:border-neutral-800 transition-colors duration-200 motion-reduce:transition-none"
                     >
                       Delete
                     </button>
@@ -372,7 +374,7 @@ export default function VirtualTryOnClient() {
             <p className="mt-2 text-neutral-500">
               Please enable camera permission from browser settings.
             </p>
-            <button
+            <button type="button"
               onClick={() => setCameraPermission("idle")}
               className="mt-5 rounded-xl bg-black px-5 py-3 text-white"
             >
@@ -384,24 +386,24 @@ export default function VirtualTryOnClient() {
 
       {isARActive && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-[#081221] text-white">
-          <div className="sticky top-0 z-20 flex items-center justify-between border-b border-white/10 bg-[#081221]/90 px-5 py-4 backdrop-blur">
-            <button
+          <div className="sticky top-0 z-20 flex items-center justify-between border-b border-white/10 bg-[#081221]/90 px-5 py-4 backdrop-blur enterprise-mobile-stack">
+            <button type="button"
               onClick={stopTryOn}
-              className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+              className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
             >
               Ã— Close
             </button>
 
             <div className="flex items-center gap-2">
-              <button
+              <button type="button"
                 onClick={resetCamera}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+                className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
               >
                 Reset
               </button>
-              <button
+              <button type="button"
                 onClick={captureFrame}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+                className="rounded-full border border-white/10 px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
               >
                 Capture
               </button>
@@ -420,8 +422,8 @@ export default function VirtualTryOnClient() {
             />
 
             <div className="relative z-10 mx-auto flex min-h-[72vh] max-w-6xl flex-col items-center justify-center">
-              <div className="relative flex h-[430px] w-[290px] items-center justify-center rounded-[28px] border border-white/15 bg-white/10 shadow-2xl backdrop-blur-sm">
-                <div className="absolute inset-8 rounded-[22px] border border-white/10 bg-white/10" />
+              <div className="relative flex h-[430px] w-[290px] items-center justify-center rounded-[28px] border border-white/15 bg-white/10 shadow-2xl backdrop-blur-sm transition-colors duration-200 motion-reduce:transition-none">
+                <div className="absolute inset-8 rounded-[22px] border border-white/10 bg-white/10 transition-colors duration-200 motion-reduce:transition-none" />
                 {productImage ? (
                   <img
                     src={productImage}
@@ -446,11 +448,11 @@ export default function VirtualTryOnClient() {
               </div>
             </div>
 
-            <div className="relative z-10 mx-auto mt-4 max-w-6xl rounded-2xl border border-white/10 bg-black/70 p-4">
+            <div className="relative z-10 mx-auto mt-4 max-w-6xl rounded-2xl border border-white/10 bg-black/70 p-4 transition-colors duration-200 motion-reduce:transition-none">
               <p className="mb-3 text-sm font-semibold text-white">Select Size:</p>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((size) => (
-                  <button
+                  <button type="button"
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={`rounded-lg px-4 py-2 text-sm font-semibold ${
@@ -465,14 +467,14 @@ export default function VirtualTryOnClient() {
               </div>
             </div>
 
-            <div className="relative z-10 mx-auto mt-4 grid max-w-6xl gap-3 md:grid-cols-2">
-              <button
+            <div className="relative z-10 mx-auto mt-4 grid max-w-6xl gap-3 md:grid-cols-2 enterprise-mobile-stack">
+              <button type="button"
                 onClick={shareTryOn}
-                className="rounded-xl border border-white/25 px-5 py-4 text-sm font-bold hover:bg-white/10"
+                className="rounded-xl border border-white/25 px-5 py-4 text-sm font-bold hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
               >
                 Share
               </button>
-              <button
+              <button type="button"
                 onClick={addToCart}
                 className="rounded-xl bg-neutral-700 px-5 py-4 text-sm font-bold text-white hover:bg-neutral-600"
               >

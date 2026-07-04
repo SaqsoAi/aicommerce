@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
+"use client";
 
 import { useState } from "react";
 import type { ProductVariantForm } from "@/types/product";
@@ -307,7 +309,7 @@ export default function VariantSection({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="enterprise-responsive-guard flex flex-col gap-3 md:flex-row md:items-center md:justify-between enterprise-mobile-stack">
         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
           Product Variants
         </h2>
@@ -336,7 +338,7 @@ export default function VariantSection({
       </div>
 
       {showGenerator && (
-        <div className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors duration-200 motion-reduce:transition-none">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Variant Auto Generator
           </h3>
@@ -403,9 +405,9 @@ export default function VariantSection({
         (variant, index) => (
           <div
             key={index}
-            className="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"
+            className="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors duration-200 motion-reduce:transition-none"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between enterprise-mobile-stack">
               <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
                 Variant #{index + 1}
               </h3>
@@ -423,7 +425,7 @@ export default function VariantSection({
               )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 enterprise-mobile-stack">
               <input
                 placeholder="Color"
                 value={variant.color}
@@ -465,7 +467,7 @@ export default function VariantSection({
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 enterprise-mobile-stack">
               <input
                 placeholder="Variant SKU"
                 value={variant.sku}
@@ -507,7 +509,7 @@ export default function VariantSection({
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 enterprise-mobile-stack">
               <input
                 type="number"
                 placeholder="Available Stock"
@@ -558,7 +560,7 @@ export default function VariantSection({
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 enterprise-mobile-stack">
               <input
                 placeholder="Supplier SKU"
                 value={
@@ -610,7 +612,7 @@ export default function VariantSection({
               </button>
 
               {showSizeGenerator === index && (
-                <div className="mt-4 space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950">
+                <div className="mt-4 space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950 transition-colors duration-200 motion-reduce:transition-none">
                   <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                     Generate size variants for: {variant.color || "this color"}
                   </p>

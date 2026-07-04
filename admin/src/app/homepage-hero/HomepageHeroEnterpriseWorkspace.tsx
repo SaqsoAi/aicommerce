@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import { useMemo, useRef, useState } from "react";
@@ -279,7 +281,7 @@ export default function HomepageHeroEnterpriseWorkspace() {
   };
 
   return (
-    <section className="mb-8 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl dark:border-white/10 dark:bg-slate-950 sm:p-7">
+    <section className="mb-8 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl dark:border-white/10 dark:bg-slate-950 sm:p-7 transition-colors duration-200 motion-reduce:transition-none">
       <div className="mb-6 flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
         <div>
           <p className="text-xs font-black uppercase tracking-[.28em] text-amber-600 dark:text-amber-300">
@@ -294,7 +296,7 @@ export default function HomepageHeroEnterpriseWorkspace() {
           <button
             type="button"
             onClick={copyPayload}
-            className="rounded-full border border-slate-200 px-6 py-4 text-xs font-black uppercase tracking-[.18em] dark:border-white/10"
+            className="rounded-full border border-slate-200 px-6 py-4 text-xs font-black uppercase tracking-[.18em] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none"
           >
             {copied ? "Copied" : "Copy Hero Payload"}
           </button>
@@ -318,7 +320,7 @@ export default function HomepageHeroEnterpriseWorkspace() {
         onChange={(event) => addFiles(event.target.files || [])}
       />
 
-      <div className="grid gap-5 xl:grid-cols-[410px_1fr]">
+      <div className="grid gap-5 xl:grid-cols-[410px_1fr] enterprise-mobile-stack">
         <div className="space-y-4">
           <div
             onClick={() => fileInputRef.current?.click()}
@@ -348,7 +350,7 @@ export default function HomepageHeroEnterpriseWorkspace() {
 
           <div className="grid gap-3">
             {items.length === 0 ? (
-              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-500 dark:border-white/10 dark:bg-white/[0.04]">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-500 dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
                 No upload queued.
               </div>
             ) : items.map((item) => (
@@ -385,12 +387,12 @@ export default function HomepageHeroEnterpriseWorkspace() {
                       </button>
 
                       {item.status === "uploading" ? (
-                        <button type="button" onClick={(event) => { event.stopPropagation(); cancelUpload(item); }} className="rounded-full border border-red-200 px-3 py-2 text-[10px] font-black uppercase tracking-[.14em] text-red-600 dark:border-red-400/30">
+                        <button type="button" onClick={(event) => { event.stopPropagation(); cancelUpload(item); }} className="rounded-full border border-red-200 px-3 py-2 text-[10px] font-black uppercase tracking-[.14em] text-red-600 dark:border-red-400/30 transition-colors duration-200 motion-reduce:transition-none">
                           Cancel
                         </button>
                       ) : null}
 
-                      <button type="button" onClick={(event) => { event.stopPropagation(); removeItem(item.id); }} className="rounded-full border border-slate-200 px-3 py-2 text-[10px] font-black uppercase tracking-[.14em] dark:border-white/10">
+                      <button type="button" onClick={(event) => { event.stopPropagation(); removeItem(item.id); }} className="rounded-full border border-slate-200 px-3 py-2 text-[10px] font-black uppercase tracking-[.14em] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                         Remove
                       </button>
                     </div>
@@ -400,12 +402,12 @@ export default function HomepageHeroEnterpriseWorkspace() {
             ))}
           </div>
 
-          <div className="grid gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[0.04]">
-            <input value={headline} onChange={(event) => setHeadline(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Hero headline" />
-            <textarea value={subheadline} onChange={(event) => setSubheadline(event.target.value)} className="min-h-24 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Hero subheadline" />
+          <div className="grid gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[0.04] transition-colors duration-200 motion-reduce:transition-none">
+            <input value={headline} onChange={(event) => setHeadline(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Hero headline" />
+            <textarea value={subheadline} onChange={(event) => setSubheadline(event.target.value)} className="min-h-24 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Hero subheadline" />
 
-            <div className="grid gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 dark:border-violet-300/20 dark:bg-violet-300/10">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="grid gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 dark:border-violet-300/20 dark:bg-violet-300/10 transition-colors duration-200 motion-reduce:transition-none">
+              <div className="flex flex-wrap items-center justify-between gap-3 enterprise-mobile-stack">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[.18em] text-violet-700 dark:text-violet-200">AI Content Studio</p>
                   <p className="mt-1 text-xs font-bold text-violet-700/70 dark:text-violet-100/70">Generate copy from uploaded visual context.</p>
@@ -415,23 +417,23 @@ export default function HomepageHeroEnterpriseWorkspace() {
                 </button>
               </div>
 
-              <input value={shortDescription} onChange={(event) => setShortDescription(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Short description" />
-              <textarea value={longDescription} onChange={(event) => setLongDescription(event.target.value)} className="min-h-24 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Long description" />
+              <input value={shortDescription} onChange={(event) => setShortDescription(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Short description" />
+              <textarea value={longDescription} onChange={(event) => setLongDescription(event.target.value)} className="min-h-24 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Long description" />
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <input value={primaryCtaLabel} onChange={(event) => setPrimaryCtaLabel(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Primary CTA text" />
-                <input value={primaryCtaLink} onChange={(event) => setPrimaryCtaLink(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Primary CTA link" />
-                <input value={secondaryCtaLabel} onChange={(event) => setSecondaryCtaLabel(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Secondary CTA text" />
-                <input value={secondaryCtaLink} onChange={(event) => setSecondaryCtaLink(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="Secondary CTA link" />
+              <div className="grid gap-3 sm:grid-cols-2 enterprise-mobile-stack">
+                <input value={primaryCtaLabel} onChange={(event) => setPrimaryCtaLabel(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Primary CTA text" />
+                <input value={primaryCtaLink} onChange={(event) => setPrimaryCtaLink(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Primary CTA link" />
+                <input value={secondaryCtaLabel} onChange={(event) => setSecondaryCtaLabel(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Secondary CTA text" />
+                <input value={secondaryCtaLink} onChange={(event) => setSecondaryCtaLink(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="Secondary CTA link" />
               </div>
 
-              <input value={seoTitle} onChange={(event) => setSeoTitle(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="SEO title" />
-              <textarea value={seoDescription} onChange={(event) => setSeoDescription(event.target.value)} className="min-h-20 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white" placeholder="SEO description" />
+              <input value={seoTitle} onChange={(event) => setSeoTitle(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="SEO title" />
+              <textarea value={seoDescription} onChange={(event) => setSeoDescription(event.target.value)} className="min-h-20 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none" placeholder="SEO description" />
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.05]">
+            <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.05] transition-colors duration-200 motion-reduce:transition-none">
               <p className="text-xs font-black uppercase tracking-[.18em] text-slate-500">Slider Studio</p>
-              <select value={sliderEffect} onChange={(event) => setSliderEffect(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white">
+              <select value={sliderEffect} onChange={(event) => setSliderEffect(event.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-black dark:text-white transition-colors duration-200 motion-reduce:transition-none">
                 {["Fade", "Slide", "Zoom", "Parallax", "Ken Burns", "Cube", "Flip", "Creative"].map((effect) => (
                   <option key={effect}>{effect}</option>
                 ))}
@@ -461,10 +463,10 @@ export default function HomepageHeroEnterpriseWorkspace() {
             <input type="range" min="20" max="90" value={activeCrop.overlay} onChange={(e) => setDeviceCrop({ overlay: Number(e.target.value) })} />
 
             <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => setSafeZone((v) => !v)} className="rounded-full border border-slate-200 px-4 py-3 text-xs font-black dark:border-white/10">
+              <button type="button" onClick={() => setSafeZone((v) => !v)} className="rounded-full border border-slate-200 px-4 py-3 text-xs font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                 Safe-zone {safeZone ? "ON" : "OFF"}
               </button>
-              <button type="button" onClick={() => setGrid((v) => !v)} className="rounded-full border border-slate-200 px-4 py-3 text-xs font-black dark:border-white/10">
+              <button type="button" onClick={() => setGrid((v) => !v)} className="rounded-full border border-slate-200 px-4 py-3 text-xs font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
                 Grid {grid ? "ON" : "OFF"}
               </button>
             </div>
@@ -480,7 +482,7 @@ export default function HomepageHeroEnterpriseWorkspace() {
             ))}
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-slate-100 p-4 shadow-inner dark:border-white/10 dark:bg-black/40">
+          <div className="rounded-[2rem] border border-slate-200 bg-slate-100 p-4 shadow-inner dark:border-white/10 dark:bg-black/40 transition-colors duration-200 motion-reduce:transition-none">
             <div className={`relative mx-auto overflow-hidden rounded-[1.5rem] bg-slate-950 shadow-2xl ${activeDevice.frame}`}>
               {activeItem ? (
                 <img
@@ -503,31 +505,31 @@ export default function HomepageHeroEnterpriseWorkspace() {
 
               <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent" style={{ opacity: activeCrop.overlay / 100 }} />
 
-              {grid ? <div className="pointer-events-none absolute inset-0 grid grid-cols-4 grid-rows-4">{Array.from({ length: 16 }).map((_, i) => <div key={i} className="border border-white/10" />)}</div> : null}
+              {grid ? <div className="pointer-events-none absolute inset-0 enterprise-responsive-guard grid grid-cols-4 grid-rows-4 enterprise-mobile-stack">{Array.from({ length: 16 }).map((_, i) => <div key={i} className="border border-white/10" />)}</div> : null}
 
               {safeZone ? (
-                <div className="absolute inset-x-[8%] top-[16%] bottom-[16%] rounded-2xl border border-dashed border-amber-300/80 bg-amber-300/5">
+                <div className="absolute inset-x-[8%] top-[16%] bottom-[16%] rounded-2xl border border-dashed border-amber-300/80 bg-amber-300/5 transition-colors duration-200 motion-reduce:transition-none">
                   <span className="absolute -top-3 left-4 rounded-full bg-amber-300 px-3 py-1 text-[10px] font-black uppercase tracking-[.16em] text-black">Safe Zone</span>
                 </div>
               ) : null}
 
               <div className="absolute max-w-[72%] -translate-y-1/2 text-white" style={{ left: `${textX}%`, top: `${textY}%` }}>
-                <p className="mb-3 inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] backdrop-blur-xl">AI Crop Preview</p>
+                <p className="mb-3 inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] backdrop-blur-xl transition-colors duration-200 motion-reduce:transition-none">AI Crop Preview</p>
                 <h3 className="text-2xl font-black leading-[.95] tracking-[-.07em] sm:text-4xl">{headline}</h3>
                 <p className="mt-3 line-clamp-3 text-xs font-semibold leading-6 text-white/70 sm:text-sm">{subheadline}</p>
               </div>
             </div>
 
-            <div className="mt-4 grid gap-3 md:grid-cols-4">
+            <div className="mt-4 grid gap-3 md:grid-cols-4 enterprise-mobile-stack">
               <div className="rounded-2xl bg-white p-4 dark:bg-white/[0.05]"><p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">Device</p><p className="mt-1 text-sm font-black text-slate-950 dark:text-white">{activeDevice.label}</p></div>
               <div className="rounded-2xl bg-white p-4 dark:bg-white/[0.05]"><p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">Target</p><p className="mt-1 text-sm font-black text-slate-950 dark:text-white">{activeDevice.size}</p></div>
               <div className="rounded-2xl bg-white p-4 dark:bg-white/[0.05]"><p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">AI Score</p><p className="mt-1 text-sm font-black text-emerald-600 dark:text-emerald-300">{score} / 100</p></div>
               <div className="rounded-2xl bg-white p-4 dark:bg-white/[0.05]"><p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">Status</p><p className="mt-1 text-sm font-black text-slate-950 dark:text-white">{activeItem?.status || "Waiting"}</p></div>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.05]">
+            <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.05] transition-colors duration-200 motion-reduce:transition-none">
               <p className="text-xs font-black uppercase tracking-[.2em] text-slate-400">Generated Hero Payload</p>
-              <pre className="mt-3 max-h-60 overflow-auto rounded-xl bg-slate-950 p-4 text-xs text-emerald-300">{safeJson(heroPayload)}</pre>
+              <pre className="mt-3 max-h-60 enterprise-table-guard overflow-x-auto overscroll-x-contain rounded-xl bg-slate-950 p-4 text-xs text-emerald-300 data-table-wrap">{safeJson(heroPayload)}</pre>
             </div>
           </div>
         </div>

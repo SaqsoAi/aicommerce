@@ -1,4 +1,5 @@
-﻿"use client";
+// PHASE_3_2_TOP_RISK_HARDENED
+"use client";
 
 
 import { useBrand } from "@/providers/BrandProvider";
@@ -93,7 +94,7 @@ export default function ProductCard({ product }: Props) {
   };
 
   return (
-    <div className="group h-full overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:-translate-y-1 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-950">
+    <div className="group h-full overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:-translate-y-1 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-950 transition-colors duration-200 motion-reduce:transition-none">
       <div className="relative flex h-80 items-center justify-center overflow-hidden bg-zinc-100 dark:bg-zinc-900">
         <img loading="lazy" decoding="async"
           src={image}
@@ -188,7 +189,7 @@ export default function ProductCard({ product }: Props) {
             type="button"
             onClick={handleAddToCart}
             disabled={totalStock <= 0}
-            className="flex-1 rounded-xl border border-zinc-300 py-3 text-sm font-semibold hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            className="flex-1 rounded-xl border border-zinc-300 py-3 text-sm font-semibold hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-900 transition-colors duration-200 motion-reduce:transition-none"
           >
             {totalStock > 0 ? "Add To Cart" : "Out Of Stock"}
           </button>

@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -210,15 +212,15 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-zinc-600 shadow dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-zinc-600 shadow dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 transition-colors duration-200 motion-reduce:transition-none">
         Loading products...
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="flex flex-col gap-3 border-b border-zinc-200 p-5 dark:border-zinc-800 md:flex-row md:items-center md:justify-between">
+    <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-950 transition-colors duration-200 motion-reduce:transition-none">
+      <div className="enterprise-responsive-guard flex flex-col gap-3 border-b border-zinc-200 p-5 dark:border-zinc-800 md:flex-row md:items-center md:justify-between enterprise-mobile-stack">
         <div>
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
             Product Master List
@@ -238,8 +240,8 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[1350px]">
+      <div className="enterprise-table-guard overflow-x-auto data-table-wrap">
+        <table className="w-full min-w-[1350px] min-w-max">
           <thead className="bg-zinc-100 dark:bg-zinc-900">
             <tr>
               <th className="p-4 text-left text-sm font-semibold">Image</th>

@@ -1,4 +1,6 @@
-﻿"use client";
+// PHASE_3_2_MODAL_DRAWER_HARDENED
+/* PHASE_3_1_OVERLAY_HARDENED */
+"use client";
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -37,7 +39,7 @@ function DialogOverlay({
   return (
     <DialogPrimitive.Overlay
       className={`
-        fixed inset-0 z-50
+        enterprise-modal-guard fixed inset-0 z-50 max-h-[calc(100dvh-1rem)] overflow-y-auto
         bg-black/50
         ${className}
       `}
@@ -60,12 +62,12 @@ function DialogContent({
 
       <DialogPrimitive.Content
         className={`
-          fixed
+          enterprise-modal-guard fixed
           left-1/2
           top-1/2
-          z-50
+          z-50 max-h-[calc(100dvh-1rem)] overflow-y-auto
           w-full
-          max-w-lg
+          max-w-lg enterprise-modal-safe
           -translate-x-1/2
           -translate-y-1/2
           rounded-xl

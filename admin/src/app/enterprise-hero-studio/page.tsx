@@ -1,3 +1,5 @@
+// PHASE_3_2_TOP_RISK_HARDENED
+/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
@@ -132,7 +134,7 @@ function SectionNav() {
     ["7", "Schedule", "Publish time & expiry"],
   ];
   return (
-    <div className="space-y-3 rounded-2xl border border-white/10 bg-[#0b111c] p-3 shadow-2xl shadow-black/20">
+    <div className="space-y-3 rounded-2xl border border-white/10 bg-[#0b111c] p-3 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
       {items.map(([num, title, desc], index) => (
         <a key={title} href={`#${String(title).toLowerCase().replaceAll(" ", "-")}`} className={`flex gap-3 rounded-2xl p-3 transition ${index === 0 ? "border border-violet-400/50 bg-violet-600/55" : "bg-[#111827]/75 hover:bg-white/10"}`}>
           <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-black ${index === 0 ? "bg-violet-500" : "bg-white/10"}`}>{num}</span>
@@ -394,7 +396,7 @@ export default function EnterpriseHeroStudioPage() {
   return (
     <div className="min-h-0 w-full min-w-0 bg-[#070b13] text-white">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#080d16]/95 backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-4 px-4 py-4 lg:px-6">
+        <div className="flex items-center justify-between gap-4 px-4 py-4 lg:px-6 enterprise-mobile-stack">
           <div className="flex min-w-0 items-center gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-950/40"><Icon name="menu" className="h-6 w-6" /></div>
             <div className="min-w-0">
@@ -403,26 +405,26 @@ export default function EnterpriseHeroStudioPage() {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">
-            <button onClick={() => saveHero(false)} disabled={saving} className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black hover:bg-white/10 disabled:opacity-60"><Icon name="save" />Save Draft</button>
-            <button className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black hover:bg-white/10"><Icon name="eye" />Preview</button>
-            <button onClick={() => saveHero(true)} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-black shadow-lg shadow-violet-950/40 hover:bg-violet-500 disabled:opacity-60"><Icon name="upload" />Publish Hero</button>
+            <button type="button" onClick={() => saveHero(false)} disabled={saving} className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black hover:bg-white/10 disabled:opacity-60 transition-colors duration-200 motion-reduce:transition-none"><Icon name="save" />Save Draft</button>
+            <button type="button" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"><Icon name="eye" />Preview</button>
+            <button type="button" onClick={() => saveHero(true)} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-black shadow-lg shadow-violet-950/40 hover:bg-violet-500 disabled:opacity-60"><Icon name="upload" />Publish Hero</button>
           </div>
         </div>
       </header>
 
-      <div className="grid min-h-[calc(100vh-87px)] grid-cols-1 gap-4 p-4 xl:grid-cols-[260px_minmax(0,1fr)_360px] 2xl:grid-cols-[260px_minmax(0,1fr)_400px]">
-        <aside className="space-y-4 xl:sticky xl:top-[104px] xl:h-[calc(100vh-120px)] xl:overflow-auto">
+      <div className="grid min-h-[calc(100vh-87px)] grid-cols-1 gap-4 p-4 xl:grid-cols-[260px_minmax(0,1fr)_360px] 2xl:grid-cols-[260px_minmax(0,1fr)_400px] enterprise-mobile-stack">
+        <aside className="space-y-4 xl:sticky xl:top-[104px] xl:h-[calc(100vh-120px)] xl:enterprise-table-guard overflow-x-auto overscroll-x-contain data-table-wrap">
           <SectionNav />
-          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4">
+          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4 transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="font-black">Quick Actions</h3>
             <div className="mt-3 space-y-3 text-sm text-slate-300">
-              <button className="block hover:text-white">Duplicate Hero</button>
-              <button className="block hover:text-white">Import Hero</button>
-              <button className="block hover:text-white">Export Hero</button>
+              <button type="button" className="block hover:text-white">Duplicate Hero</button>
+              <button type="button" className="block hover:text-white">Import Hero</button>
+              <button type="button" className="block hover:text-white">Export Hero</button>
               <a href="/" target="_blank" className="block hover:text-white">View Live Hero</a>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4">
+          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4 transition-colors duration-200 motion-reduce:transition-none">
             <h3 className="font-black">Storage</h3>
             <p className="mt-4 text-sm text-slate-400">Local Storage</p>
             <div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-2 w-1/4 rounded-full bg-violet-500" /></div>
@@ -431,52 +433,52 @@ export default function EnterpriseHeroStudioPage() {
         </aside>
 
         <section className="min-w-0 space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <a href="/homepage-hero" className="inline-flex w-fit items-center rounded-xl border border-violet-400/30 bg-violet-500/10 px-4 py-2 text-sm font-black text-violet-200 hover:bg-violet-500/20">Back to Hero Manager</a>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between enterprise-mobile-stack">
+            <a href="/homepage-hero" className="inline-flex w-fit items-center rounded-xl border border-violet-400/30 bg-violet-500/10 px-4 py-2 text-sm font-black text-violet-200 hover:bg-violet-500/20 transition-colors duration-200 motion-reduce:transition-none">Back to Hero Manager</a>
             <div className="flex items-center gap-2 text-xs text-slate-400">Auto Saved <span className="text-emerald-400"><Icon name="check" className="inline h-4 w-4" /></span> 2 seconds ago</div>
           </div>
 
           {message && <div className={`rounded-2xl border p-3 text-sm ${isError ? "border-amber-400/20 bg-amber-400/10 text-amber-200" : "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"}`}>{loading ? "Loading... " : ""}{message}</div>}
 
-          <section id="content" className="grid gap-4 2xl:grid-cols-[1fr_1.05fr]">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20">
+          <section id="content" className="grid gap-4 2xl:grid-cols-[1fr_1.05fr] enterprise-mobile-stack">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
               <h2 className="text-lg font-black">Basic Information</h2>
               <div className="mt-4 space-y-4">
-                <label className="block"><span className="text-xs font-bold text-slate-400">Hero Title</span><input value={headline} onChange={(e) => setHeadline(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none focus:border-violet-400" placeholder="Hero Title" /></label>
-                <label className="block"><span className="text-xs font-bold text-slate-400">Subtitle</span><input value={subheadline} onChange={(e) => setSubheadline(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none focus:border-violet-400" placeholder="Subtitle" /></label>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Type</span><select value={type} onChange={(e) => setType(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none"><option value="image">Image</option><option value="video">Video</option></select></label>
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Slider Effect</span><select value={effect} onChange={(e) => setEffect(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none">{["fade-in-out","slide-left","zoom-in","ken-burns","parallax","cube","flip","creative"].map((x) => <option key={x} value={x}>{x}</option>)}</select></label>
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Primary Button</span><input value={primaryCta} onChange={(e) => setPrimaryCta(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none" /></label>
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Link</span><input value={primaryLink} onChange={(e) => setPrimaryLink(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none" /></label>
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Secondary Button</span><input value={secondaryCta} onChange={(e) => setSecondaryCta(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none" /></label>
-                  <label className="block"><span className="text-xs font-bold text-slate-400">Link</span><input value={secondaryLink} onChange={(e) => setSecondaryLink(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none" /></label>
+                <label className="block"><span className="text-xs font-bold text-slate-400">Hero Title</span><input value={headline} onChange={(e) => setHeadline(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none focus:border-violet-400 transition-colors duration-200 motion-reduce:transition-none" placeholder="Hero Title" /></label>
+                <label className="block"><span className="text-xs font-bold text-slate-400">Subtitle</span><input value={subheadline} onChange={(e) => setSubheadline(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none focus:border-violet-400 transition-colors duration-200 motion-reduce:transition-none" placeholder="Subtitle" /></label>
+                <div className="grid gap-3 sm:grid-cols-2 enterprise-mobile-stack">
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Type</span><select value={type} onChange={(e) => setType(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none"><option value="image">Image</option><option value="video">Video</option></select></label>
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Slider Effect</span><select value={effect} onChange={(e) => setEffect(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none">{["fade-in-out","slide-left","zoom-in","ken-burns","parallax","cube","flip","creative"].map((x) => <option key={x} value={x}>{x}</option>)}</select></label>
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Primary Button</span><input value={primaryCta} onChange={(e) => setPrimaryCta(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none" /></label>
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Link</span><input value={primaryLink} onChange={(e) => setPrimaryLink(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none" /></label>
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Secondary Button</span><input value={secondaryCta} onChange={(e) => setSecondaryCta(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none" /></label>
+                  <label className="block"><span className="text-xs font-bold text-slate-400">Link</span><input value={secondaryLink} onChange={(e) => setSecondaryLink(e.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b111c] px-4 py-3 text-sm outline-none transition-colors duration-200 motion-reduce:transition-none" /></label>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
               <h2 className="text-lg font-black">Hero Preview (Active Slide)</h2>
               <div className="mt-4 aspect-[16/8] overflow-hidden rounded-2xl bg-black">
                 {preview ? <img src={preview} alt={headline} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-500">Upload or load hero image</div>}
               </div>
-              <div className="mt-4 rounded-xl border border-white/10 bg-[#111827] p-4 text-sm text-slate-300"><b className="mr-2 rounded-lg bg-emerald-500/15 px-2 py-1 text-xs text-emerald-300">{active ? "Live" : "Draft"}</b>This hero can be saved or published to website.</div>
+              <div className="mt-4 rounded-xl border border-white/10 bg-[#111827] p-4 text-sm text-slate-300 transition-colors duration-200 motion-reduce:transition-none"><b className="mr-2 rounded-lg bg-emerald-500/15 px-2 py-1 text-xs text-emerald-300">{active ? "Live" : "Draft"}</b>This hero can be saved or published to website.</div>
             </div>
           </section>
 
-          <section id="media" className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20">
+          <section id="media" className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
             <h2 className="text-lg font-black">Device Images</h2>
-            <div className="mt-4 grid gap-3 md:grid-cols-4">
+            <div className="mt-4 grid gap-3 md:grid-cols-4 enterprise-mobile-stack">
               {devices.map((device) => (
-                <button key={device.key} onClick={() => setActiveDevice(device.key)} className={`flex items-center gap-4 rounded-2xl border p-4 text-left transition ${activeDevice === device.key ? "border-violet-500 bg-violet-500/20 text-violet-100" : "border-white/10 bg-[#111827]/70 hover:bg-white/[0.07]"}`}>
+                <button type="button" key={device.key} onClick={() => setActiveDevice(device.key)} className={`flex items-center gap-4 rounded-2xl border p-4 text-left transition ${activeDevice === device.key ? "border-violet-500 bg-violet-500/20 text-violet-100" : "border-white/10 bg-[#111827]/70 hover:bg-white/[0.07]"}`}>
                   <Icon name={device.key} className="h-6 w-6" />
                   <span><b className="block text-sm">{device.label}</b><small className="text-slate-400">{device.size}</small></span>
                 </button>
               ))}
             </div>
 
-            <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_1.1fr]">
-              <label className="flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 bg-[#0b111c] p-6 text-center hover:border-violet-400/60">
+            <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_1.1fr] enterprise-mobile-stack">
+              <label className="flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 bg-[#0b111c] p-6 text-center hover:border-violet-400/60 transition-colors duration-200 motion-reduce:transition-none">
                 <Icon name="upload" className="h-12 w-12 text-slate-400" />
                 <b className="mt-4">Drag and drop images here</b>
                 <span className="text-sm text-slate-400">or</span>
@@ -485,39 +487,39 @@ export default function EnterpriseHeroStudioPage() {
                 <input type="file" accept="image/*,video/*" className="hidden" onChange={(e) => upload(e, activeDevice)} />
               </label>
 
-              <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4">
+              <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-4 transition-colors duration-200 motion-reduce:transition-none">
                 <p className="font-black">{activeDeviceInfo.label} Image</p>
-                <div className="mt-4 grid gap-4 sm:grid-cols-[220px_1fr]">
+                <div className="mt-4 grid gap-4 sm:grid-cols-[220px_1fr] enterprise-mobile-stack">
                   <div className="aspect-video overflow-hidden rounded-xl bg-black">{images[activeDevice] ? <img src={images[activeDevice]} alt={activeDevice} className="h-full w-full object-cover" /> : null}</div>
                   <div className="text-sm text-slate-400"><p className="font-bold text-white">hero-{activeDevice}.jpg</p><p className="mt-2">Browser local image or API image</p><p className="mt-2 text-emerald-300">{images[activeDevice] ? "Ready" : "Waiting for upload"}</p></div>
                 </div>
-                <button onClick={() => setImages((p) => ({ ...p, [activeDevice]: "" }))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold hover:bg-white/10"><Icon name="trash" />Replace / Remove Image</button>
+                <button type="button" onClick={() => setImages((p) => ({ ...p, [activeDevice]: "" }))} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"><Icon name="trash" />Replace / Remove Image</button>
               </div>
             </div>
             <div className="mt-4 rounded-xl bg-emerald-500/10 p-3 text-center text-sm text-emerald-300">All changes are auto-saved to local storage</div>
           </section>
         </section>
 
-        <aside className="space-y-4 xl:sticky xl:top-[104px] xl:h-[calc(100vh-120px)] xl:overflow-auto">
-          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20">
-            <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-black">AI Assistant</h2><button onClick={generateAi} className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-black hover:bg-violet-500">Generate</button></div>
-            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-4 min-h-28 w-full rounded-xl border border-white/10 bg-[#111827] p-4 text-sm outline-none focus:border-violet-400" />
-            <div className="mt-4"><p className="mb-3 text-sm font-black">Quick Prompts</p><div className="flex flex-wrap gap-2">{["Fashion Collection","Summer Sale","New Arrival","Luxury Brand"].map((x) => <button key={x} className="rounded-full border border-white/10 px-3 py-2 text-xs hover:bg-white/10">{x}</button>)}</div></div>
+        <aside className="space-y-4 xl:sticky xl:top-[104px] xl:h-[calc(100vh-120px)] xl:enterprise-table-guard overflow-x-auto overscroll-x-contain data-table-wrap">
+          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
+            <div className="flex items-center justify-between gap-3 enterprise-mobile-stack"><h2 className="text-lg font-black">AI Assistant</h2><button type="button" onClick={generateAi} className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-black hover:bg-violet-500">Generate</button></div>
+            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="mt-4 min-h-28 w-full rounded-xl border border-white/10 bg-[#111827] p-4 text-sm outline-none focus:border-violet-400 transition-colors duration-200 motion-reduce:transition-none" />
+            <div className="mt-4"><p className="mb-3 text-sm font-black">Quick Prompts</p><div className="flex flex-wrap gap-2">{["Fashion Collection","Summer Sale","New Arrival","Luxury Brand"].map((x) => <button type="button" key={x} className="rounded-full border border-white/10 px-3 py-2 text-xs hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none">{x}</button>)}</div></div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20">
+          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
             <h2 className="text-lg font-black">AI Score</h2>
             <div className="mt-5 flex items-center gap-5">
-              <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-8 border-violet-500 text-center"><span><b className="block text-3xl">{score}</b><small className="text-emerald-300">Excellent</small></span></div>
+              <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-8 border-violet-500 text-center transition-colors duration-200 motion-reduce:transition-none"><span><b className="block text-3xl">{score}</b><small className="text-emerald-300">Excellent</small></span></div>
               <div className="flex-1 space-y-3 text-sm">{["Composition","Text Clarity","Color Harmony","Visual Impact"].map((x, i) => { const n = Math.max(72, score - i * 3); return <div key={x}><div className="mb-1 flex justify-between"><span>{x}</span><span>{n}</span></div><div className="h-2 rounded-full bg-white/10"><div className="h-2 rounded-full bg-violet-500" style={{ width: `${n}%` }} /></div></div>; })}</div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20">
+          <div className="rounded-2xl border border-white/10 bg-[#0b111c] p-5 shadow-2xl shadow-black/20 transition-colors duration-200 motion-reduce:transition-none">
             <h2 className="text-lg font-black">Device Previews</h2>
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 enterprise-responsive-guard grid grid-cols-2 gap-3 enterprise-mobile-stack">
               {devices.map((device) => (
-                <button key={device.key} onClick={() => setActiveDevice(device.key)} className={`rounded-xl border p-2 transition ${activeDevice === device.key ? "border-violet-500 bg-violet-500/15" : "border-white/10 bg-[#111827]/60 hover:bg-white/[0.07]"}`}>
+                <button type="button" key={device.key} onClick={() => setActiveDevice(device.key)} className={`rounded-xl border p-2 transition ${activeDevice === device.key ? "border-violet-500 bg-violet-500/15" : "border-white/10 bg-[#111827]/60 hover:bg-white/[0.07]"}`}>
                   <div className="aspect-video overflow-hidden rounded-lg bg-black">{images[device.key] ? <img src={images[device.key]} alt={device.label} className="h-full w-full object-cover" /> : null}</div>
                   <p className="mt-2 text-xs font-black">{device.label}</p>
                   <p className="text-[11px] text-slate-400">{device.size}</p>
