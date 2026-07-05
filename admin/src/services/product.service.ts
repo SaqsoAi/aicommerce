@@ -1,4 +1,3 @@
-﻿
 // PHASE_12_3B_TOKEN_EXPIRY_HANDLER
 const handleAuthExpiry = () => {
   if (typeof window === "undefined") return;
@@ -41,8 +40,8 @@ const api = axios.create({
   baseURL: API,
 });
 
-
 attachAuthExpiryInterceptor(api);
+
 const getAuthConfig = () => {
   const token =
     typeof window !== "undefined"
@@ -63,11 +62,14 @@ export default api;
 export type ProductVariantPayload = {
   color: string;
   size: string;
+  styleNo?: string;
+  fabric?: string;
+  occasion?: string;
+  costPrice?: number;
+  salesPrice?: number;
   stock: number;
-
-  sku: string;
+  sku?: string;
   barcode?: string;
-
   price?: number;
   availableStock?: number;
   lowStockThreshold?: number;
@@ -107,6 +109,11 @@ export type ProductPayload = {
   trending?: boolean;
   status?: string;
   visibility?: string;
+  condition?: string;
+  approvalStatus?: string;
+  approvalNote?: string;
+  publishAt?: string;
+  unpublishAt?: string;
 
   thumbnail?: string;
   videoUrl?: string;
@@ -147,6 +154,21 @@ export const deleteProduct = async (id: string) => {
   return response.data;
 };
 
+export const duplicateProduct = async (id: string) => {
+  const response = await api.post(`/products/${id}/duplicate`, {}, getAuthConfig());
+
+  return response.data;
+};
+
+export const updateProductStatus = async (
+  id: string,
+  data: { status: string; visibility?: string },
+) => {
+  const response = await api.patch(`/products/${id}/status`, data, getAuthConfig());
+
+  return response.data;
+};
+
 export const getProductById = async (id: string) => {
   const response = await api.get(`/products/${id}`);
 
@@ -178,5 +200,3 @@ export const scheduleProduct = async (id: string, publishAt?: string, unpublishA
   const response = await api.post(`/products/${id}/schedule`, { publishAt, unpublishAt }, getAuthConfig());
   return response.data;
 };
-
-

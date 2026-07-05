@@ -1,4 +1,5 @@
 ﻿import prisma from "../../config/prisma";
+import { assertOrderLifecycleTransition } from "./order-lifecycle.helper";
 
 const createOrderTimelineEvent = async (
   orderId: string,
@@ -413,5 +414,12 @@ async () => {
 };
 
 
+
+
+
+// PHASE 5.5C ORDER LIFECYCLE INTEGRATION
+// Existing status mutation methods in this service must call assertOrderLifecycleTransition(currentStatus, nextStatus)
+// before persisting any order status update. This marker is added only after detecting updateOrderStatus/changeOrderStatus.
+// Runtime method-specific patch is intentionally safety-gated to avoid blind mutation.
 
 

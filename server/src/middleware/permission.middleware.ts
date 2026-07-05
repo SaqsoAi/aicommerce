@@ -43,3 +43,10 @@ export const permission =
   };
 
 export const requirePermission = permission;
+
+
+/**
+ * PHASE 4.6B ENTERPRISE AUDIT NOTE:
+ * Permission denial branches must call auditPermissionDenied(req, resource, reason)
+ * from modules/audit-log/enterprise-audit.middleware before returning 403.
+ */

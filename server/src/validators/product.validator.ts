@@ -1,111 +1,95 @@
-﻿import { z } from "zod";
+import { z } from "zod";
+
+const optionalTrimmedString = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => (value === "" ? undefined : value));
+
+const productStatusSchema = z.enum([
+  "DRAFT",
+  "ACTIVE",
+  "INACTIVE",
+  "ARCHIVED",
+]);
+
+const productVisibilitySchema = z.enum(["PUBLIC", "PRIVATE", "HIDDEN"]);
+
+const productConditionSchema = z.enum(["NEW", "USED", "REFURBISHED", "OPEN_BOX"]);
+
+const approvalStatusSchema = z.enum(["DRAFT", "REVIEW", "APPROVED", "REJECTED"]);
+
+const productVariantSchema = z.object({
+  color: optionalTrimmedString,
+  size: optionalTrimmedString,
+  fabric: optionalTrimmedString,
+  occasion: optionalTrimmedString,
+  costPrice: z.coerce.number().nonnegative().optional(),
+  salesPrice: z.coerce.number().nonnegative().optional(),
+  stock: z.coerce.number().int().nonnegative().optional(),
+  sku: optionalTrimmedString,
+  barcode: optionalTrimmedString,
+  price: z.coerce.number().nonnegative().optional(),
+  availableStock: z.coerce.number().int().nonnegative().optional(),
+  lowStockThreshold: z.coerce.number().int().nonnegative().optional(),
+  reservedStock: z.coerce.number().int().nonnegative().optional(),
+  supplierSku: optionalTrimmedString,
+  warehouseLocation: optionalTrimmedString,
+});
 
 export const productSchema = z.object({
-  name: z.string().min(3),
-
-  groupName: z.string().optional(),
-
-  categoryId: z.string().min(1),
-
-  subcategoryId: z.string().optional(),
-
-  brandId: z.string().optional(),
-
-  sku: z.string().min(3),
-
-  styleNo: z.string().optional(),
-
-  barcode: z.string().optional(),
-
-  shortDescription: z.string().optional(),
-
-  description: z.string().min(3),
-
-  seoTitle: z.string().optional(),
-
-  seoKeywords: z.string().optional(),
-
-  seoDescription: z.string().optional(),
-
-  price: z.coerce.number(),
-
-  discountPrice: z.coerce.number().optional(),
-
+  name: z.string().trim().min(3),
+  groupName: optionalTrimmedString,
+  categoryId: z.string().trim().min(1),
+  subcategoryId: optionalTrimmedString,
+  brandId: optionalTrimmedString,
+  sku: z.string().trim().min(3),
+  styleNo: optionalTrimmedString,
+  barcode: optionalTrimmedString,
+  shortDescription: optionalTrimmedString,
+  description: z.string().trim().min(3),
+  seoTitle: optionalTrimmedString,
+  seoKeywords: optionalTrimmedString,
+  seoDescription: optionalTrimmedString,
+  price: z.coerce.number().nonnegative(),
+  discountPrice: z.coerce.number().nonnegative().optional(),
   featured: z.boolean().optional(),
-
   trending: z.boolean().optional(),
-
-  status: z.string().optional(),
-
-  visibility: z.string().optional(),
-
-  condition: z.string().optional(),
-
+  status: productStatusSchema.optional(),
+  visibility: productVisibilitySchema.optional(),
+  condition: productConditionSchema.optional(),
+  approvalStatus: approvalStatusSchema.optional(),
+  approvalNote: optionalTrimmedString,
+  publishAt: optionalTrimmedString,
+  unpublishAt: optionalTrimmedString,
   specifications: z
     .array(
       z.object({
-        name: z.string(),
-        value: z.string(),
+        name: z.string().trim().min(1),
+        value: z.string().trim().min(1),
       })
     )
     .optional(),
-
   attributes: z
     .array(
       z.object({
-        name: z.string(),
-        value: z.string(),
+        name: z.string().trim().min(1),
+        value: z.string().trim().min(1),
       })
     )
     .optional(),
-
-  thumbnail: z.string().optional(),
-
-  videoUrl: z.string().optional(),
-
+  thumbnail: optionalTrimmedString,
+  videoUrl: optionalTrimmedString,
   gallery: z
     .array(
       z.object({
-        fileName: z.string().optional(),
-        url: z.string().optional(),
+        fileName: optionalTrimmedString,
+        url: optionalTrimmedString,
         isThumbnail: z.boolean().optional(),
       })
     )
     .optional(),
-
-  variants: z
-    .array(
-      z.object({
-        color: z.string(),
-
-        size: z.string(),
-
-        fabric: z.string().optional(),
-
-        occasion: z.string().optional(),
-
-        costPrice: z.coerce.number().optional(),
-
-        salesPrice: z.coerce.number().optional(),
-
-        stock: z.coerce.number(),
-
-        sku: z.string().optional(),
-
-        barcode: z.string().optional(),
-
-        price: z.coerce.number().optional(),
-
-        availableStock: z.coerce.number().optional(),
-
-        lowStockThreshold: z.coerce.number().optional(),
-
-        reservedStock: z.coerce.number().optional(),
-
-        supplierSku: z.string().optional(),
-
-        warehouseLocation: z.string().optional(),
-      })
-    )
-    .optional(),
+  variants: z.array(productVariantSchema).optional(),
 });
+
+export const productUpdateSchema = productSchema.partial();

@@ -21,3 +21,13 @@ export const purchaseSchema =
       })
     ),
   });
+// PHASE 5.3 PURCHASE VALIDATION NOTE
+// Required enterprise checks:
+// - supplier exists
+// - product exists
+// - variant exists where required
+// - warehouse exists where required
+// - quantity > 0
+// - costPrice >= 0
+// - status workflow: DRAFT -> PENDING_APPROVAL -> APPROVED -> PARTIALLY_RECEIVED/RECEIVED -> terminal
+// No duplicate procurement validator was created.

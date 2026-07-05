@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import prisma from "../config/prisma";
 
 import { protect } from "../modules/auth/auth.middleware";
@@ -14,6 +14,7 @@ import {
   updateProduct,
   updateProductStatus,
   duplicateProduct,
+  deleteProduct,
 } from "../controllers/product.controller";
 
 import { uploadMedia } from "../controllers/upload.controller";
@@ -42,7 +43,11 @@ router.get("/:id", getProductById);
 
 router.post(
   "/",
-  protect, superAdminBypass(createProduct), permission(PERMISSIONS.PRODUCT_CREATE), quotaGuard("products"), createProduct
+  protect,
+  superAdminBypass(createProduct),
+  permission(PERMISSIONS.PRODUCT_CREATE),
+  quotaGuard("products"),
+  createProduct
 );
 
 router.put(
@@ -262,70 +267,18 @@ router.post(
 
 router.post(
   "/upload",
-  protect, superAdminBypass(upload.single("file")), permission(PERMISSIONS.MEDIA_UPLOAD), upload.single("file"), uploadMedia
+  protect,
+  superAdminBypass(upload.single("file")),
+  permission(PERMISSIONS.MEDIA_UPLOAD),
+  upload.single("file"),
+  uploadMedia
 );
 
 router.delete(
   "/:id",
   protect,
   permission(PERMISSIONS.PRODUCT_DELETE),
-  async (req, res) => {
-    try {
-      const id = String(req.params.id || "");
-
-      if (!id) {
-        return res.status(400).json({
-          success: false,
-          message: "Product id is required",
-        });
-      }
-
-      const orderItems = await prisma.orderItem.findFirst({
-        where: { productId: id },
-      });
-
-      if (orderItems) {
-        return res.status(400).json({
-          success: false,
-          message: "Product cannot be deleted because it has order history",
-        });
-      }
-
-      await prisma.$transaction(async (tx: any) => {
-        await tx.productImage.deleteMany({
-          where: { productId: id },
-        });
-
-        await tx.productVariant.deleteMany({
-          where: { productId: id },
-        });
-
-        await tx.wishlist.deleteMany({
-          where: { productId: id },
-        });
-
-        await tx.cart.deleteMany({
-          where: { productId: id },
-        });
-
-        await tx.product.delete({
-          where: { id },
-        });
-      });
-
-      return res.json({
-        success: true,
-        message: "Product deleted successfully",
-      });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        message: error.message || "Product delete failed",
-      });
-    }
-  }
+  deleteProduct
 );
 
 export default router;
-
-

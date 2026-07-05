@@ -33,3 +33,10 @@ export const supplierSchema =
       z.string()
         .optional(),
   });
+// PHASE 5.3 SUPPLIER VALIDATION NOTE
+// Required enterprise checks:
+// - active/inactive status compatibility
+// - safe contact fields
+// - purchase relation compatibility
+// - ledger compatibility only if already present
+// No full accounting ledger was created in Phase 5.3.

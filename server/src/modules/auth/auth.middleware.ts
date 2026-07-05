@@ -51,3 +51,12 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 
 export const authenticate = protect;
 export const requireAuth = protect;
+
+
+/**
+ * PHASE 4.6B ENTERPRISE AUDIT NOTE:
+ * This auth middleware is an integration point for unauthorized_access,
+ * token_expired, login, logout, and failed_login events.
+ * Use writeEnterpriseSecurityEvent/writeEnterpriseAuditLog from
+ * modules/audit-log/enterprise-audit.service in exact controller branches.
+ */

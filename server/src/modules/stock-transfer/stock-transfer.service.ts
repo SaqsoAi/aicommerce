@@ -83,3 +83,25 @@ export const transferVariantStock = async (
     variant: updated,
   };
 };
+
+// PHASE 5.2 ENTERPRISE STOCK TRANSFER HARDENING
+export type EnterpriseStockTransferInput = {
+  productId?: string | null;
+  variantId?: string | null;
+  fromWarehouseId: string;
+  toWarehouseId: string;
+  quantity: number;
+  reason?: string | null;
+  actorId?: string | null;
+};
+
+export function assertEnterpriseStockTransfer(input: EnterpriseStockTransferInput): EnterpriseStockTransferInput {
+  if (!input) throw new Error("Stock transfer payload is required");
+  if (!input.variantId && !input.productId) throw new Error("Stock transfer requires productId or variantId");
+  if (!input.fromWarehouseId) throw new Error("Stock transfer requires source warehouse");
+  if (!input.toWarehouseId) throw new Error("Stock transfer requires target warehouse");
+  if (input.fromWarehouseId === input.toWarehouseId) throw new Error("Source and target warehouse cannot be the same");
+  if (!Number.isFinite(Number(input.quantity)) || Number(input.quantity) <= 0) throw new Error("Stock transfer quantity must be positive");
+  return input;
+}
+// END PHASE 5.2 ENTERPRISE STOCK TRANSFER HARDENING

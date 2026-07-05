@@ -7,6 +7,7 @@ import { createEmbedding } from "../ai/vector/embedding";
 import { storeProductVector } from "../ai/vector/product.vector";
 
 import {
+  archiveProductService,
   createProductService,
   getProductsService,
   getFeaturedProductsService,
@@ -21,7 +22,16 @@ import {
   updateProductAttributesService,
 } from "../services/product.service";
 
-import { productSchema } from "../validators/product.validator";
+import { productSchema, productUpdateSchema } from "../validators/product.validator";
+
+const sendServerError = (res: Response, error: any, fallback: string) => {
+  console.error(error);
+
+  return res.status(500).json({
+    success: false,
+    message: error?.message || fallback,
+  });
+};
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
@@ -32,12 +42,7 @@ export const getProducts = async (req: Request, res: Response) => {
       data: products,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch products",
-    });
+    return sendServerError(res, error, "Failed to fetch products");
   }
 };
 
@@ -50,12 +55,7 @@ export const getFeaturedProducts = async (req: Request, res: Response) => {
       data: products,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch featured products",
-    });
+    return sendServerError(res, error, "Failed to fetch featured products");
   }
 };
 
@@ -68,12 +68,7 @@ export const getTrendingProducts = async (req: Request, res: Response) => {
       data: products,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch trending products",
-    });
+    return sendServerError(res, error, "Failed to fetch trending products");
   }
 };
 
@@ -95,12 +90,7 @@ export const getProductById = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch product",
-    });
+    return sendServerError(res, error, "Failed to fetch product");
   }
 };
 
@@ -114,7 +104,7 @@ export const createProduct = async (req: Request, res: Response) => {
       const embedding = await createEmbedding(product.name);
       await storeProductVector(product, embedding);
     } catch (error: any) {
-      console.log("AI Vector skipped:", error);
+      console.log("AI Vector skipped:", error?.message || error);
     }
 
     return res.status(201).json({
@@ -122,11 +112,14 @@ export const createProduct = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
+    const isValidationError = error?.name === "ZodError";
+
     console.error(error);
 
-    return res.status(500).json({
+    return res.status(isValidationError ? 400 : 500).json({
       success: false,
       message: error?.message || "Failed to create product",
+      issues: isValidationError ? error?.issues : undefined,
     });
   }
 };
@@ -134,24 +127,44 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.id as string;
+    const validated = productUpdateSchema.parse(req.body);
 
-    const product = await updateProductService(productId, req.body);
+    const product = await updateProductService(productId, validated);
 
     return res.status(200).json({
       success: true,
       data: product,
     });
   } catch (error: any) {
+    const isValidationError = error?.name === "ZodError";
+
     console.error(error);
 
-    return res.status(500).json({
+    return res.status(isValidationError ? 400 : 500).json({
       success: false,
       message: error?.message || "Product update failed",
+      issues: isValidationError ? error?.issues : undefined,
     });
   }
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id as string;
+
+    const product = await archiveProductService(productId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product archived successfully",
+      data: product,
+    });
+  } catch (error: any) {
+    return sendServerError(res, error, "Product archive failed");
+  }
+};
+
+export const hardDeleteProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.id as string;
 
@@ -222,12 +235,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
       message: "Product deleted successfully",
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product delete failed",
-    });
+    return sendServerError(res, error, "Product delete failed");
   }
 };
 
@@ -240,12 +248,7 @@ export const updateProductStatus = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product status update failed",
-    });
+    return sendServerError(res, error, "Product status update failed");
   }
 };
 
@@ -258,12 +261,7 @@ export const duplicateProduct = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product duplicate failed",
-    });
+    return sendServerError(res, error, "Product duplicate failed");
   }
 };
 
@@ -276,12 +274,7 @@ export const updateProductSeo = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product SEO update failed",
-    });
+    return sendServerError(res, error, "Product SEO update failed");
   }
 };
 
@@ -297,12 +290,7 @@ export const updateProductGallery = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product gallery update failed",
-    });
+    return sendServerError(res, error, "Product gallery update failed");
   }
 };
 
@@ -321,12 +309,7 @@ export const updateProductSpecifications = async (
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product specifications update failed",
-    });
+    return sendServerError(res, error, "Product specifications update failed");
   }
 };
 
@@ -342,11 +325,6 @@ export const updateProductAttributes = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Product attributes update failed",
-    });
+    return sendServerError(res, error, "Product attributes update failed");
   }
 };
