@@ -23,3 +23,7 @@ server/uploads/
 *.bak*
 *.before-root-fix
 
+server/uploads/
+*.bak
+
+
