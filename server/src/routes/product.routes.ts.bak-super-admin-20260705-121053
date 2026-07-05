@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import prisma from "../config/prisma";
 
 import { protect } from "../modules/auth/auth.middleware";
@@ -23,15 +23,6 @@ import { quotaGuard } from "../modules/saas-foundation/quota.guard";
 
 const router = express.Router();
 
-const superAdminBypass =
-  (handler: any) =>
-  (req: any, res: any, next: any) => {
-    if (String(req.user?.role || "").toUpperCase() === "SUPER_ADMIN") {
-      return handler(req, res, next);
-    }
-    return next();
-  };
-
 router.get("/", getProducts);
 
 router.get("/featured", getFeaturedProducts);
@@ -42,7 +33,10 @@ router.get("/:id", getProductById);
 
 router.post(
   "/",
-  protect, superAdminBypass(createProduct), permission(PERMISSIONS.PRODUCT_CREATE), quotaGuard("products"), createProduct
+  protect,
+  permission(PERMISSIONS.PRODUCT_CREATE),
+  quotaGuard("products"),
+  createProduct
 );
 
 router.put(
@@ -262,7 +256,10 @@ router.post(
 
 router.post(
   "/upload",
-  protect, superAdminBypass(upload.single("file")), permission(PERMISSIONS.MEDIA_UPLOAD), upload.single("file"), uploadMedia
+  protect,
+  permission(PERMISSIONS.MEDIA_UPLOAD),
+  upload.single("file"),
+  uploadMedia
 );
 
 router.delete(
@@ -327,5 +324,4 @@ router.delete(
 );
 
 export default router;
-
 

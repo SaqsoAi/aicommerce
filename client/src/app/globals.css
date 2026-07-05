@@ -987,3 +987,12 @@ html.dark [data-page="cart"] [class*="muted"] {
   }
 }
 
+/* === ANDROID_HEADER_FORCE_FIX_BOTH_ROOTS_START === */
+@media (max-width: 767px) {
+  [data-saqso-mobile-header="true"] { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 999999 !important; min-height: 118px !important; padding-top: calc(env(safe-area-inset-top, 0px) + 12px) !important; padding-left: 16px !important; padding-right: 16px !important; padding-bottom: 14px !important; background: rgba(0,0,0,.92) !important; backdrop-filter: blur(18px) !important; -webkit-backdrop-filter: blur(18px) !important; }
+  [data-saqso-mobile-header="true"] img { max-height: 38px !important; width: auto !important; object-fit: contain !important; }
+  [data-saqso-mobile-header="true"] button, [data-saqso-mobile-header="true"] a { min-width: 42px !important; min-height: 42px !important; touch-action: manipulation !important; }
+  main, body > div { padding-top: 118px !important; }
+  main section:first-of-type, [data-saqso-hero="true"] { padding-top: 0 !important; min-height: calc(100svh - 118px) !important; }
+}
+/* === ANDROID_HEADER_FORCE_FIX_BOTH_ROOTS_END === */

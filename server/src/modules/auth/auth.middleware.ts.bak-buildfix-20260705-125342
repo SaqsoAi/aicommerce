@@ -1,18 +1,9 @@
 ﻿import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import prisma from "../../config/prisma";
+import { getRolePermissions } from "../rbac/rbac.service";
 
-export type AuthRequest = Request & {
-  user?: {
-    id?: string;
-    userId?: string;
-    email?: string | null;
-    role?: string;
-    permissions?: string[];
-  };
-};
-
-export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = async (req: any, res: Response, next: NextFunction) => {
   try {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7) : null;
@@ -32,7 +23,8 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
       return res.status(401).json({ success: false, message: "User not found" });
     }
 
-    const role = String(dbUser.role || decoded.role || "").toUpperCase();
+    const role = String(dbUser.role || "").toUpperCase();
+    const permissions = role === "SUPER_ADMIN" ? ["*"] : await getRolePermissions(dbUser.role);
 
     req.user = {
       ...decoded,
@@ -40,7 +32,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
       userId: dbUser.id,
       email: dbUser.email,
       role,
-      permissions: role === "SUPER_ADMIN" ? ["*"] : []
+      permissions
     };
 
     return next();
@@ -49,5 +41,4 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
   }
 };
 
-export const authenticate = protect;
 export const requireAuth = protect;

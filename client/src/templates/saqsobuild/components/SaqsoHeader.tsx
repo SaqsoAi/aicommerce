@@ -1,4 +1,4 @@
-// PHASE_3_2_TOP_RISK_HARDENED
+﻿// PHASE_3_2_TOP_RISK_HARDENED
 /* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
@@ -79,7 +79,7 @@ export default function SaqsoHeader() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#030303]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-2xl">
+      <header data-saqso-mobile-header="true" className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#030303]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-2xl">
         <div className="mx-auto flex h-[var(--ai-header-h-mobile)] max-w-[1680px] items-center justify-between gap-2 px-3 sm:h-[var(--ai-header-h-tablet)] sm:px-5 lg:h-[var(--ai-header-h-desktop)] lg:px-14 enterprise-mobile-stack">
           <Link href="/" onClick={() => setMobileOpen(false)} className="min-w-0 shrink-0">
             <HeaderLogo />
@@ -180,5 +180,6 @@ export default function SaqsoHeader() {
     </>
   );
 }
+
 
 
