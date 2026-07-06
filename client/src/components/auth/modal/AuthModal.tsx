@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿// PHASE_CLIENT_AUTH_LOGIN_REFERENCE_STYLE_DEV_PATCH
-=======
-// PHASE_3_2_TOP_RISK_HARDENED
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
+// PHASE_CLIENT_AUTH_LOGIN_REFERENCE_STYLE_DEV_PATCH
 "use client";
 
 import { useEffect, useState } from "react";
@@ -122,7 +118,6 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
     }
   };
 
-<<<<<<< HEAD
   const openOtp = (provider: OtpProvider) => {
     setOtpProvider(provider);
     setOtp("");
@@ -130,14 +125,6 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
     setOtpSecondsLeft(0);
     setMode("phone");
   };
-=======
-  return (
-    <section className="w-full max-w-md rounded-[2rem] border border-white/15 bg-white/95 p-6 shadow-2xl backdrop-blur-2xl dark:bg-zinc-950/95 transition-colors duration-200 motion-reduce:transition-none">
-      <div className="text-center">
-        <p className="text-xs uppercase tracking-[0.35em] text-zinc-500">
-          SAQSO Account
-        </p>
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
 
   const inputClass =
     "h-[52px] w-full rounded-full border border-white/15 bg-black/35 px-5 text-sm font-semibold text-white outline-none placeholder:text-white/45 transition focus:border-white/35 focus:ring-2 focus:ring-white/10";
@@ -216,13 +203,8 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
               setOtpSent(false);
               setOtpSecondsLeft(0);
             }}
-<<<<<<< HEAD
             placeholder="+880 phone number"
             className={inputClass}
-=======
-            placeholder="Phone number"
-            className="h-[52px] w-full rounded-[1.35rem] border border-white/10 bg-white/[0.035] px-5 text-white outline-none shadow-inner placeholder:text-white/45 focus:border-white/25 transition-colors duration-200 motion-reduce:transition-none"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
           />
 
           {otpSent && (
@@ -230,31 +212,19 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
               value={otp}
               onChange={(event) => setOtp(event.target.value)}
               placeholder="Enter OTP"
-<<<<<<< HEAD
               className={inputClass}
-=======
-              className="h-[52px] w-full rounded-[1.35rem] border border-white/10 bg-white/[0.035] px-5 text-white outline-none shadow-inner placeholder:text-white/45 focus:border-white/25 transition-colors duration-200 motion-reduce:transition-none"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             />
           )}
 
           {otpSent && (
-<<<<<<< HEAD
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/60">
-=======
-            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-zinc-400 transition-colors duration-200 motion-reduce:transition-none">
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
               {otpSecondsLeft > 0 ? (
                 <span>
                   OTP expires in <b className="text-white">{formatOtpTime(otpSecondsLeft)}</b>
                 </span>
               ) : (
-<<<<<<< HEAD
                 <button
                   type="button"
-=======
-                <button type="button"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
                   onClick={handleSendOtp}
                   disabled={loading}
                   className="font-bold text-white underline disabled:opacity-60"
@@ -265,12 +235,8 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
             </div>
           )}
 
-<<<<<<< HEAD
           <button
             type="button"
-=======
-          <button type="button"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             onClick={otpSent ? handleVerifyOtp : handleSendOtp}
             disabled={loading || (otpSent && otp.trim().length < 4)}
             className={primaryClass}
@@ -285,11 +251,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="Full name"
-<<<<<<< HEAD
               className={inputClass}
-=======
-              className="h-[52px] w-full rounded-[1.35rem] border border-white/10 bg-white/[0.035] px-5 text-white outline-none shadow-inner placeholder:text-white/45 focus:border-white/25 transition-colors duration-200 motion-reduce:transition-none"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             />
           )}
 
@@ -298,11 +260,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Email"
             type="email"
-<<<<<<< HEAD
             className={inputClass}
-=======
-            className="h-[52px] w-full rounded-[1.35rem] border border-white/10 bg-white/[0.035] px-5 text-white outline-none shadow-inner placeholder:text-white/45 focus:border-white/25 transition-colors duration-200 motion-reduce:transition-none"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
           />
 
           <input
@@ -310,18 +268,11 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Password"
             type="password"
-<<<<<<< HEAD
             className={inputClass}
           />
 
           <button
             type="button"
-=======
-            className="h-[52px] w-full rounded-[1.35rem] border border-white/10 bg-white/[0.035] px-5 text-white outline-none shadow-inner placeholder:text-white/45 focus:border-white/25 transition-colors duration-200 motion-reduce:transition-none"
-          />
-
-          <button type="button"
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             onClick={mode === "register" ? handleRegister : handleEmailLogin}
             disabled={loading}
             className={primaryClass}
@@ -333,11 +284,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
 
       <div className="mt-6 text-center text-sm text-white/55">
         {mode === "register" ? (
-<<<<<<< HEAD
           <button type="button" onClick={() => setMode("login")} className="font-bold text-white">
-=======
-          <button type="button" onClick={() => setMode("login")} className="font-bold text-zinc-950 dark:text-white">
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             Already have an account? Login
           </button>
         ) : mode === "phone" ? (
@@ -345,11 +292,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
             Back to login
           </button>
         ) : (
-<<<<<<< HEAD
           <button type="button" onClick={() => setMode("register")} className="font-bold text-white">
-=======
-          <button type="button" onClick={() => setMode("register")} className="font-bold text-zinc-950 dark:text-white">
->>>>>>> 88db37a (feat(phase-3): enterprise design system and responsive UX hardening)
             New to SAQSO? Create account
           </button>
         )}
