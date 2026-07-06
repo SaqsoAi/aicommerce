@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
-const API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/$/, "");
+const API =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, "") + "/api" ||
+  "http://localhost:5000/api";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm();
@@ -23,20 +26,9 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
       window.location.href = "/dashboard";
-    } catch (error: unknown) {
+    } catch (error) {
       console.error(error);
-
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof (error as { response?: { data?: { message?: unknown } } }).response?.data?.message === "string"
-          ? (error as { response: { data: { message: string } } }).response.data.message
-          : error instanceof Error
-            ? error.message
-            : "Login failed";
-
-      alert(message);
+      alert("Login failed");
     } finally {
       setLoading(false);
     }
@@ -59,6 +51,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-
-

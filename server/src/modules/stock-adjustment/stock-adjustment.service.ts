@@ -118,23 +118,3 @@ export const adjustVariantStock = async (
     variant: updated,
   };
 };
-
-// PHASE 5.2 ENTERPRISE STOCK ADJUSTMENT HARDENING
-export type EnterpriseStockAdjustmentInput = {
-  productId?: string | null;
-  variantId?: string | null;
-  warehouseId?: string | null;
-  quantity: number;
-  reason: string;
-  actorId?: string | null;
-};
-
-export function assertEnterpriseStockAdjustment(input: EnterpriseStockAdjustmentInput): EnterpriseStockAdjustmentInput {
-  if (!input) throw new Error("Stock adjustment payload is required");
-  if (!input.variantId && !input.productId) throw new Error("Stock adjustment requires productId or variantId");
-  if (!input.warehouseId) throw new Error("Stock adjustment requires warehouseId");
-  if (!Number.isFinite(Number(input.quantity))) throw new Error("Stock adjustment quantity must be numeric");
-  if (!input.reason || input.reason.trim().length < 3) throw new Error("Stock adjustment reason is required");
-  return input;
-}
-// END PHASE 5.2 ENTERPRISE STOCK ADJUSTMENT HARDENING

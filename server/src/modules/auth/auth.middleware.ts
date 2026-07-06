@@ -1,4 +1,4 @@
-﻿import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import prisma from "../../config/prisma";
 
@@ -25,7 +25,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 
     const dbUser = await prisma.user.findUnique({
       where: { id: decoded.id || decoded.userId },
-      select: { id: true, email: true, role: true }
+      select: { id: true, email: true, role: true },
     });
 
     if (!dbUser) {
@@ -34,13 +34,37 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 
     const role = String(dbUser.role || decoded.role || "").toUpperCase();
 
+    let permissions: string[] = [];
+    if (role === "SUPER_ADMIN") {
+      permissions = ["*"];
+    } else {
+      try {
+        const rolePermissions = await (prisma as any).rolePermission.findMany({
+          where: { role },
+          include: { permission: true },
+        });
+
+        permissions = rolePermissions
+          .map((item: any) =>
+            item.permission?.key ||
+            item.permission?.name ||
+            item.permission?.code ||
+            item.permission ||
+            item.permissionKey
+          )
+          .filter(Boolean);
+      } catch {
+        permissions = [];
+      }
+    }
+
     req.user = {
       ...decoded,
       id: dbUser.id,
       userId: dbUser.id,
       email: dbUser.email,
       role,
-      permissions: role === "SUPER_ADMIN" ? ["*"] : []
+      permissions,
     };
 
     return next();
@@ -51,12 +75,3 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 
 export const authenticate = protect;
 export const requireAuth = protect;
-
-
-/**
- * PHASE 4.6B ENTERPRISE AUDIT NOTE:
- * This auth middleware is an integration point for unauthorized_access,
- * token_expired, login, logout, and failed_login events.
- * Use writeEnterpriseSecurityEvent/writeEnterpriseAuditLog from
- * modules/audit-log/enterprise-audit.service in exact controller branches.
- */

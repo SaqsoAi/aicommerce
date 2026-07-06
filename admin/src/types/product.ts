@@ -1,10 +1,9 @@
-export type ProductVariantForm = {
+﻿export type ProductVariantForm = {
   color: string;
-  size: string;
-  styleNo?: string;
-  fabric?: string;
-  occasion?: string;
-  costPrice?: number;
+  size: string;  
+  fabric?: string;  
+  occasion?: string;  
+  costPrice?: number;  
   salesPrice?: number;
   stock: number;
   sku: string;
@@ -18,13 +17,13 @@ export type ProductVariantForm = {
 };
 
 export type ProductMetaRow = {
-  name: string;
+  name: string;  
   groupName?: string;
   value: string;
 };
 
 export type ProductFormData = {
-  name: string;
+  name: string;  
   groupName?: string;
 
   styleNo?: string;
@@ -51,10 +50,6 @@ export type ProductFormData = {
   status?: string;
   visibility?: string;
   condition?: string;
-  approvalStatus?: string;
-  approvalNote?: string;
-  publishAt?: string;
-  unpublishAt?: string;
 
   thumbnail?: string;
   videoUrl?: string;
@@ -72,7 +67,7 @@ export type ProductMasterResponse = {
   source?: string;
 
   product?: {
-    name: string;
+    name: string;  
     groupName?: string;
     brand?: string;
     category?: string;
@@ -83,12 +78,14 @@ export type ProductMasterResponse = {
 
     variants?: {
       color: string;
-      size: string;
-      fabric?: string;
-      occasion?: string;
-      costPrice?: number;
+      size: string;  
+      fabric?: string;  
+      occasion?: string;  
+      costPrice?: number;  
       salesPrice?: number;
       qty: number;
     }[];
   };
 };
+
+

@@ -4,15 +4,12 @@
 
 import { useEffect, useState } from "react";
 
+import { getProducts, deleteProduct } from "@/services/product.service";
 import {
+  submitProductForReview,
   approveProduct,
-  deleteProduct,
-  duplicateProduct,
-  getProducts,
   rejectProduct,
   scheduleProduct,
-  submitProductForReview,
-  updateProductStatus,
 } from "@/services/product.service";
 import { resolveAssetUrl } from "@/utils/resolveAssetUrl";
 
@@ -39,7 +36,6 @@ type Product = {
     id: string;
     stock: number;
     availableStock?: number;
-    active?: boolean;
   }[];
   createdAt: string;
 };
@@ -49,16 +45,18 @@ type Props = {
   onEdit?: (id: string) => void;
 };
 
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
 const badgeClass = (value?: string) => {
-  if (value === "ACTIVE" || value === "PUBLIC" || value === "APPROVED") {
+  if (value === "ACTIVE" || value === "PUBLIC") {
     return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300";
   }
 
-  if (value === "DRAFT" || value === "REVIEW") {
+  if (value === "DRAFT") {
     return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300";
   }
 
-  if (value === "ARCHIVED" || value === "HIDDEN" || value === "REJECTED") {
+  if (value === "ARCHIVED" || value === "HIDDEN") {
     return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300";
   }
 
@@ -88,7 +86,7 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
   }, [refreshKey]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Archive this product? It will be hidden from client storefronts.")) return;
+    if (!confirm("Delete this product?")) return;
 
     try {
       setActionLoading(id);
@@ -96,7 +94,7 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
       await loadProducts();
     } catch (error) {
       console.error(error);
-      alert("Archive failed");
+      alert("Delete failed");
     } finally {
       setActionLoading(null);
     }
@@ -107,7 +105,23 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
 
     try {
       setActionLoading(id);
-      await duplicateProduct(id);
+
+      const res = await fetch(`${API}/products/${id}/duplicate`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Duplicate failed (${res.status}): ${errorText}`);
+      }
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Duplicate failed");
+      }
+
       await loadProducts();
       alert("Product duplicated");
     } catch (error) {
@@ -162,10 +176,28 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
 
       const nextStatus = product.status === "ACTIVE" ? "DRAFT" : "ACTIVE";
 
-      await updateProductStatus(product.id, {
-        status: nextStatus,
-        visibility: product.visibility || "PUBLIC",
+      const res = await fetch(`${API}/products/${product.id}/status`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: nextStatus,
+          visibility: product.visibility || "PUBLIC",
+        }),
       });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Status update failed (${res.status}): ${errorText}`);
+      }
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Status update failed");
+      }
 
       await loadProducts();
     } catch (error) {
@@ -215,7 +247,9 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
               <th className="p-4 text-left text-sm font-semibold">Image</th>
               <th className="p-4 text-left text-sm font-semibold">Product</th>
               <th className="p-4 text-left text-sm font-semibold">Category</th>
-              <th className="p-4 text-left text-sm font-semibold">Subcategory</th>
+              <th className="p-4 text-left text-sm font-semibold">
+                Subcategory
+              </th>
               <th className="p-4 text-left text-sm font-semibold">Brand</th>
               <th className="p-4 text-left text-sm font-semibold">SKU</th>
               <th className="p-4 text-left text-sm font-semibold">Style No</th>
@@ -225,7 +259,9 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
               <th className="p-4 text-left text-sm font-semibold">Status</th>
               <th className="p-4 text-left text-sm font-semibold">Approval</th>
               <th className="p-4 text-left text-sm font-semibold">Schedule</th>
-              <th className="p-4 text-left text-sm font-semibold">Visibility</th>
+              <th className="p-4 text-left text-sm font-semibold">
+                Visibility
+              </th>
               <th className="p-4 text-left text-sm font-semibold">Action</th>
             </tr>
           </thead>
@@ -243,14 +279,12 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
             ) : (
               products.map((product) => {
                 const totalStock =
-                  product.variants
-                    ?.filter((variant) => variant.active !== false)
-                    .reduce(
-                      (sum, variant) =>
-                        sum +
-                        Number(variant.availableStock ?? variant.stock ?? 0),
-                      0,
-                    ) ?? 0;
+                  product.variants?.reduce(
+                    (sum, variant) =>
+                      sum +
+                      Number(variant.availableStock ?? variant.stock ?? 0),
+                    0,
+                  ) ?? 0;
 
                 return (
                   <tr
@@ -308,13 +342,21 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
                     </td>
 
                     <td className="p-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(product.status)}`}>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(
+                          product.status,
+                        )}`}
+                      >
                         {product.status || "DRAFT"}
                       </span>
                     </td>
 
                     <td className="p-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(product.approvalStatus || "APPROVED")}`}>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(
+                          product.approvalStatus || "APPROVED",
+                        )}`}
+                      >
                         {product.approvalStatus || "APPROVED"}
                       </span>
                     </td>
@@ -329,43 +371,86 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
                     </td>
 
                     <td className="p-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(product.visibility)}`}>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass(
+                          product.visibility,
+                        )}`}
+                      >
                         {product.visibility || "PUBLIC"}
                       </span>
                     </td>
 
                     <td className="p-4">
                       <div className="flex flex-wrap gap-2">
-                        <button type="button" onClick={() => onEdit?.(product.id)} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">
+                        <button
+                          type="button"
+                          onClick={() => onEdit?.(product.id)}
+                          className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                        >
                           Edit
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleStatusToggle(product)} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleStatusToggle(product)}
+                          className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                        >
                           Toggle
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleGovernanceAction(product, "review")} className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleGovernanceAction(product, "review")}
+                          className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                        >
                           Review
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleGovernanceAction(product, "approve")} className="rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleGovernanceAction(product, "approve")}
+                          className="rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                        >
                           Approve
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleGovernanceAction(product, "reject")} className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleGovernanceAction(product, "reject")}
+                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 disabled:opacity-50"
+                        >
                           Reject
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleGovernanceAction(product, "schedule")} className="rounded-lg bg-cyan-600 px-3 py-2 text-xs font-semibold text-white hover:bg-cyan-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleGovernanceAction(product, "schedule")}
+                          className="rounded-lg bg-cyan-600 px-3 py-2 text-xs font-semibold text-white hover:bg-cyan-700 disabled:opacity-50"
+                        >
                           Schedule
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleDuplicate(product.id)} className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:opacity-50">
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleDuplicate(product.id)}
+                          className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:opacity-50"
+                        >
                           Duplicate
                         </button>
 
-                        <button type="button" disabled={actionLoading === product.id} onClick={() => handleDelete(product.id)} className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">
-                          Archive
+                        <button
+                          type="button"
+                          disabled={actionLoading === product.id}
+                          onClick={() => handleDelete(product.id)}
+                          className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                        >
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -379,3 +464,7 @@ export default function ProductTable({ refreshKey, onEdit }: Props) {
     </div>
   );
 }
+
+
+
+

@@ -1,10 +1,4 @@
-import prisma from "../config/prisma";
-
-const PRODUCT_ACTIVE_STATUS = "ACTIVE";
-const PRODUCT_ARCHIVED_STATUS = "ARCHIVED";
-const PRODUCT_PUBLIC_VISIBILITY = "PUBLIC";
-const PRODUCT_HIDDEN_VISIBILITY = "HIDDEN";
-const PRODUCT_APPROVED_STATUS = "APPROVED";
+﻿import prisma from "../config/prisma";
 
 const createSlug = (text: string) => {
   return text
@@ -12,53 +6,6 @@ const createSlug = (text: string) => {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/[^\w-]/g, "");
-};
-
-const normalizeText = (value: unknown) => {
-  if (typeof value !== "string") return value;
-  const trimmed = value.trim();
-  return trimmed.length ? trimmed : null;
-};
-
-const normalizeCode = (value: unknown) => {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-  return trimmed.length ? trimmed.toUpperCase() : null;
-};
-
-const normalizeNumber = (value: unknown, fallback = 0) => {
-  const numberValue = Number(value ?? fallback);
-  return Number.isFinite(numberValue) ? numberValue : fallback;
-};
-
-const normalizeInteger = (value: unknown, fallback = 0) => {
-  const numberValue = Math.trunc(normalizeNumber(value, fallback));
-  return numberValue < 0 ? fallback : numberValue;
-};
-
-const parseOptionalDate = (value: unknown, field: string) => {
-  if (!value) return null;
-  const date = new Date(String(value));
-
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid ${field}`);
-  }
-
-  return date;
-};
-
-const publicProductWhere = () => {
-  const now = new Date();
-
-  return {
-    status: PRODUCT_ACTIVE_STATUS,
-    visibility: PRODUCT_PUBLIC_VISIBILITY,
-    approvalStatus: PRODUCT_APPROVED_STATUS,
-    AND: [
-      { OR: [{ publishAt: null }, { publishAt: { lte: now } }] },
-      { OR: [{ unpublishAt: null }, { unpublishAt: { gt: now } }] },
-    ],
-  };
 };
 
 const normalizeProductImageUrl = (image: any) => {
@@ -96,249 +43,42 @@ const createImageRowsFromGallery = (gallery: any[]) => {
     .filter((image: any) => Boolean(image.url));
 };
 
-const isBlankVariant = (variant: any) => {
-  return ![
-    variant?.color,
-    variant?.size,
-    variant?.sku,
-    variant?.barcode,
-    variant?.supplierSku,
-    variant?.warehouseLocation,
-  ].some((value) => typeof value === "string" && value.trim().length > 0);
-};
-
-const slugCodePart = (value: unknown, fallback: string) => {
-  const text = String(value || fallback)
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  return text || fallback;
-};
-
-const validateUniqueList = (items: string[], label: string) => {
-  const seen = new Set<string>();
-
-  items.forEach((item) => {
-    if (seen.has(item)) {
-      throw new Error(`Duplicate ${label}: ${item}`);
-    }
-
-    seen.add(item);
-  });
-};
-
-const normalizeVariantRows = (variants: any[] | undefined, productSku: string, styleNo: string | null, productBarcode: string | null) => {
-  if (!Array.isArray(variants)) return [];
-
-  const normalized = variants
-    .filter((variant) => !isBlankVariant(variant))
-    .map((variant, index) => {
-      const color = normalizeText(variant.color);
-      const size = normalizeText(variant.size);
-
-      if (!color || !size) {
-        throw new Error("Variant color and size are required for every active variant");
-      }
-
-      const stock = normalizeInteger(variant.stock, 0);
-      const sku =
-        normalizeCode(variant.sku) ||
-        `${productSku}-${slugCodePart(color, "COLOR")}-${slugCodePart(size, "SIZE")}`;
-      const barcode =
-        normalizeCode(variant.barcode) ||
-        `${productBarcode || styleNo || productSku}-${String(index + 1).padStart(2, "0")}`;
-
-      return {
-        color,
-        size,
-        fabric: normalizeText(variant.fabric),
-        occasion: normalizeText(variant.occasion),
-        costPrice: variant.costPrice !== undefined ? normalizeNumber(variant.costPrice, 0) : null,
-        salesPrice:
-          variant.salesPrice !== undefined
-            ? normalizeNumber(variant.salesPrice, 0)
-            : variant.price !== undefined
-              ? normalizeNumber(variant.price, 0)
-              : null,
-        stock,
-        sku,
-        barcode,
-        styleNo,
-        price: variant.price !== undefined ? normalizeNumber(variant.price, 0) : null,
-        availableStock: normalizeInteger(variant.availableStock ?? stock, stock),
-        lowStockThreshold: normalizeInteger(variant.lowStockThreshold, 5),
-        reservedStock: normalizeInteger(variant.reservedStock, 0),
-        supplierSku: normalizeText(variant.supplierSku),
-        warehouseLocation: normalizeText(variant.warehouseLocation),
-        active: true,
-      };
-    });
-
-  validateUniqueList(normalized.map((variant) => variant.sku), "variant SKU");
-  validateUniqueList(normalized.map((variant) => variant.barcode), "variant barcode");
-
-  if (normalized.some((variant) => variant.sku === productSku)) {
-    throw new Error("Variant SKU cannot duplicate the product SKU");
-  }
-
-  if (productBarcode && normalized.some((variant) => variant.barcode === productBarcode)) {
-    throw new Error("Variant barcode cannot duplicate the product barcode");
-  }
-
-  const combinationKeys = normalized.map(
-    (variant) => `${String(variant.color).toLowerCase()}|${String(variant.size).toLowerCase()}`,
-  );
-
-  validateUniqueList(combinationKeys, "variant color/size combination");
-
-  return normalized;
-};
-
-const validateProductReferences = async (data: any) => {
-  if (data.categoryId) {
-    const category = await prisma.category.findUnique({ where: { id: data.categoryId } });
-    if (!category) throw new Error("Category not found");
-  }
-
-  if (data.subcategoryId) {
-    const subcategory = await prisma.subcategory.findUnique({ where: { id: data.subcategoryId } });
-    if (!subcategory) throw new Error("Subcategory not found");
-    if (data.categoryId && subcategory.categoryId !== data.categoryId) {
-      throw new Error("Subcategory does not belong to the selected category");
-    }
-  }
-
-  if (data.brandId) {
-    const brand = await prisma.brand.findUnique({ where: { id: data.brandId } });
-    if (!brand) throw new Error("Brand not found");
-  }
-};
-
-const validateCodeUniqueness = async ({
-  productId,
-  sku,
-  styleNo,
-  barcode,
-  variants,
-}: {
-  productId?: string;
-  sku?: string | null;
-  styleNo?: string | null;
-  barcode?: string | null;
-  variants: Array<{ sku: string; barcode: string }>;
-}) => {
-  const productOr: any[] = [];
-  if (sku) productOr.push({ sku });
-  if (styleNo) productOr.push({ styleNo });
-  if (barcode) productOr.push({ barcode });
-
-  if (productOr.length) {
-    const duplicateProduct = await prisma.product.findFirst({
-      where: {
-        OR: productOr,
-        ...(productId ? { NOT: { id: productId } } : {}),
-      },
-      select: { sku: true, styleNo: true, barcode: true },
-    });
-
-    if (duplicateProduct?.sku === sku) throw new Error(`Duplicate product SKU: ${sku}`);
-    if (styleNo && duplicateProduct?.styleNo === styleNo) throw new Error(`Duplicate style number: ${styleNo}`);
-    if (barcode && duplicateProduct?.barcode === barcode) throw new Error(`Duplicate product barcode: ${barcode}`);
-  }
-
-  const variantOr = variants.flatMap((variant) => [
-    { sku: variant.sku },
-    { barcode: variant.barcode },
-  ]);
-
-  if (sku) variantOr.push({ sku });
-  if (barcode) variantOr.push({ barcode });
-
-  if (variantOr.length) {
-    const duplicateVariant = await prisma.productVariant.findFirst({
-      where: {
-        OR: variantOr,
-        ...(productId ? { NOT: { productId } } : {}),
-      },
-      select: { sku: true, barcode: true },
-    });
-
-    if (duplicateVariant?.sku) throw new Error(`Duplicate variant SKU: ${duplicateVariant.sku}`);
-    if (duplicateVariant?.barcode) throw new Error(`Duplicate variant barcode: ${duplicateVariant.barcode}`);
-  }
-};
-
-const normalizeProductBaseData = (data: any) => {
-  const status = normalizeCode(data.status) || "DRAFT";
-  const visibility = status === PRODUCT_ARCHIVED_STATUS ? PRODUCT_HIDDEN_VISIBILITY : normalizeCode(data.visibility) || PRODUCT_PUBLIC_VISIBILITY;
-  const publishAt = parseOptionalDate(data.publishAt, "publishAt");
-  const unpublishAt = parseOptionalDate(data.unpublishAt, "unpublishAt");
-
-  if (publishAt && unpublishAt && publishAt >= unpublishAt) {
-    throw new Error("publishAt must be before unpublishAt");
-  }
-
-  return {
-    name: String(data.name).trim(),
-    groupName: normalizeText(data.groupName),
-    description: String(data.description).trim(),
-    shortDescription: normalizeText(data.shortDescription),
-    sku: normalizeCode(data.sku) || "",
-    styleNo: normalizeCode(data.styleNo),
-    barcode: normalizeCode(data.barcode),
-    price: normalizeNumber(data.price, 0),
-    discountPrice: data.discountPrice !== undefined ? normalizeNumber(data.discountPrice, 0) : null,
-    thumbnail: normalizeText(data.thumbnail),
-    videoUrl: normalizeText(data.videoUrl),
-    gallery: data.gallery ?? null,
-    categoryId: data.categoryId,
-    subcategoryId: data.subcategoryId ? data.subcategoryId : null,
-    brandId: data.brandId ? data.brandId : null,
-    featured: status === PRODUCT_ARCHIVED_STATUS ? false : Boolean(data.featured),
-    trending: status === PRODUCT_ARCHIVED_STATUS ? false : Boolean(data.trending),
-    seoTitle: normalizeText(data.seoTitle),
-    seoKeywords: normalizeText(data.seoKeywords),
-    seoDescription: normalizeText(data.seoDescription),
-    specifications: data.specifications ?? null,
-    attributes: data.attributes ?? null,
-    status,
-    visibility,
-    condition: normalizeCode(data.condition) || "NEW",
-    approvalStatus: normalizeCode(data.approvalStatus) || PRODUCT_APPROVED_STATUS,
-    approvalNote: normalizeText(data.approvalNote),
-    publishAt,
-    unpublishAt,
-  };
-};
-
-const productInclude = {
-  category: true,
-  subcategory: true,
-  brand: true,
-  images: true,
-  variants: true,
-};
-
 export const createProductService = async (data: any) => {
-  const baseData = normalizeProductBaseData(data);
-  const slug = `${createSlug(baseData.name)}-${Date.now()}`;
+  const slug = `${createSlug(data.name)}-${Date.now()}`;
   const autoThumbnail = createThumbnailFromGallery(data.gallery);
-  const variants = normalizeVariantRows(data.variants, baseData.sku, baseData.styleNo, baseData.barcode);
-
-  await validateProductReferences(baseData);
-  await validateCodeUniqueness({
-    sku: baseData.sku,
-    styleNo: baseData.styleNo,
-    barcode: baseData.barcode,
-    variants,
-  });
 
   return prisma.product.create({
-    data: ({
-      ...baseData,
+    data: {
+      name: data.name,
+      groupName: data.groupName ?? null,
       slug,
-      thumbnail: baseData.thumbnail ?? autoThumbnail,
+      description: data.description,
+      shortDescription: data.shortDescription ?? null,
+      sku: data.sku,
+      styleNo: data.styleNo ?? null,
+      barcode: data.barcode ?? null,
+      price: Number(data.price),
+      discountPrice: data.discountPrice ? Number(data.discountPrice) : null,
+      thumbnail: data.thumbnail ?? autoThumbnail,
+      videoUrl: data.videoUrl ?? null,
+      gallery: data.gallery ?? null,
+      categoryId: data.categoryId,
+      subcategoryId:
+        data.subcategoryId && data.subcategoryId.trim()
+          ? data.subcategoryId
+          : null,
+      brandId: data.brandId ?? null,
+      featured: Boolean(data.featured),
+      trending: Boolean(data.trending),
+      seoTitle: data.seoTitle ?? null,
+      seoKeywords: data.seoKeywords ?? null,
+      seoDescription: data.seoDescription ?? null,
+      specifications: data.specifications ?? null,
+      attributes: data.attributes ?? null,
+      status: data.status ?? "DRAFT",
+      visibility: data.visibility ?? "PUBLIC",
+      condition: data.condition ?? "NEW",
+
       ...(data.gallery?.length
         ? {
             images: {
@@ -346,21 +86,61 @@ export const createProductService = async (data: any) => {
             },
           }
         : {}),
-      ...(variants.length
+
+      ...(data.variants?.length
         ? {
             variants: {
-              create: variants,
+              create: data.variants.map((v: any, index: number) => ({
+                color: v.color,
+                size: v.size,
+                fabric: v.fabric ?? null,
+                occasion: v.occasion ?? null,
+                costPrice: v.costPrice ? Number(v.costPrice) : null,
+                salesPrice: v.salesPrice
+                  ? Number(v.salesPrice)
+                  : v.price
+                    ? Number(v.price)
+                    : null,
+                stock: Number(v.stock ?? 0),
+                sku:
+                  v.sku ||
+                  `${data.sku}-${v.color}-${v.size}`.replace(/\s+/g, "-"),
+                barcode:
+                  v.barcode ||
+                  `${data.styleNo || data.sku}${String(index + 1).padStart(
+                    2,
+                    "0",
+                  )}`,
+                price: v.price ? Number(v.price) : null,
+                availableStock: Number(v.availableStock ?? v.stock ?? 0),
+                lowStockThreshold: Number(v.lowStockThreshold ?? 5),
+                reservedStock: Number(v.reservedStock ?? 0),
+                supplierSku: v.supplierSku ?? null,
+                warehouseLocation: v.warehouseLocation ?? null,
+              })),
             },
           }
         : {}),
-    } as any),
-    include: productInclude,
+    },
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      images: true,
+      variants: true,
+    },
   });
 };
 
 export const getProductsService = async () => {
   return prisma.product.findMany({
-    include: productInclude,
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      images: true,
+      variants: true,
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -369,16 +149,28 @@ export const getProductsService = async () => {
 
 export const getFeaturedProductsService = async () => {
   return prisma.product.findMany({
-    where: { featured: true, ...publicProductWhere() },
-    include: productInclude,
+    where: { featured: true },
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      variants: true,
+      images: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 };
 
 export const getTrendingProductsService = async () => {
   return prisma.product.findMany({
-    where: { trending: true, ...publicProductWhere() },
-    include: productInclude,
+    where: { trending: true },
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      variants: true,
+      images: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 };
@@ -386,125 +178,134 @@ export const getTrendingProductsService = async () => {
 export const getProductByIdService = async (id: string) => {
   return prisma.product.findUnique({
     where: { id },
-    include: productInclude,
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      variants: true,
+      images: true,
+    },
   });
 };
 
 export const updateProductService = async (id: string, data: any) => {
-  const existingProduct = await prisma.product.findUnique({
-    where: { id },
-    include: { variants: true },
-  });
-
-  if (!existingProduct) throw new Error("Product not found");
-
-  const mergedData = {
-    ...existingProduct,
-    ...data,
-    categoryId: data.categoryId ?? existingProduct.categoryId,
-    subcategoryId: data.subcategoryId ?? existingProduct.subcategoryId,
-    brandId: data.brandId ?? existingProduct.brandId,
-    variants: data.variants,
-  };
-
-  const baseData = normalizeProductBaseData(mergedData);
-  const slug = data.name ? `${createSlug(baseData.name)}-${Date.now()}` : undefined;
+  const slug = data.name ? `${createSlug(data.name)}-${Date.now()}` : undefined;
   const autoThumbnail = createThumbnailFromGallery(data.gallery);
-  const variants = Array.isArray(data.variants)
-    ? normalizeVariantRows(data.variants, baseData.sku, baseData.styleNo, baseData.barcode)
-    : [];
-
-  await validateProductReferences(baseData);
-  await validateCodeUniqueness({
-    productId: id,
-    sku: baseData.sku,
-    styleNo: baseData.styleNo,
-    barcode: baseData.barcode,
-    variants: Array.isArray(data.variants)
-      ? variants
-      : existingProduct.variants.map((variant) => ({ sku: variant.sku, barcode: variant.barcode || "" })).filter((variant) => variant.barcode),
-  });
 
   const updateData: any = {
-    ...(data.name !== undefined && { name: baseData.name }),
-    ...(data.groupName !== undefined && { groupName: baseData.groupName }),
+    ...(data.name && { name: data.name }),
+    ...(data.groupName !== undefined && { groupName: data.groupName }),
     ...(slug && { slug }),
-    ...(data.description !== undefined && { description: baseData.description }),
-    ...(data.shortDescription !== undefined && { shortDescription: baseData.shortDescription }),
-    ...(data.sku !== undefined && { sku: baseData.sku }),
-    ...(data.styleNo !== undefined && { styleNo: baseData.styleNo }),
-    ...(data.barcode !== undefined && { barcode: baseData.barcode }),
-    ...(data.price !== undefined && { price: baseData.price }),
-    ...(data.discountPrice !== undefined && { discountPrice: baseData.discountPrice }),
-    ...(data.thumbnail !== undefined && { thumbnail: baseData.thumbnail }),
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.shortDescription !== undefined && {
+      shortDescription: data.shortDescription,
+    }),
+    ...(data.sku && { sku: data.sku }),
+    ...(data.styleNo !== undefined && { styleNo: data.styleNo }),
+    ...(data.barcode !== undefined && { barcode: data.barcode }),
+    ...(data.price !== undefined && { price: Number(data.price) }),
+    ...(data.discountPrice !== undefined && {
+      discountPrice: data.discountPrice ? Number(data.discountPrice) : null,
+    }),
+    ...(data.thumbnail !== undefined && { thumbnail: data.thumbnail }),
     ...(autoThumbnail && { thumbnail: autoThumbnail }),
-    ...(data.videoUrl !== undefined && { videoUrl: baseData.videoUrl }),
-    ...(data.gallery !== undefined && { gallery: baseData.gallery }),
-    ...(data.categoryId !== undefined && { categoryId: baseData.categoryId }),
-    ...(data.subcategoryId !== undefined && { subcategoryId: baseData.subcategoryId }),
-    ...(data.brandId !== undefined && { brandId: baseData.brandId }),
-    ...(data.featured !== undefined && { featured: baseData.featured }),
-    ...(data.trending !== undefined && { trending: baseData.trending }),
-    ...(data.seoTitle !== undefined && { seoTitle: baseData.seoTitle }),
-    ...(data.seoKeywords !== undefined && { seoKeywords: baseData.seoKeywords }),
-    ...(data.seoDescription !== undefined && { seoDescription: baseData.seoDescription }),
-    ...(data.specifications !== undefined && { specifications: baseData.specifications }),
-    ...(data.attributes !== undefined && { attributes: baseData.attributes }),
-    ...(data.status !== undefined && { status: baseData.status }),
-    ...(data.visibility !== undefined && { visibility: baseData.visibility }),
-    ...(data.condition !== undefined && { condition: baseData.condition }),
-    ...(data.approvalStatus !== undefined && { approvalStatus: baseData.approvalStatus }),
-    ...(data.approvalNote !== undefined && { approvalNote: baseData.approvalNote }),
-    ...(data.publishAt !== undefined && { publishAt: baseData.publishAt }),
-    ...(data.unpublishAt !== undefined && { unpublishAt: baseData.unpublishAt }),
+    ...(data.videoUrl !== undefined && { videoUrl: data.videoUrl }),
+    ...(data.gallery !== undefined && { gallery: data.gallery }),
+    ...(data.categoryId && { categoryId: data.categoryId }),
+    ...(data.subcategoryId !== undefined && {
+      subcategoryId:
+        data.subcategoryId && data.subcategoryId.trim()
+          ? data.subcategoryId
+          : null,
+    }),
+    ...(data.brandId !== undefined && {
+      brandId: data.brandId && data.brandId !== "" ? data.brandId : null,
+    }),
+    ...(data.featured !== undefined && { featured: Boolean(data.featured) }),
+    ...(data.trending !== undefined && { trending: Boolean(data.trending) }),
+    ...(data.seoTitle !== undefined && { seoTitle: data.seoTitle }),
+    ...(data.seoKeywords !== undefined && { seoKeywords: data.seoKeywords }),
+    ...(data.seoDescription !== undefined && {
+      seoDescription: data.seoDescription,
+    }),
+    ...(data.specifications !== undefined && {
+      specifications: data.specifications,
+    }),
+    ...(data.attributes !== undefined && { attributes: data.attributes }),
+    ...(data.status !== undefined && { status: data.status }),
+    ...(data.visibility !== undefined && { visibility: data.visibility }),
+    ...(data.condition !== undefined && { condition: data.condition }),
   };
 
-  return prisma.$transaction(async (tx: any) => {
-    if (Array.isArray(data.variants)) {
-      await tx.productVariant.updateMany({
-        where: { productId: id },
-        data: { active: false },
-      });
-
-      await tx.productVariant.deleteMany({
-        where: { productId: id },
-      });
-
-      updateData.variants = {
-        create: variants,
-      };
-    }
-
-    if (Array.isArray(data.gallery)) {
-      await tx.productImage.deleteMany({
-        where: { productId: id },
-      });
-
-      updateData.images = {
-        create: createImageRowsFromGallery(data.gallery),
-      };
-    }
-
-    return tx.product.update({
-      where: { id },
-      data: updateData,
-      include: productInclude,
+  if (data.variants && Array.isArray(data.variants)) {
+    await prisma.productVariant.deleteMany({
+      where: { productId: id },
     });
+
+    updateData.variants = {
+      create: data.variants.map((v: any, index: number) => ({
+        color: v.color,
+        size: v.size,
+        fabric: v.fabric ?? null,
+        occasion: v.occasion ?? null,
+        costPrice: v.costPrice ? Number(v.costPrice) : null,
+        salesPrice: v.salesPrice
+          ? Number(v.salesPrice)
+          : v.price
+            ? Number(v.price)
+            : null,
+        stock: Number(v.stock ?? 0),
+        sku: v.sku || `${data.sku}-${v.color}-${v.size}`.replace(/\s+/g, "-"),
+        barcode:
+          v.barcode ||
+          `${data.styleNo || data.sku}${String(index + 1).padStart(2, "0")}`,
+        price: v.price ? Number(v.price) : null,
+        availableStock: Number(v.availableStock ?? v.stock ?? 0),
+        lowStockThreshold: Number(v.lowStockThreshold ?? 5),
+        reservedStock: Number(v.reservedStock ?? 0),
+        supplierSku: v.supplierSku ?? null,
+        warehouseLocation: v.warehouseLocation ?? null,
+      })),
+    };
+  }
+
+  if (data.gallery && Array.isArray(data.gallery)) {
+    await prisma.productImage.deleteMany({
+      where: { productId: id },
+    });
+
+    updateData.images = {
+      create: createImageRowsFromGallery(data.gallery),
+    };
+  }
+
+  return prisma.product.update({
+    where: { id },
+    data: updateData,
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      variants: true,
+      images: true,
+    },
   });
 };
 
 export const updateProductStatusService = async (id: string, data: any) => {
-  const status = normalizeCode(data.status);
-  const visibility = status === PRODUCT_ARCHIVED_STATUS ? PRODUCT_HIDDEN_VISIBILITY : normalizeCode(data.visibility);
-
   return prisma.product.update({
     where: { id },
     data: {
-      ...(status !== null && { status }),
-      ...(visibility !== null && { visibility }),
-      ...(status === PRODUCT_ARCHIVED_STATUS && { featured: false, trending: false }),
+      ...(data.status !== undefined && { status: data.status }),
+      ...(data.visibility !== undefined && { visibility: data.visibility }),
     },
-    include: productInclude,
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      variants: true,
+      images: true,
+    },
   });
 };
 
@@ -518,11 +319,8 @@ export const duplicateProductService = async (id: string) => {
     throw new Error("Product not found");
   }
 
-  const suffix = Date.now();
-  const newSku = `${product.sku}-COPY-${suffix}`.toUpperCase();
-  const newSlug = `${product.slug}-copy-${suffix}`;
-  const newStyleNo = product.styleNo ? `${product.styleNo}-COPY-${suffix}`.toUpperCase() : null;
-  const newBarcode = product.barcode ? `${product.barcode}-COPY-${suffix}`.toUpperCase() : null;
+  const newSku = `${product.sku}-COPY-${Date.now()}`;
+  const newSlug = `${product.slug}-copy-${Date.now()}`;
 
   return prisma.product.create({
     data: {
@@ -532,8 +330,8 @@ export const duplicateProductService = async (id: string) => {
       description: product.description,
       shortDescription: product.shortDescription,
       sku: newSku,
-      styleNo: newStyleNo,
-      barcode: newBarcode,
+      styleNo: product.styleNo ? `${product.styleNo}-COPY` : null,
+      barcode: product.barcode ? `${product.barcode}-COPY` : null,
       price: product.price,
       discountPrice: product.discountPrice,
       thumbnail:
@@ -555,7 +353,6 @@ export const duplicateProductService = async (id: string) => {
       attributes: product.attributes as any,
       status: "DRAFT",
       visibility: product.visibility,
-      approvalStatus: "DRAFT",
       condition: product.condition,
       images: {
         create: product.images.map((image) => ({
@@ -574,51 +371,25 @@ export const duplicateProductService = async (id: string) => {
           salesPrice: variant.salesPrice,
           stock: variant.stock,
           sku: `${newSku}-${index + 1}`,
-          barcode: `${newBarcode || newStyleNo || newSku}-${index + 1}`,
-          styleNo: newStyleNo,
+          barcode: variant.barcode
+            ? `${variant.barcode}-COPY-${index + 1}`
+            : "",
           price: variant.price,
           availableStock: variant.availableStock,
           lowStockThreshold: variant.lowStockThreshold,
           reservedStock: variant.reservedStock,
           supplierSku: variant.supplierSku,
           warehouseLocation: variant.warehouseLocation,
-          active: true,
         })),
       },
     },
-    include: productInclude,
-  });
-};
-
-export const archiveProductService = async (id: string) => {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    select: { id: true },
-  });
-
-  if (!product) throw new Error("Product not found");
-
-  return prisma.$transaction(async (tx: any) => {
-    await tx.productVariant.updateMany({
-      where: { productId: id },
-      data: { active: false },
-    });
-
-    await tx.cart.deleteMany({
-      where: { productId: id },
-    });
-
-    return tx.product.update({
-      where: { id },
-      data: {
-        status: PRODUCT_ARCHIVED_STATUS,
-        visibility: PRODUCT_HIDDEN_VISIBILITY,
-        featured: false,
-        trending: false,
-        unpublishAt: new Date(),
-      },
-      include: productInclude,
-    });
+    include: {
+      category: true,
+      subcategory: true,
+      brand: true,
+      images: true,
+      variants: true,
+    },
   });
 };
 
@@ -626,9 +397,9 @@ export const updateProductSeoService = async (id: string, data: any) => {
   return prisma.product.update({
     where: { id },
     data: {
-      seoTitle: normalizeText(data.seoTitle),
-      seoKeywords: normalizeText(data.seoKeywords),
-      seoDescription: normalizeText(data.seoDescription),
+      seoTitle: data.seoTitle ?? null,
+      seoKeywords: data.seoKeywords ?? null,
+      seoDescription: data.seoDescription ?? null,
     },
   });
 };
@@ -675,4 +446,3 @@ export const updateProductAttributesService = async (
     data: { attributes },
   });
 };
-
