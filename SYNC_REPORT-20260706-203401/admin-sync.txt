@@ -1,0 +1,186 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : Monday, July 6, 2026 8:34:01 PM
+   Source : D:\AI-ECOMMERCE\admin\
+     Dest : D:\AI-ECOMMERCE\AI-CommerceLIVE\admin\
+
+    Files : *.*
+	    
+Exc Files : *.log
+	    *.tmp
+	    *.bak
+	    *.zip
+	    
+ Exc Dirs : node_modules
+	    .next
+	    dist
+	    build
+	    coverage
+	    .git
+	    .turbo
+	    .cache
+	    .vscode
+	    logs
+	    tmp
+	    temp
+	    
+  Options : *.* /S /E /DCOPY:DA /COPY:DAT /R:2 /W:2 
+
+------------------------------------------------------------------------------
+
+	                  13	D:\AI-ECOMMERCE\admin\
+	                   6	D:\AI-ECOMMERCE\admin\public\
+	                   0	D:\AI-ECOMMERCE\admin\public\uploads\
+	                   0	D:\AI-ECOMMERCE\admin\public\uploads\hero\
+	                   1	D:\AI-ECOMMERCE\admin\src\
+	                   4	D:\AI-ECOMMERCE\admin\src\api\
+	                   4	D:\AI-ECOMMERCE\admin\src\app\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\404\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-chat\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-control-center\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-recommendation\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-search\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-virtual-tryon\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\analytics\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\audit-logs\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\auth-provider-center\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\automation-rules\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\automation-studio\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\brands\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\campaigns\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\categories\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\coupons\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\couriers\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\customer-intelligence\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\customer-profile-builder\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\customers\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\dashboard\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\discount-policy\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-auth-identity\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-auth-providers\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-hero-studio\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-product-normalization\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-store-settings\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\feature-flags\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\grn\
+	                   5	D:\AI-ECOMMERCE\admin\src\app\heroes\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\heroes\create\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\heroes\[id]\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\heroes\[id]\edit\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\homepage-builder\
+	                   4	D:\AI-ECOMMERCE\admin\src\app\homepage-hero\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\import-center\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\inventory\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\landing-builder\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\landing-builder\[id]\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\landing-builder\[id]\edit\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\login\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\lookbooks\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\lookbooks\new\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\lookbooks\[id]\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\lookbooks\[id]\edit\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\media\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\media\library\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\media\upload\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\membership\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-banner\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-benefits\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-settings\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-delivery-analytics\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-event-mapping\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-queue\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\notification-providers\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\notifications\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\omnichannel\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\orders\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\permissions\
+	                   2	D:\AI-ECOMMERCE\admin\src\app\product-engine\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\product-variants\
+	                   2	D:\AI-ECOMMERCE\admin\src\app\products\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\purchases\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\refunds\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\returns\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\reviews\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\rewards\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\roles\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\search\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\settings\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\settings\theme\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\size-fit-builder\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\sms-control-center\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\stock-adjustment\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\stock-transfer\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\store-settings\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\subcategories\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\subscriptions\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\super-admin\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\feature-flags\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\provider-control\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\users\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\supplier-ledger\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\suppliers\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\templates\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\install\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\settings\
+	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\switch\
+	                   1	D:\AI-ECOMMERCE\admin\src\app\tenant-usage\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\admin\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\admin\templates\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\audit\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\auth\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\barcode\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\brands\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\campaigns\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\categories\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\common\
+	                   6	D:\AI-ECOMMERCE\admin\src\components\dashboard\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\cards\
+	                   4	D:\AI-ECOMMERCE\admin\src\components\dashboard\widgets\
+	                   7	D:\AI-ECOMMERCE\admin\src\components\hero\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\homepage-builder\
+	                   4	D:\AI-ECOMMERCE\admin\src\components\inventory\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\landing-builder\
+	                  14	D:\AI-ECOMMERCE\admin\src\components\layout\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\layout\_legacy-sidebar-backups\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\lookbook\
+	                   3	D:\AI-ECOMMERCE\admin\src\components\notifications\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\permissions\
+	                   8	D:\AI-ECOMMERCE\admin\src\components\products\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\purchases\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\quick-actions\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\roles\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\search\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\settings\
+	                   1	D:\AI-ECOMMERCE\admin\src\components\size-fit-builder\
+	                   5	D:\AI-ECOMMERCE\admin\src\components\store-settings\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\subcategories\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\suppliers\
+	                   0	D:\AI-ECOMMERCE\admin\src\components\theme\
+	                  17	D:\AI-ECOMMERCE\admin\src\components\ui\
+	                   2	D:\AI-ECOMMERCE\admin\src\components\upload\
+	                   1	D:\AI-ECOMMERCE\admin\src\constants\
+	                   1	D:\AI-ECOMMERCE\admin\src\data\
+	                   1	D:\AI-ECOMMERCE\admin\src\hooks\
+	                   6	D:\AI-ECOMMERCE\admin\src\lib\
+	                   2	D:\AI-ECOMMERCE\admin\src\lib\branding\
+	                   1	D:\AI-ECOMMERCE\admin\src\providers\
+	                  43	D:\AI-ECOMMERCE\admin\src\services\
+	                   3	D:\AI-ECOMMERCE\admin\src\store\
+	                   0	D:\AI-ECOMMERCE\admin\src\styles\
+	                   3	D:\AI-ECOMMERCE\admin\src\types\
+	                   1	D:\AI-ECOMMERCE\admin\src\utils\
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :       145         0       145         0         0         0
+   Files :       271         0       271         0         0         0
+   Bytes :    1.68 m         0    1.68 m         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+   Ended : Monday, July 6, 2026 8:34:01 PM
+
