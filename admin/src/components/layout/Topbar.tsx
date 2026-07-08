@@ -1,141 +1,126 @@
-﻿"use client";
+"use client";
 
-import {
-  Bell,
-  ChevronsLeft,
-  ChevronsRight,
-  Menu,
-  Moon,
-  Search,
-  Sparkles,
-  Sun,
-  Upload,
-  LogOut,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getAdminBreadcrumb } from "./navigation.helpers";
+import { Bell, ChevronDown, HelpCircle, LogOut, Menu, Moon, Search, Settings, SlidersHorizontal, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-type TopbarProps = {
-  onMenuClick: () => void;
-  onCollapseClick: () => void;
-  onCommandClick?: () => void;
-  collapsed?: boolean;
-};
+type UserSession = { name?: string; email?: string; role?: string };
 
-export default function Topbar({
-  onMenuClick,
-  onCollapseClick,
-  onCommandClick,
-  collapsed = false,
-}: TopbarProps) {
-  const pathname = usePathname();
-  const breadcrumb = getAdminBreadcrumb(pathname || "/dashboard");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+function readUser(): UserSession {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem("user");
+    if (raw) return JSON.parse(raw) as UserSession;
+  } catch {}
+  return {
+    name: localStorage.getItem("name") || undefined,
+    email: localStorage.getItem("email") || undefined,
+    role: localStorage.getItem("role") || localStorage.getItem("userRole") || undefined,
+  };
+}
 
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("user");
+function normalizeRole(role?: string) {
+  const r = String(role || "MANAGER").toUpperCase();
+  if (r === "SUPER_ADMIN") return "Super Admin";
+  if (r === "ADMIN") return "Admin";
+  if (r === "USER_ADMIN") return "User Admin";
+  return "Manager";
+}
+
+function initials(name: string) {
+  const words = name.split(/\s+/).filter(Boolean);
+  return ((words[0]?.[0] || "U") + (words[1]?.[0] || "A")).toUpperCase();
+}
+
+export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
+  const [user, setUser] = useState<UserSession>({});
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [setup, setSetup] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.documentElement.classList.remove("light");
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("admin-theme", "dark");
+    setUser(readUser());
+  }, []);
+
+  const name = useMemo(() => user.name || user.email || "Signed-in User", [user.name, user.email]);
+  const role = useMemo(() => normalizeRole(user.role), [user.role]);
+
+  function go(path: string) {
+    window.location.href = path;
+  }
+
+  function signOut() {
+    ["token", "accessToken", "refreshToken", "adminToken", "admin_token", "authToken", "user", "role", "userRole", "permissions"].forEach((key) => localStorage.removeItem(key));
+    sessionStorage.clear();
     window.location.href = "/login";
   }
 
-  useEffect(() => {
-    const stored = localStorage.getItem("admin-theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const next = stored === "dark" || (!stored && prefersDark) ? "dark" : "light";
-
-    setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-  }, []);
-
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-
-    setTheme(next);
-    localStorage.setItem("admin-theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-  }
-
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 px-4 py-3 shadow-sm shadow-slate-950/[0.03] backdrop-blur-xl dark:border-white/10 dark:bg-[#080b12]/90 dark:shadow-black/20">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <button
-            type="button"
-            onClick={onMenuClick}
-            className="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm hover:bg-slate-50 lg:hidden dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/[0.08]"
-            aria-label="Open sidebar"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={onCollapseClick}
-            className="hidden rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm hover:bg-slate-50 lg:inline-flex dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/[0.08]"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
-          </button>
-
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span className="truncate">{breadcrumb.group}</span>
-            </div>
-            <h1 className="truncate text-lg font-black text-slate-950 dark:text-white">
-              {breadcrumb.page}
-            </h1>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={onCommandClick}
-          className="hidden min-w-[260px] max-w-md flex-1 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left transition hover:bg-slate-100 md:flex dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.08]"
-          aria-label="Open command palette"
-        >
-          <Search className="h-4 w-4 text-slate-400" />
-          <span className="w-full truncate text-sm font-semibold text-slate-400">
-            Search admin, orders, products...
-          </span>
-          <span className="rounded-lg border border-slate-200 px-2 py-1 text-[10px] font-black text-slate-400 dark:border-white/10">
-            Ctrl K
-          </span>
+    <header className="ds-topbar">
+      <div className="ds-topbar-left">
+        <button type="button" className="ds-square" onClick={onToggleSidebar} aria-label="Toggle sidebar">
+          <Menu size={22} />
         </button>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="hidden rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm hover:bg-slate-50 sm:inline-flex dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/[0.08]"
-            aria-label="Upload"
-          >
-            <Upload className="h-5 w-5" />
-          </button>
-
-          <button
-            type="button"
-            className="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm hover:bg-slate-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/[0.08]"
-            aria-label="Notifications"
-          >
-            <Bell className="h-5 w-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm hover:bg-slate-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/[0.08]"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </button>
-
-          <button type="button" onClick={logout} className="rounded-2xl border border-red-200 bg-white p-2.5 text-red-600 shadow-sm hover:bg-red-50 dark:border-red-500/20 dark:bg-white/[0.04] dark:text-red-300 dark:hover:bg-red-500/10" aria-label="Logout">
-            <LogOut className="h-5 w-5" />
-          </button>
+        <div className="ds-title">
+          <span>{role}</span>
+          <strong>Dashboard</strong>
         </div>
       </div>
+
+      <button type="button" className="ds-search" onClick={() => setSetup("Command palette needs a searchable route registry for live activation.")}>
+        <Search size={18} />
+        <span>Search anything in project...</span>
+        <kbd>Ctrl /</kbd>
+      </button>
+
+      <div className="ds-actions">
+        <button type="button" className="ds-square" onClick={() => go("/notifications")} aria-label="Notifications">
+          <Bell size={19} />
+        </button>
+        <button type="button" className="ds-square" onClick={() => go("/settings")} aria-label="Settings">
+          <Settings size={19} />
+        </button>
+        <button type="button" className="ds-square" onClick={() => setSetup("Create /help route or docs center, then connect this button.")} aria-label="Help">
+          <HelpCircle size={19} />
+        </button>
+        <button type="button" className="ds-square" onClick={() => setSetup("Dark dashboard lock active. Build a separate tested light theme before enabling toggle.")} aria-label="Theme">
+          <Moon size={19} />
+        </button>
+        <button type="button" className="ds-square" onClick={() => go("/ai-control-center")} aria-label="Controls">
+          <SlidersHorizontal size={19} />
+        </button>
+
+        <div className="ds-profile">
+          <button type="button" onClick={() => setProfileOpen((v) => !v)}>
+            <i>{initials(name)}</i>
+            <span>
+              <strong>{name}</strong>
+              <small>{role}</small>
+            </span>
+            <ChevronDown size={16} />
+          </button>
+          {profileOpen ? (
+            <div className="ds-profile-menu">
+              <button type="button" onClick={() => go("/settings")}>Profile settings</button>
+              <button type="button" onClick={() => go("/permissions")}>View permissions</button>
+              <button type="button" className="danger" onClick={signOut}><LogOut size={16} /> Sign out</button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {setup ? (
+        <div className="ds-modal-overlay">
+          <div className="ds-modal">
+            <button className="ds-modal-close" onClick={() => setSetup(null)}><X size={18} /></button>
+            <p>Setup Required</p>
+            <h2>Action not active yet</h2>
+            <span>{setup}</span>
+            <button type="button" onClick={() => setSetup(null)}>Got it</button>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }

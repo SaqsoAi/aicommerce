@@ -1,4 +1,4 @@
-﻿import { existsSync } from "fs";
+import { existsSync } from "fs";
 import path from "path";
 import { spawnSync } from "child_process";
 
@@ -8,6 +8,7 @@ const scripts = [
   "seed-rewards.ts",
   "seed-size-fit-center.ts",
   "seed-subcategories-from-purchase.ts",
+  "seed-role-demo-users.ts",
 ];
 
 console.log("");

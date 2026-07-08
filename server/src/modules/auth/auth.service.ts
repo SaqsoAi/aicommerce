@@ -2,9 +2,22 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import prisma from "../../config/prisma";
+import { Pool } from "pg";
 import { sendVerificationEmail } from "../../services/email.service";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const authPool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+type LoginUserRecord = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string | null;
+  role: string;
+  emailVerified: boolean;
+  provider: string | null;
+};
 
 const getJwtSecret = () => {
   const jwtSecret = process.env.JWT_SECRET;
@@ -81,11 +94,15 @@ export const loginUserService = async (
   email: string,
   password: string
 ) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const result = await authPool.query<LoginUserRecord>(
+    `select id, name, email, password, phone, role::text as role, "emailVerified", provider
+     from "User"
+     where lower(email) = lower($1)
+     limit 1`,
+    [email]
+  );
+
+  const user = result.rows[0];
 
   if (!user) {
     throw new Error("User not found");

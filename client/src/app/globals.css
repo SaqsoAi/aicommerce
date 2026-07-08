@@ -1,3 +1,11 @@
+@import "../styles/tokens/client-theme.css";
+@import "../styles/tokens/client-colors.css";
+@import "../styles/tokens/client-components.css";
+@import "../styles/tokens/client-radius.css";
+@import "../styles/tokens/client-shadows.css";
+@import "../styles/tokens/client-spacing.css";
+@import "../styles/tokens/client-typography.css";
+@import "../styles/tokens/index.css"; /* PHASE 7.2 CLIENT TOKENS */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -859,7 +867,7 @@ html, body { max-width: 100%; overflow-x: clip; }
 /* PHASE_3_2_ENTERPRISE_UI_HARDENING_END */
 
 /* =========================================================
-   CLIENT CART THEME FIX â€” 20260704-051446
+   CLIENT CART THEME FIX ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â 20260704-051446
    Fixes /cart light/dark mode readability and white washed UI
    ========================================================= */
 

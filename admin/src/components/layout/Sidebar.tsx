@@ -1,378 +1,178 @@
 "use client";
 
+import {
+  Activity,
+  Bot,
+  Boxes,
+  ChartNoAxesCombined,
+  Code2,
+  Database,
+  Flag,
+  Gauge,
+  Home,
+  KeyRound,
+  Layers,
+  MessageSquare,
+  Package,
+  Search,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  SlidersHorizontal,
+  Users,
+  WalletCards,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Activity,
-  BadgeCheck,
-  BadgeDollarSign,
-  BarChart3,
-  Bell,
-  Bot,
-  Boxes,
-  ChevronDown,
-  ChevronRight,
-  ClipboardCheck,
-  ClipboardList,
-  Cpu,
-  CreditCard,
-  Crown,
-  Factory,
-  FileSearch,
-  FileStack,
-  FolderOpen,
-  Heart,
-  Image,
-  Images,
-  KeyRound,
-  Layers3,
-  LayoutDashboard,
-  LayoutTemplate,
-  ListChecks,
-  ListTodo,
-  ListTree,
-  LockKeyhole,
-  Megaphone,
-  MessageSquareText,
-  Network,
-  Package,
-  PanelTop,
-  PanelsTopLeft,
-  Receipt,
-  RotateCcw,
-  Ruler,
-  Search,
-  Settings,
-  Settings2,
-  Shield,
-  ShieldCheck,
-  Shirt,
-  ShoppingCart,
-  SlidersHorizontal,
-  Sparkles,
-  Store,
-  Tags,
-  TicketPercent,
-  ToggleLeft,
-  Truck,
-  UploadCloud,
-  UserCog,
-  Users,
-  Wand2,
-  Warehouse,
-  Workflow,
-  X,
-} from "lucide-react";
-import { filterAdminNavigationByRole, isAdminNavActive } from "./navigation.helpers";
 
-const iconMap = {
-  Activity,
-  BadgeCheck,
-  BadgeDollarSign,
-  BarChart3,
-  Bell,
-  Bot,
-  Boxes,
-  ChevronDown,
-  ChevronRight,
-  ClipboardCheck,
-  ClipboardList,
-  Cpu,
-  CreditCard,
-  Crown,
-  Factory,
-  FileSearch,
-  FileStack,
-  FolderOpen,
-  Heart,
-  Image,
-  Images,
-  KeyRound,
-  Layers3,
-  LayoutDashboard,
-  LayoutTemplate,
-  ListChecks,
-  ListTodo,
-  ListTree,
-  LockKeyhole,
-  Megaphone,
-  MessageSquareText,
-  Network,
-  Package,
-  PanelTop,
-  PanelsTopLeft,
-  Receipt,
-  RotateCcw,
-  Ruler,
-  Search,
-  Settings,
-  Settings2,
-  Shield,
-  ShieldCheck,
-  Shirt,
-  ShoppingCart,
-  SlidersHorizontal,
-  Sparkles,
-  Store,
-  Tags,
-  TicketPercent,
-  ToggleLeft,
-  Truck,
-  UploadCloud,
-  UserCog,
-  Users,
-  Wand2,
-  Warehouse,
-  Workflow,
-};
+type Role = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
+type Item = { label: string; href: string; icon: LucideIcon };
+type Group = { title: string; items: Item[] };
 
-type SidebarProps = {
-  onClose?: () => void;
-  collapsed?: boolean;
-};
-
-function IconByName({ name, className }: { name?: string; className?: string }) {
-  const Icon = iconMap[(name || "LayoutDashboard") as keyof typeof iconMap] || LayoutDashboard;
-  return <Icon className={className} />;
-}
-
-function getStoredRole() {
-  if (typeof window === "undefined") return null;
-
+function roleFromStorage(): Role {
+  if (typeof window === "undefined") return "MANAGER";
   try {
-    const raw =
-      localStorage.getItem("adminUser") ||
-      localStorage.getItem("user") ||
-      localStorage.getItem("authUser");
-
-    if (!raw) return localStorage.getItem("role");
-
-    const parsed = JSON.parse(raw);
-    return parsed?.role || parsed?.user?.role || localStorage.getItem("role");
-  } catch {
-    return localStorage.getItem("role");
-  }
+    const raw = localStorage.getItem("user");
+    const parsed = raw ? JSON.parse(raw) : null;
+    const role = String(parsed?.role || localStorage.getItem("role") || "MANAGER").toUpperCase();
+    if (role === "SUPER_ADMIN") return "SUPER_ADMIN";
+    if (role === "ADMIN") return "ADMIN";
+  } catch {}
+  return "MANAGER";
 }
 
-function getInitialOpenGroups(groups: ReturnType<typeof filterAdminNavigationByRole>, pathname: string) {
-  const active = groups
-    .filter((group) => group.items.some((item) => isAdminNavActive(pathname || "", item.href)))
-    .map((group) => group.id || group.name);
+const superGroups: Group[] = [
+  { title: "Platform Command", items: [
+    { label: "Dashboard", href: "/dashboard", icon: Home },
+    { label: "Analytics", href: "/analytics", icon: Activity },
+    { label: "Tenant Usage", href: "/tenant-usage", icon: Gauge },
+    { label: "Subscriptions", href: "/subscriptions", icon: WalletCards },
+    { label: "Feature Flags", href: "/feature-flags", icon: Flag },
+    { label: "Provider Control", href: "/super-admin/provider-control", icon: SlidersHorizontal },
+  ] },
+  { title: "Security & RBAC", items: [
+    { label: "Roles", href: "/roles", icon: ShieldCheck },
+    { label: "Permissions", href: "/permissions", icon: KeyRound },
+    { label: "Super Admin Users", href: "/super-admin/users", icon: Users },
+    { label: "Audit Logs", href: "/audit-logs", icon: Code2 },
+    { label: "Auth Provider Center", href: "/auth-provider-center", icon: Settings },
+    { label: "Enterprise Auth Identity", href: "/enterprise-auth-identity", icon: ShieldCheck },
+  ] },
+  { title: "AI Management", items: [
+    { label: "AI Developer", href: "/ai-development-copilot", icon: Bot },
+    { label: "AI Architect", href: "/ai", icon: Layers },
+    { label: "AI Code Reviewer", href: "/ai-code-reviewer", icon: Code2 },
+    { label: "AI Bug Detector", href: "/ai-bug-detector", icon: Activity },
+    { label: "AI Performance", href: "/ai-performance", icon: Gauge },
+    { label: "AI Search", href: "/ai-search", icon: Search },
+  ] },
+  { title: "Project Management", items: [
+    { label: "Projects", href: "/automation-studio", icon: Boxes },
+    { label: "Modules", href: "/settings", icon: Layers },
+    { label: "Database", href: "/analytics", icon: Database },
+  ] },
+];
 
-  if (typeof window === "undefined") return new Set(active);
+const adminGroups: Group[] = [
+  { title: "Store Operations", items: [
+    { label: "Dashboard", href: "/dashboard", icon: Home },
+    { label: "Analytics", href: "/analytics", icon: Activity },
+    { label: "Orders", href: "/orders", icon: ShoppingBag },
+    { label: "Products", href: "/products", icon: Package },
+    { label: "Categories", href: "/categories", icon: Boxes },
+    { label: "Subcategories", href: "/subcategories", icon: Boxes },
+    { label: "Brands", href: "/brands", icon: ShieldCheck },
+    { label: "Customers", href: "/customers", icon: Users },
+  ] },
+  { title: "Inventory & Fulfillment", items: [
+    { label: "Inventory", href: "/inventory", icon: Database },
+    { label: "Stock Adjustment", href: "/stock-adjustment", icon: SlidersHorizontal },
+    { label: "Stock Transfer", href: "/stock-transfer", icon: Activity },
+    { label: "Couriers", href: "/couriers", icon: Package },
+    { label: "Returns", href: "/returns", icon: ShoppingBag },
+    { label: "Refunds", href: "/refunds", icon: WalletCards },
+  ] },
+  { title: "Marketing", items: [
+    { label: "Campaigns", href: "/campaigns", icon: ChartNoAxesCombined },
+    { label: "Notifications", href: "/notifications", icon: MessageSquare },
+    { label: "Store Settings", href: "/store-settings", icon: Settings },
+  ] },
+];
 
-  try {
-    const stored = localStorage.getItem("admin-sidebar-open-groups");
-    if (!stored) return new Set(active);
-    return new Set([...JSON.parse(stored), ...active]);
-  } catch {
-    return new Set(active);
-  }
-}
+const managerGroups: Group[] = [
+  { title: "Manager Workspace", items: [
+    { label: "Dashboard", href: "/dashboard", icon: Home },
+    { label: "Assigned Orders", href: "/orders", icon: ShoppingBag },
+    { label: "Customers", href: "/customers", icon: Users },
+    { label: "Products", href: "/products", icon: Package },
+    { label: "Inventory", href: "/inventory", icon: Database },
+  ] },
+  { title: "Daily Tasks", items: [
+    { label: "Reviews", href: "/reviews", icon: MessageSquare },
+    { label: "Returns", href: "/returns", icon: ShoppingBag },
+    { label: "Refunds", href: "/refunds", icon: WalletCards },
+    { label: "Notifications", href: "/notifications", icon: MessageSquare },
+    { label: "Reports", href: "/analytics", icon: Activity },
+  ] },
+  { title: "Limited Tools", items: [
+    { label: "AI Chat", href: "/ai-chat", icon: Bot },
+    { label: "AI Search", href: "/ai-search", icon: Search },
+    { label: "Store Settings", href: "/store-settings", icon: Settings },
+  ] },
+];
 
-export default function Sidebar({ onClose, collapsed = false }: SidebarProps) {
+export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
-  const role = getStoredRole();
-  const groups = useMemo(() => filterAdminNavigationByRole(role), [role]);
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
+  const [role, setRole] = useState<Role>("MANAGER");
 
-  useEffect(() => {
-    setOpenGroups(getInitialOpenGroups(groups, pathname || "/dashboard"));
-  }, [groups, pathname]);
+  useEffect(() => setRole(roleFromStorage()), []);
 
-  function toggleGroup(groupId: string) {
-    setOpenGroups((current) => {
-      const next = new Set(current);
-      if (next.has(groupId)) {
-        next.delete(groupId);
-      } else {
-        next.add(groupId);
-      }
-
-      localStorage.setItem("admin-sidebar-open-groups", JSON.stringify(Array.from(next)));
-      return next;
-    });
-  }
+  const groups = useMemo(() => role === "SUPER_ADMIN" ? superGroups : role === "ADMIN" ? adminGroups : managerGroups, [role]);
+  const product = role === "SUPER_ADMIN" ? "AICopilot" : "AI-Commerce";
+  const subtitle = role === "SUPER_ADMIN" ? "Super Admin - AI Development Copilot" : role === "ADMIN" ? "Admin - Commerce Operations" : "User Admin - Limited Workspace";
+  const status = role === "SUPER_ADMIN" ? "All Systems Operational" : role === "ADMIN" ? "Business Modules Active" : "Limited Access Active";
+  const accentClass = role === "SUPER_ADMIN" ? "super" : role === "ADMIN" ? "admin" : "manager";
 
   return (
-    <aside
-      className={[
-        "flex h-full flex-col overflow-hidden border-r border-slate-200 bg-white text-slate-950 shadow-xl shadow-slate-950/5 transition-all duration-300 dark:border-white/10 dark:bg-[#080b12] dark:text-white dark:shadow-black/30",
-        collapsed ? "w-[88px]" : "w-[304px]",
-      ].join(" ")}
-    >
-      <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-200 px-4 dark:border-white/10">
-        <Link href="/dashboard" onClick={onClose} className="flex min-w-0 items-center gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-            <Sparkles className="h-5 w-5" />
-          </span>
-
-          {!collapsed && (
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-black tracking-[0.28em]">AI COMMERCE</span>
-              <span className="block truncate text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-                Enterprise Admin
-              </span>
-            </span>
-          )}
-        </Link>
-
-        {!collapsed && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 lg:hidden dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
-            aria-label="Close sidebar"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        )}
+    <aside className={`ds-sidebar ${collapsed ? "collapsed" : ""} ${accentClass}`}>
+      <div className="ds-brand">
+        <i>AI</i>
+        <div>
+          <strong>{product}</strong>
+          <small>{subtitle}</small>
+        </div>
       </div>
 
-      {!collapsed && (
-        <div className="border-b border-slate-200 p-4 dark:border-white/10">
-          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-white/10 dark:bg-white/[0.04]">
-            <Search className="h-4 w-4 text-slate-400" />
-            <input
-              aria-label="Search admin menu"
-              placeholder="Search menu..."
-              className="w-full bg-transparent text-sm font-semibold outline-none placeholder:text-slate-400"
-            />
-          </div>
-        </div>
-      )}
+      <div className="ds-menu-search">Search menu...</div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4 [scrollbar-width:thin]">
-        <div className="space-y-2">
-          {groups.map((group) => {
-            const groupId = group.id || group.name;
-            const activeGroup = group.items.some((item) => isAdminNavActive(pathname || "", item.href));
-            const isOpen = collapsed || activeGroup || openGroups.has(groupId);
-
-            return (
-              <section key={groupId} className="rounded-3xl">
-                {collapsed ? (
-                  <div className="space-y-1">
-                    {group.items.map((item) => {
-                      const active = isAdminNavActive(pathname || "", item.href);
-
-                      return (
-                        <Link
-                          key={item.id || item.href}
-                          href={item.href}
-                          onClick={onClose}
-                          title={item.label || item.name}
-                          className={[
-                            "group flex items-center justify-center rounded-2xl px-3 py-2.5 text-sm font-bold transition",
-                            active
-                              ? "bg-slate-950 text-white shadow-lg shadow-slate-950/15 dark:bg-white dark:text-slate-950 dark:shadow-white/10"
-                              : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.07] dark:hover:text-white",
-                          ].join(" ")}
-                        >
-                          <IconByName
-                            name={item.icon}
-                            className={[
-                              "h-4 w-4 shrink-0",
-                              active ? "text-current" : "text-slate-400 group-hover:text-current dark:text-slate-500",
-                            ].join(" ")}
-                          />
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => toggleGroup(groupId)}
-                      className={[
-                        "flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-left transition",
-                        activeGroup
-                          ? "bg-slate-100 text-slate-950 dark:bg-white/[0.08] dark:text-white"
-                          : "text-slate-500 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-white",
-                      ].join(" ")}
-                      aria-expanded={isOpen}
-                    >
-                      <span className="flex min-w-0 items-center gap-2">
-                        <IconByName name={group.icon} className="h-4 w-4 shrink-0" />
-                        <span className="truncate text-[11px] font-black uppercase tracking-[0.2em]">
-                          {group.label || group.name}
-                        </span>
-                      </span>
-
-                      {isOpen ? (
-                        <ChevronDown className="h-4 w-4 shrink-0 transition-transform" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 shrink-0 transition-transform" />
-                      )}
-                    </button>
-
-                    <div
-                      className={[
-                        "grid transition-all duration-300",
-                        isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-                      ].join(" ")}
-                    >
-                      <div className="overflow-hidden">
-                        <div className="mt-1 space-y-1 pb-2">
-                          {group.items.map((item) => {
-                            const active = isAdminNavActive(pathname || "", item.href);
-
-                            return (
-                              <Link
-                                key={item.id || item.href}
-                                href={item.href}
-                                onClick={onClose}
-                                className={[
-                                  "group ml-2 flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-sm font-bold transition",
-                                  active
-                                    ? "bg-slate-950 text-white shadow-lg shadow-slate-950/15 dark:bg-white dark:text-slate-950 dark:shadow-white/10"
-                                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.07] dark:hover:text-white",
-                                ].join(" ")}
-                              >
-                                <span className="flex min-w-0 items-center gap-3">
-                                  <IconByName
-                                    name={item.icon}
-                                    className={[
-                                      "h-4 w-4 shrink-0",
-                                      active ? "text-current" : "text-slate-400 group-hover:text-current dark:text-slate-500",
-                                    ].join(" ")}
-                                  />
-                                  <span className="truncate">{item.label || item.name}</span>
-                                </span>
-
-                                {item.badge && (
-                                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black text-emerald-600 dark:text-emerald-300">
-                                    {item.badge}
-                                  </span>
-                                )}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </section>
-            );
-          })}
-        </div>
+      <nav>
+        {groups.map((group) => (
+          <section key={group.title}>
+            <h3>{group.title}</h3>
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.href;
+              return (
+                <Link href={item.href} key={item.href + item.label} className={active ? "active" : ""}>
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </section>
+        ))}
       </nav>
 
-      {!collapsed && (
-        <div className="shrink-0 border-t border-slate-200 p-4 dark:border-white/10">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[0.04]">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
-              Shell 3.0C.2
-            </p>
-            <p className="mt-1 text-sm font-bold text-slate-800 dark:text-slate-100">
-              Drawer Groups Active
-            </p>
-          </div>
+      <div className="ds-status">
+        <i>AI</i>
+        <div>
+          <strong>AI System Status</strong>
+          <small>{status}</small>
         </div>
-      )}
+        <b />
+      </div>
     </aside>
   );
 }
