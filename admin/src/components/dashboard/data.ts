@@ -53,6 +53,11 @@ export type DashboardModel = {
   status: Array<[string, string]>;
   tasks: Array<[string, string]>;
   activities: Array<[string, string, string]>;
+  salesTrend: Array<{ label: string; value: number }>;
+  customers: Array<[string, string, string]>;
+  inventory: Array<[string, string]>;
+  system: Array<[string, string]>;
+  store: Array<[string, string]>;
 };
 
 export const unavailable = "Unavailable";
@@ -80,7 +85,7 @@ export const superDashboard: DashboardModel = {
   accent: "super",
   mode: "super",
   eyebrow: "Super Admin Enterprise Command",
-  title: "Good Evening",
+  title: "Platform Command Center",
   subtitle: "AI Copilot command center uses live platform APIs only.",
   dateLabel: "Live API",
   actionLabel: "Quick Actions",
@@ -89,31 +94,31 @@ export const superDashboard: DashboardModel = {
   warning: "Unavailable widgets are intentionally not estimated or demo-filled.",
   sources: baseSources,
   metrics: [
-    unavailableMetric("Platform Revenue", WalletCards, "/api/dashboard/summary", "cyan"),
-    unavailableMetric("Total Orders", ShoppingBag, "/api/dashboard/summary", "purple"),
-    unavailableMetric("Products", Package, "/api/dashboard/summary", "cyan"),
-    unavailableMetric("Customers", Users, "/api/dashboard/summary", "green"),
-    unavailableMetric("Roles", ShieldCheck, "/api/roles", "purple"),
-    unavailableMetric("Permissions", KeyRound, "/api/permissions", "cyan"),
+    unavailableMetric("AI Features", Bot, "/api/ai-control/dashboard", "green"),
+    unavailableMetric("AI Providers", Database, "/api/ai-control/dashboard", "cyan"),
+    unavailableMetric("Enabled Features", ShieldCheck, "/api/ai-control/dashboard", "green"),
+    unavailableMetric("Enabled Providers", Activity, "/api/ai-control/dashboard", "purple"),
+    unavailableMetric("Usage Events", Gauge, "/api/ai-control/dashboard", "yellow"),
+    unavailableMetric("Active Overrides", KeyRound, "/api/ai-control/dashboard", "red"),
   ],
   smallMetrics: [
-    unavailableMetric("Low Stock", AlertTriangle, "/api/dashboard/summary", "yellow"),
-    unavailableMetric("Out of Stock", AlertTriangle, "/api/inventory/out-of-stock", "red"),
-    unavailableMetric("Notifications", Bell, "/api/notifications/unread-count", "cyan"),
-    unavailableMetric("Menu Sections", Menu, "Role navigation registry", "purple"),
     unavailableMetric("API Health", Activity, "/api/health", "green"),
-    unavailableMetric("AI Providers", Bot, "/api/ai-control/dashboard", "purple"),
-    unavailableMetric("System Monitor", Gauge, "Monitoring API", "cyan"),
+    unavailableMetric("Roles", Users, "/api/roles", "cyan"),
+    unavailableMetric("Permissions", ShieldCheck, "/api/permissions", "green"),
+    unavailableMetric("AI Features", Bot, "/api/ai-control/dashboard", "purple"),
+    unavailableMetric("AI Providers", Database, "/api/ai-control/dashboard", "yellow"),
+    unavailableMetric("Usage Logs", Activity, "/api/ai-control/dashboard", "cyan"),
+    unavailableMetric("Overrides", KeyRound, "/api/ai-control/dashboard", "red"),
   ],
   overview: [
-    ["Platform Overview", unavailable, "unavailable", "/api/dashboard/summary"],
-    ["Products", unavailable, "unavailable", "/api/dashboard/summary"],
-    ["Orders", unavailable, "unavailable", "/api/dashboard/summary"],
-    ["Customers", unavailable, "unavailable", "/api/dashboard/summary"],
+    ["Platform API", unavailable, "unavailable", "/api/health"],
     ["Roles", unavailable, "unavailable", "/api/roles"],
     ["Permissions", unavailable, "unavailable", "/api/permissions"],
+    ["AI Features", unavailable, "unavailable", "/api/ai-control/dashboard"],
+    ["AI Providers", unavailable, "unavailable", "/api/ai-control/dashboard"],
+    ["Usage Events", unavailable, "unavailable", "/api/ai-control/dashboard"],
     ["Role Menu Coverage", "Configured", "available", "Local role registry"],
-    ["Recent Activity", unavailable, "unavailable", "/api/audit-logs"],
+    ["Active Overrides", unavailable, "unavailable", "/api/ai-control/dashboard"],
   ],
   insights: [],
   products: [],
@@ -121,6 +126,11 @@ export const superDashboard: DashboardModel = {
   status: [],
   tasks: [],
   activities: [],
+  salesTrend: [],
+  customers: [],
+  inventory: [],
+  system: [],
+  store: [],
 };
 
 export const adminDashboard: DashboardModel = {
@@ -128,7 +138,7 @@ export const adminDashboard: DashboardModel = {
   accent: "admin",
   mode: "commerce",
   eyebrow: "Store Operations",
-  title: "Welcome back, Admin",
+  title: "Store Command Center",
   subtitle: "Here is what is happening with your store from live APIs.",
   dateLabel: "Live API",
   actionLabel: "Export Report",
@@ -157,15 +167,21 @@ export const adminDashboard: DashboardModel = {
     ["Unpaid Orders", unavailable],
   ],
   activities: [],
+  salesTrend: [],
+  customers: [],
+  inventory: [],
+  system: [],
+  store: [],
 };
 
 export const managerDashboard: DashboardModel = {
   ...adminDashboard,
   role: "MANAGER",
   accent: "manager",
-  eyebrow: "Store Manager Workspace",
-  title: "Welcome back, User Admin",
-  roleLabel: "User Admin",
+  eyebrow: "Store Operations",
+  title: "Operations Command Center",
+  subtitle: "Manage daily store operations within assigned permissions using live APIs.",
+  roleLabel: "Manager",
   themeLabel: "Green",
   warning: "Manager view hides platform/security/provider controls and only shows live store data.",
   metrics: [
@@ -190,5 +206,12 @@ export function cloneDashboard(model: DashboardModel): DashboardModel {
     status: model.status.map((row) => [...row] as [string, string]),
     tasks: model.tasks.map((row) => [...row] as [string, string]),
     activities: model.activities.map((row) => [...row] as [string, string, string]),
+    salesTrend: model.salesTrend.map((point) => ({ ...point })),
+    customers: model.customers.map((row) => [...row] as [string, string, string]),
+    inventory: model.inventory.map((row) => [...row] as [string, string]),
+    system: model.system.map((row) => [...row] as [string, string]),
+    store: model.store.map((row) => [...row] as [string, string]),
   };
 }
+
+

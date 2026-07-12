@@ -1,4 +1,4 @@
-﻿.env
+.env
 .env.*
 !.env.example
 node_modules/
@@ -27,3 +27,8 @@ server/uploads/
 *.bak
 
 
+
+.turbo/
+build/
+*.pem
+*.key

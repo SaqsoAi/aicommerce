@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Heart,
@@ -18,6 +18,7 @@ const nav = [
   { label: "Home", href: "/", desc: "Premium homepage" },
   { label: "Shop", href: "/shop", desc: "All products" },
   { label: "Lookbook", href: "/lookbook", desc: "Style stories" },
+  { label: "Size Guide", href: "/size-guide", desc: "Find your fit" },
   { label: "Try-On", href: "/virtual-tryon", desc: "AI fitting room" },
 ];
 
@@ -74,10 +75,23 @@ function HeaderLogo() {
 
 export default function SaqsoHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#030303]/95 shadow-[0_22px_80px_rgba(0,0,0,.55)] backdrop-blur-2xl">
+      <header
+        className={[
+          "fixed inset-x-0 top-0 z-50 border-b border-white/10 transition-all duration-300",
+          scrolled ? "bg-[#030303]/82 shadow-none backdrop-blur-2xl" : "bg-[#030303]/48 shadow-none backdrop-blur-xl",
+        ].join(" ")}
+      >
         <div className="mx-auto flex h-[var(--ai-header-h-mobile)] max-w-[1680px] items-center justify-between gap-2 px-3 sm:h-[var(--ai-header-h-tablet)] sm:px-5 lg:h-[var(--ai-header-h-desktop)] lg:px-14">
           <Link href="/" onClick={() => setMobileOpen(false)} className="min-w-0 shrink-0">
             <HeaderLogo />
@@ -178,5 +192,3 @@ export default function SaqsoHeader() {
     </>
   );
 }
-
-

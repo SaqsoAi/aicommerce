@@ -31,7 +31,7 @@ function initials(name: string) {
   return ((words[0]?.[0] || "U") + (words[1]?.[0] || "A")).toUpperCase();
 }
 
-export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
+export default function Topbar({ onToggleSidebar, sidebarExpanded = false }: { onToggleSidebar?: () => void; sidebarExpanded?: boolean }) {
   const [user, setUser] = useState<UserSession>({});
   const [profileOpen, setProfileOpen] = useState(false);
   const [setup, setSetup] = useState<string | null>(null);
@@ -40,11 +40,24 @@ export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => vo
     document.documentElement.classList.remove("light");
     document.documentElement.classList.add("dark");
     localStorage.setItem("admin-theme", "dark");
-    setUser(readUser());
+
+    const refreshUser = () => setUser(readUser());
+    refreshUser();
+    window.addEventListener("storage", refreshUser);
+    window.addEventListener("auth:changed", refreshUser);
+    window.addEventListener("role:changed", refreshUser);
+    window.addEventListener("focus", refreshUser);
+    return () => {
+      window.removeEventListener("storage", refreshUser);
+      window.removeEventListener("auth:changed", refreshUser);
+      window.removeEventListener("role:changed", refreshUser);
+      window.removeEventListener("focus", refreshUser);
+    };
   }, []);
 
   const name = useMemo(() => user.name || user.email || "Signed-in User", [user.name, user.email]);
   const role = useMemo(() => normalizeRole(user.role), [user.role]);
+  const isSuperAdmin = role === "Super Admin";
 
   function go(path: string) {
     window.location.href = path;
@@ -59,12 +72,15 @@ export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => vo
   return (
     <header className="ds-topbar">
       <div className="ds-topbar-left">
-        <button type="button" className="ds-square" onClick={onToggleSidebar} aria-label="Toggle sidebar">
-          <Menu size={22} />
+        <button type="button" className="ds-square ds-sidebar-toggle" onClick={onToggleSidebar} aria-label="Toggle sidebar" aria-controls="admin-primary-navigation" aria-expanded={sidebarExpanded}>
+          <Menu size={21} aria-hidden="true" />
         </button>
-        <div className="ds-title">
-          <span>{role}</span>
-          <strong>Dashboard</strong>
+        <div className={`ds-topbar-brand ${isSuperAdmin ? "super" : role === "Admin" ? "admin" : "manager"}`}>
+          <i>AI</i>
+          <span>
+            <strong>{isSuperAdmin ? "AICopilot" : "AI-Commerce"}</strong>
+            <small>{isSuperAdmin ? "Super Admin - AI Development Copilot" : role === "Admin" ? "Admin Dashboard" : "User Admin Dashboard"}</small>
+          </span>
         </div>
       </div>
 
@@ -124,3 +140,6 @@ export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => vo
     </header>
   );
 }
+
+
+

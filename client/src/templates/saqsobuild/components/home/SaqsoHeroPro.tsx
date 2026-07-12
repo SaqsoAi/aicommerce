@@ -106,7 +106,7 @@ export default function SaqsoHeroPro() {
   if (!hero) return null;
 
   return (
-    <section className="relative h-[calc(100svh-72px)] min-h-[690px] overflow-hidden bg-black text-white md:h-screen">
+    <section className="relative overflow-hidden bg-black text-white h-[100svh] sm:h-[100svh] lg:h-screen">
       {image ? (
         <img
           src={image}
@@ -114,36 +114,36 @@ export default function SaqsoHeroPro() {
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover brightness-[1.03] contrast-[1.04] saturate-[1.08]"
+          className="absolute inset-0 h-full w-full object-cover brightness-[0.86] contrast-[1.04] saturate-[1.02]"
         />
       ) : null}
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/8 via-black/8 to-black/32" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/45" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/38 via-black/8 to-transparent" />
 
-      <div className="relative z-10 flex h-full items-end px-5 pb-[92px] sm:px-8 md:items-center md:px-12 md:pb-0 lg:px-20">
+      <div className="relative z-10 flex h-full min-h-full items-center px-5 py-0 sm:px-8 lg:px-12">
         <div className="w-full max-w-[min(92vw,640px)] md:max-w-2xl">
-          <h1 className="text-[40px] font-black leading-[0.96] tracking-[-0.035em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.42)] sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="max-w-3xl text-[36px] font-black leading-[0.98] tracking-[-0.04em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.42)] sm:text-5xl md:text-6xl lg:text-7xl">
             {hero.headline || `${brand.storeName} Essentials Are Here`}
           </h1>
 
-          <p className="mt-5 max-w-[min(92vw,640px)] text-[17px] font-semibold leading-8 text-white/90 drop-shadow-[0_5px_18px_rgba(0,0,0,0.45)] sm:text-xl md:max-w-xl">
+          <p className="mt-0 max-w-xl text-sm font-semibold leading-6 text-white/90 drop-shadow-[0_5px_18px_rgba(0,0,0,0.45)] sm:text-base">
             {hero.subheadline ||
               `Discover premium collections from ${brand.storeName}`}
           </p>
 
-          <div className="mt-8 flex w-full max-w-[min(92vw,640px)] flex-col gap-4 md:max-w-[min(92vw,640px)]">
+          <div className="mt-0 flex w-full max-w-xl flex-col gap-3 sm:w-auto sm:flex-row">
             <Link
               href={hero.primaryCtaLink || "/shop"}
               style={{ backgroundColor: brand.primaryColor }}
-              className="inline-flex min-h-[46px] w-full items-center justify-center rounded-none px-6 py-3 text-base font-black text-white shadow-[0_16px_55px_rgba(199,75,33,0.26)] transition hover:brightness-110 md:min-h-[58px] md:rounded-md md:text-lg"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-md px-5 py-0 text-xs font-black uppercase tracking-[0.14em] text-white shadow-[0_16px_55px_rgba(199,75,33,0.26)] transition hover:brightness-110 sm:px-7"
             >
               {hero.primaryCtaLabel || "Shop Winter Collection"}
             </Link>
 
             <Link
               href={hero.secondaryCtaLink || "/lookbook"}
-              className="inline-flex min-h-[46px] w-full items-center justify-center rounded-none border border-white/85 bg-transparent px-6 py-3 text-base font-black text-white backdrop-blur-sm transition hover:bg-white hover:text-black md:min-h-[58px] md:rounded-md md:text-lg"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-md border border-white/85 bg-transparent px-5 py-0 text-xs font-black uppercase tracking-[0.14em] text-white backdrop-blur-sm transition hover:bg-white hover:text-black sm:px-7"
             >
               {hero.secondaryCtaLabel || "View Lookbook"}
             </Link>
@@ -169,4 +169,6 @@ export default function SaqsoHeroPro() {
     </section>
   );
 }
+
+
 

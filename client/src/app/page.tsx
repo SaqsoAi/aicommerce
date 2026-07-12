@@ -1,12 +1,5 @@
-﻿import TemplateRenderer
-from "@/builders/TemplateRenderer";
+import HomepageRuntimeOrchestrator from "@/components/homepage/HomepageRuntimeOrchestrator";
 
 export default function Home() {
-  return (
-    <TemplateRenderer
-      template="saqsobuild"
-    />
-  );
+  return <HomepageRuntimeOrchestrator />;
 }
-
-

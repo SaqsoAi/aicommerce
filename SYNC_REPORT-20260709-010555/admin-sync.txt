@@ -1,290 +1,0 @@
-
--------------------------------------------------------------------------------
-   ROBOCOPY     ::     Robust File Copy for Windows                              
--------------------------------------------------------------------------------
-
-  Started : Thursday, July 9, 2026 1:05:55 AM
-   Source : D:\AI-ECOMMERCE\admin\
-     Dest : D:\AI-ECOMMERCE\AI-CommerceLIVE\admin\
-
-    Files : *.*
-	    
-Exc Files : *.log
-	    *.tmp
-	    *.bak
-	    *.zip
-	    
- Exc Dirs : node_modules
-	    .next
-	    dist
-	    build
-	    coverage
-	    .git
-	    .turbo
-	    .cache
-	    .vscode
-	    logs
-	    tmp
-	    temp
-	    
-  Options : *.* /S /E /DCOPY:DA /COPY:DAT /R:2 /W:2 
-
-------------------------------------------------------------------------------
-
-	                  13	D:\AI-ECOMMERCE\admin\
-	                   6	D:\AI-ECOMMERCE\admin\public\
-	                   0	D:\AI-ECOMMERCE\admin\public\uploads\
-	                   0	D:\AI-ECOMMERCE\admin\public\uploads\hero\
-	                   1	D:\AI-ECOMMERCE\admin\src\
-	                   4	D:\AI-ECOMMERCE\admin\src\api\
-	                   4	D:\AI-ECOMMERCE\admin\src\app\
-	    Older     		   43357	globals.css100%  
-	    Older     		     144	page.tsx100%  
-	                   0	D:\AI-ECOMMERCE\admin\src\app\404\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-bug-detector\
-	    Older     		     225	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-chat\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-code-reviewer\
-	    Older     		     231	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-control-center\
-	    Older     		     227	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-creative-studio\
-	    Older     		    1871	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-development-copilot\
-	    Older     		     397	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-documentation\
-	    Older     		     226	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-marketing\
-	    Older     		    1885	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-performance\
-	    Older     		     229	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-recommendation\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-search\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-security-automation\
-	    Older     		    8329	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-social-manager\
-	    Older     		    5964	page.tsx100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\ai-virtual-tryon\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\analytics\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\audit-logs\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\auth-provider-center\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\automation-rules\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\automation-studio\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\brands\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\campaigns\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\categories\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\coupons\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\couriers\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\customer-intelligence\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\customer-profile-builder\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\customers\
-	                   2	D:\AI-ECOMMERCE\admin\src\app\dashboard\
-	    Older     		     170	page.tsx100%  
-	    Older     		    8793	role-dashboard.css100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\app\discount-policy\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-auth-identity\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-auth-providers\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-hero-studio\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-product-normalization\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\enterprise-store-settings\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\feature-flags\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\grn\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\help\
-	    Older     		     221	page.tsx100%  
-	                   5	D:\AI-ECOMMERCE\admin\src\app\heroes\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\heroes\create\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\heroes\[id]\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\heroes\[id]\edit\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\homepage-builder\
-	                   4	D:\AI-ECOMMERCE\admin\src\app\homepage-hero\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\import-center\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\inventory\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\landing-builder\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\landing-builder\[id]\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\landing-builder\[id]\edit\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\login\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\lookbooks\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\lookbooks\new\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\lookbooks\[id]\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\lookbooks\[id]\edit\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\media\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\media\library\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\media\upload\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\membership\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-banner\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-benefits\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\membership-settings\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-delivery-analytics\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-event-mapping\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\messaging-queue\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\notification-providers\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\notifications\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\omnichannel\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\orders\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\permissions\
-	                   2	D:\AI-ECOMMERCE\admin\src\app\product-engine\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\product-variants\
-	                   2	D:\AI-ECOMMERCE\admin\src\app\products\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\purchases\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\refunds\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\returns\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\reviews\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\rewards\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\roles\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\search\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\settings\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\settings\theme\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\size-fit-builder\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\sms-control-center\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\stock-adjustment\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\stock-transfer\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\store-settings\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\subcategories\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\subscriptions\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\super-admin\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\feature-flags\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\provider-control\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\super-admin\users\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\supplier-ledger\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\suppliers\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\
-	  *EXTRA File 		   10290	page.tsx
-	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\install\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\settings\
-	                   0	D:\AI-ECOMMERCE\admin\src\app\templates\switch\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\tenant-usage\
-	                   1	D:\AI-ECOMMERCE\admin\src\app\wishlist\
-	    Older     		    7737	page.tsx100%  
-	                   0	D:\AI-ECOMMERCE\admin\src\components\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\admin\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\admin\templates\
-	  *EXTRA File 		    2429	TemplateCard.tsx
-	                   1	D:\AI-ECOMMERCE\admin\src\components\audit\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\auth\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\barcode\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\brands\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\campaigns\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\categories\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\common\
-	                   6	D:\AI-ECOMMERCE\admin\src\components\dashboard\
-	*EXTRA Dir        -1	D:\AI-ECOMMERCE\AI-CommerceLIVE\admin\src\components\dashboard\cards\
-	*EXTRA Dir        -1	D:\AI-ECOMMERCE\AI-CommerceLIVE\admin\src\components\dashboard\widgets\
-	  *EXTRA File 		     687	AIInsights.tsx
-	  *EXTRA File 		     572	LowStockWidget.tsx
-	  *EXTRA File 		    1199	QuickActions.tsx
-	  *EXTRA File 		    1126	RecentOrders.tsx
-	  *EXTRA File 		    1265	RevenueChart.tsx
-	  *EXTRA File 		     926	StatsCards.tsx
-	    Older     		     776	ActionModal.tsx100%  
-	    Older     		    2354	charts.tsx100%  
-	    Older     		    1610	DashboardRouter.tsx100%  
-	    Older     		   12961	DashboardShell.tsx100%  
-	    Older     		    7193	data.ts100%  
-	    Older     		    7910	liveData.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\actions\
-	    Older     		     723	ActionResolver.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\config\
-	    Older     		     780	role.config.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\copilot\
-	    Older     		     184	CopilotResolver.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\engine\
-	    Older     		     449	DashboardEngine.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\components\dashboard\permissions\
-	    Older     		     277	PermissionResolver.ts100%  
-	                   2	D:\AI-ECOMMERCE\admin\src\components\dashboard\registry\
-	    Older     		     605	types.ts100%  
-	    Older     		    1149	WidgetRegistry.ts100%  
-	                   5	D:\AI-ECOMMERCE\admin\src\components\dashboard\role-wise\
-	    Older     		    1134	ActionModal.tsx100%  
-	    Older     		    2354	charts.tsx100%  
-	    Older     		     907	DashboardRouter.tsx100%  
-	    Older     		   11828	DashboardShell.tsx100%  
-	    Older     		    6982	data.ts100%  
-	                   7	D:\AI-ECOMMERCE\admin\src\components\hero\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\homepage-builder\
-	                   4	D:\AI-ECOMMERCE\admin\src\components\inventory\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\landing-builder\
-	                  11	D:\AI-ECOMMERCE\admin\src\components\layout\
-	  *EXTRA File 		    1143	adminSidebarTheme.ts
-	  *EXTRA File 		     547	SidebarEnterpriseFooter.tsx
-	  *EXTRA File 		     848	SidebarRoleCard.tsx
-	  *EXTRA File 		     288	SidebarSearch.tsx
-	    Older     		     347	AdminShellRouter.tsx100%  
-	    Older     		    1525	DashboardLayout.tsx100%  
-	    Older     		    3056	RoleThemeBinder.tsx100%  
-	    Older     		    7007	Sidebar.tsx100%  
-	    Older     		    4920	Topbar.tsx100%  
-	                   0	D:\AI-ECOMMERCE\admin\src\components\layout\_legacy-sidebar-backups\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\lookbook\
-	                   3	D:\AI-ECOMMERCE\admin\src\components\notifications\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\permissions\
-	                   6	D:\AI-ECOMMERCE\admin\src\components\products\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\purchases\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\quick-actions\
-	                   0	D:\AI-ECOMMERCE\admin\src\components\roles\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\search\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\settings\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\size-fit-builder\
-	                   5	D:\AI-ECOMMERCE\admin\src\components\store-settings\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\subcategories\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\suppliers\
-	                   1	D:\AI-ECOMMERCE\admin\src\components\theme\
-	    Older     		     547	RoleThemeBinder.tsx100%  
-	                  17	D:\AI-ECOMMERCE\admin\src\components\ui\
-	                   2	D:\AI-ECOMMERCE\admin\src\components\upload\
-	                   1	D:\AI-ECOMMERCE\admin\src\constants\
-	                   1	D:\AI-ECOMMERCE\admin\src\data\
-	                   1	D:\AI-ECOMMERCE\admin\src\hooks\
-	                  15	D:\AI-ECOMMERCE\admin\src\lib\
-	    Older     		    6114	adminRoleNavigation.ts100%  
-	    Older     		     917	aiCreativeStudio.ts100%  
-	    Older     		     897	aiMarketingAutomation.ts100%  
-	    Older     		    1424	aiPersonalization.ts100%  
-	    Older     		    1925	dashboardCurrency.ts100%  
-	    Older     		    7755	dashboardRealData.ts100%  
-	    Older     		    2351	dashboardRoleTheme.ts100%  
-	    Older     		    1378	dashboardWidgetRegistry.ts100%  
-	    Older     		    1230	enterpriseBI.ts100%  
-	                   3	D:\AI-ECOMMERCE\admin\src\lib\ai\
-	    Older     		     446	aiSearchPlatformNotes.ts100%  
-	    Older     		     490	aiSocialManagerNotes.ts100%  
-	    Older     		    1709	developmentCopilot.ts100%  
-	                   2	D:\AI-ECOMMERCE\admin\src\lib\branding\
-	                   4	D:\AI-ECOMMERCE\admin\src\lib\dashboard\
-	    Older     		    9414	dashboardApi.ts100%  
-	    Older     		     745	dashboardTypes.ts100%  
-	    Older     		    1858	dashboardWidgets.ts100%  
-	    Older     		    4188	enterpriseWidgetRegistry.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\lib\theme\
-	    Older     		    1188	roleTheme.ts100%  
-	                   1	D:\AI-ECOMMERCE\admin\src\providers\
-	                  43	D:\AI-ECOMMERCE\admin\src\services\
-	                   3	D:\AI-ECOMMERCE\admin\src\store\
-	                   1	D:\AI-ECOMMERCE\admin\src\styles\
-	    Older     		   24707	dashboard-system.css100%  
-	                   8	D:\AI-ECOMMERCE\admin\src\styles\tokens\
-	    Older     		     852	colors.css100%  
-	    Older     		    4456	components.css100%  
-	    Older     		     266	index.css100%  
-	    Older     		     328	motion.css100%  
-	    Older     		     112	radius.css100%  
-	    Older     		     181	shadows.css100%  
-	    Older     		     287	spacing.css100%  
-	    Older     		     290	typography.css100%  
-	                   3	D:\AI-ECOMMERCE\admin\src\types\
-	                   1	D:\AI-ECOMMERCE\admin\src\utils\
-
-------------------------------------------------------------------------------
-
-               Total    Copied   Skipped  Mismatch    FAILED    Extras
-    Dirs :       165         0       165         0         0         2
-   Files :       310        66       244         0         0        14
-   Bytes :    1.75 m   227.6 k    1.52 m         0         0    93.0 k
-   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
-
-
-   Speed :            15539466 Bytes/sec.
-   Speed :             889.175 MegaBytes/min.
-   Ended : Thursday, July 9, 2026 1:05:55 AM
-

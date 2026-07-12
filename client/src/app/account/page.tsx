@@ -1,273 +1,291 @@
-// PHASE_3_2_TOP_RISK_HARDENED
-/* PHASE_3_1_RESPONSIVE_GUARD */
-"use client";
-
-
-
-
-import AccountRealDataDashboard from "@/components/account/AccountRealDataDashboard";
-import CustomerAccountSidebarWidgets from "@/components/account/CustomerAccountSidebarWidgets";
-import CustomerAccountRealDataSections from "@/components/account/CustomerAccountRealDataSections";
-import { useBrand } from "@/providers/BrandProvider";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  ChevronRight,
-  CreditCard,
-  Gift,
-  Heart,
-  HelpCircle,
-  Home,
-  LogOut,
-  MapPin,
-  Package,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-  Tag,
-  User,
-} from "lucide-react";
+import { getAccountDashboard } from "@/api/account.api";
+import { AccountGlyph, AccountPageShell } from "./_components/AccountClientUi";
+import LocalStorageAvatar from "./_components/LocalStorageAvatar";
 
-type AccountUser = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-};
+type AnyRecord = Record<string, any>;
 
-const menu = [
-  { label: "Overview", icon: Home, active: true },
-  { label: "Order History", icon: Box },
-  { label: "Wishlist", icon: Heart },
-  { label: "Style Profile", icon: User },
-  { label: "Rewards", icon: Gift },
-  { label: "Addresses", icon: MapPin },
-  { label: "Payment Methods", icon: CreditCard },
-  { label: "Settings", icon: Settings },
-];
+function currency(value: unknown) {
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount)) return "Tk 0";
+  return `Tk ${amount.toLocaleString("en-BD")}`;
+}
 
-const quick = [
-  { label: "Track Orders", sub: "View order status", icon: Package, tone: "text-blue-400 bg-blue-500/10" },
-  { label: "My Wishlist", sub: "12 saved items", icon: Heart, tone: "text-pink-400 bg-pink-500/10" },
-  { label: "Size Guide", sub: "Find perfect fit", icon: Tag, tone: "text-green-400 bg-green-500/10" },
-  { label: "Style Quiz", sub: "Update preferences", icon: Sparkles, tone: "text-violet-400 bg-violet-500/10" },
-  { label: "My Rewards", sub: "Redeem points", icon: Gift, tone: "text-orange-400 bg-orange-500/10" },
-  { label: "Get Help", sub: "24/7 support", icon: HelpCircle, tone: "text-sky-400 bg-sky-500/10" },
-];
+function normalizeUploadUrl(url: unknown) {
+  if (!url || typeof url !== "string") return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/uploads")) return `http://localhost:5000${url}`;
+  return url;
+}
 
-export default function AccountPage() {
-  const { brand } = useBrand();
-  const [user, setUser] = useState<AccountUser | null>(null);
-  const [ready, setReady] = useState(false);
+function getDisplayName(profile: AnyRecord) {
+  return profile?.displayName || profile?.name || profile?.email || "Test Customer";
+}
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (!token) {
-      window.location.href = "/login?returnUrl=/account";
-      return;
-    }
-
-    if (savedUser) {
-      try { setUser(JSON.parse(savedUser)); } catch { setUser(null); }
-    }
-
-    setReady(true);
-  }, []);
-
-  const name = user?.name || "Sarah Johnson";
-  const initials = useMemo(() => {
-    return name.split(" ").map((x) => x[0]).join("").slice(0, 2).toUpperCase();
-  }, [name]);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
-    window.location.href = "/";
-  };
-
-  if (!ready) {
-    return (
-      <main className="account-real-data-dashboard-hide-old flex min-min-min-h-screen items-center justify-center bg-[#070707] text-white">
-      <div data-account-brand-panel className="mb-6 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-slate-200 dark:border-white/10 dark:bg-white/[0.045] transition-colors duration-200 motion-reduce:transition-none">
-        <div className="flex items-center gap-4">
-          {brand.logoUrl ? (
-            <img src={brand.logoUrl} alt={brand.storeName} className="h-12 w-12 rounded-2xl bg-white object-contain p-1" />
-          ) : null}
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.26em] text-zinc-500">{brand.storeName} Account</p>
-            <p className="mt-1 text-sm font-semibold text-zinc-500">
-              {brand.contactPhone || brand.contactEmail || "Premium account support ready"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-        <p className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white/[0.05] px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-slate-400 dark:text-white/60 transition-colors duration-200 motion-reduce:transition-none">
-          Loading ${brand.storeName} Account
-        </p>
-      </main>
-    );
-  }
-
+function initials(name: string) {
   return (
-    <main className="account-real-data-dashboard-hide-old min-min-min-h-screen bg-[#070707] pb-24 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-8 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-4 sm:px-6 lg:px-10">
-        <section className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-r from-[#27231e] to-[#8a714c] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.28)] md:p-8 transition-colors duration-200 motion-reduce:transition-none">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between enterprise-mobile-stack">
-            <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white text-2xl font-black text-black transition-colors duration-200 motion-reduce:transition-none">
-                {initials}
-              </div>
-              <div>
-                <h1 className="text-2xl font-black md:text-xl sm:text-2xl lg:text-xl sm:text-2xl lg:text-xl sm:text-2xl lg:text-3xl">Welcome back, {name}!</h1>
-                <p className="mt-1 text-sm font-medium text-white/75">Member since March 2022</p>
-                <p data-account-brand-note className="mt-1 text-xs font-bold text-white/55">{brand.storeName} member support: {brand.contactPhone || brand.contactEmail || "Ready"}</p>
-              </div>
-            </div>
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "TC"
+  );
+}
 
-            <div className="flex gap-6 md:text-right">
-              <div>
-                <p className="text-xl sm:text-2xl lg:text-xl sm:text-2xl lg:text-xl sm:text-2xl lg:text-3xl font-black">2,450</p>
-                <p className="text-sm text-white/75">Style Points</p>
-              </div>
-              <div className="border-l border-white/20 pl-6">
-                <p className="text-lg font-black">Gold</p>
-                <p className="text-sm text-white/75">Member Tier</p>
-              </div>
-            </div>
-          </div>
-        </section>
+function memberSince(profile: AnyRecord) {
+  const value = profile?.joinedAt || profile?.createdAt || profile?.memberSince;
+  if (!value) return "March 2022";
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr] enterprise-mobile-stack">
-          <aside className="hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] lg:block transition-colors duration-200 motion-reduce:transition-none">
-            <div className="space-y-1">
-              {menu.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button type="button"
-                    key={item.label}
-                    className={[
-                      "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition",
-                      item.active ? "text-white" : "text-slate-600 dark:text-white/70 hover:bg-white/[0.07] hover:text-white",
-                    ].join(" ")}
-                  >
-                    <Icon size={17} />
-                    {item.label}
-                  </button>
-                );
-              })}
-              <button type="button" onClick={logout} className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-slate-600 dark:text-white/70 hover:bg-white/[0.07] hover:text-white">
-                <LogOut size={17} />
-                Sign Out
-              </button>
-<CustomerAccountSidebarWidgets />
-            </div>
-          </aside>
+  try {
+    return new Date(value).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return "March 2022";
+  }
+}
 
-          <section className="space-y-6">
-            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
-              <div className="flex items-center justify-between enterprise-mobile-stack">
-                <h2 className="text-xl font-black">Quick Actions</h2>
-                <Link href="/shop" className="text-sm font-bold text-white/55 hover:text-white">View All</Link>
-              </div>
+function orderCode(order: AnyRecord, index: number) {
+  const raw =
+    order?.orderNumber ||
+    order?.orderNo ||
+    order?.code ||
+    order?.id ||
+    `SH20240${index + 1}`;
 
-              <div className="mt-5 enterprise-responsive-guard grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 enterprise-mobile-stack">
-                {quick.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button type="button" key={item.label} className="rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.04] p-4 text-center transition hover:-translate-y-1 hover:bg-white/[0.07] transition-colors duration-200 motion-reduce:transition-none">
-                      <div className={["mx-auto flex h-10 w-10 items-center justify-center rounded-xl", item.tone].join(" ")}>
-                        <Icon size={20} />
-                      </div>
-                      <p className="mt-3 text-sm font-black">{item.label}</p>
-                      <p className="mt-1 text-xs text-white/45">{item.sub}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+  const text = String(raw);
+  return text.startsWith("#") ? text : `#${text.slice(-8).toUpperCase()}`;
+}
 
-            <div className="grid gap-6 xl:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 enterprise-mobile-stack">
-              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
-                <div className="flex items-center justify-between enterprise-mobile-stack">
-                  <h2 className="text-xl font-black">Recent Orders</h2>
-                  <Link href="/orders" className="text-sm font-bold text-white/55 hover:text-white">View All Orders</Link>
-                </div>
+function orderStatus(order: AnyRecord) {
+  return String(order?.status || order?.orderStatus || "Processing").replaceAll("_", " ");
+}
 
-                <div className="mt-5 space-y-3">
-                  {[["#SH2024001","Delivered","2 items Ã‚Â· $189.99"],["#SH2024002","Shipped","3 items Ã‚Â· $299.50"],["#SH2024003","Processing","1 item Ã‚Â· $125.00"]].map((order) => (
-                    <div key={order[0]} className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4 enterprise-mobile-stack transition-colors duration-200 motion-reduce:transition-none">
-                      <div>
-                        <p className="font-black">Order {order[0]}</p>
-                        <p className="mt-1 text-sm text-slate-400 dark:text-white/60">{order[2]}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-300">{order[1]}</span>
-                        <ChevronRight size={18} className="text-white/35" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+function orderItems(order: AnyRecord) {
+  const count = Number(
+    order?.itemCount ||
+      order?.itemsCount ||
+      order?.items?.length ||
+      order?.orderItems?.length ||
+      1
+  );
 
-              <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
-                <div className="flex items-center justify-between enterprise-mobile-stack">
-                  <div>
-                    <h2 className="text-xl font-black">My Wishlists</h2>
-                    <p className="text-sm text-white/45">6 items saved</p>
-                  </div>
-                  <button type="button" className="text-sm font-bold text-slate-600 dark:text-white/70">+ New List</button>
-                </div>
+  return `${count} ${count === 1 ? "item" : "items"}`;
+}
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 enterprise-mobile-stack">
-                  {["Saved Wishlist","Saved Wishlist","Special Occasions"].map((x) => (
-                    <div key={x} className="rounded-xl border border-slate-200 dark:border-white/10 bg-[#111114] border border-white/10 text-white shadow-[0_16px_45px_rgba(225,29,72,0.35)] dark:bg-[#18181b] text-white border border-white/10 dark:bg-black dark:text-white dark:text-white/20 p-4 transition-colors duration-200 motion-reduce:transition-none">
-                      <Heart size={16} className="ml-auto text-white/70" />
-                      <p className="mt-5 font-black">{x}</p>
-                      <p className="mt-2 text-xs text-white/45">Real wishlist data will appear here</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+function orderTotal(order: AnyRecord) {
+  return order?.totalAmount || order?.total || order?.amount || order?.grandTotal || 0;
+}
 
-            <div className="rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)] md:p-6 transition-colors duration-200 motion-reduce:transition-none">
-              <div className="flex items-center justify-between enterprise-mobile-stack">
-                <div>
-                  <h2 className="text-xl font-black">Recommended for You</h2>
-                  <p className="text-sm text-white/45">Based on your style profile and purchase history</p>
-                </div>
-                <Link href="/shop" className="text-sm font-bold text-white/55 hover:text-white">View All</Link>
-              </div>
+function wishlistTitle(item: AnyRecord, index: number) {
+  return item?.name || item?.title || item?.product?.name || `Saved Wishlist ${index + 1}`;
+}
 
-              <div className="mt-5 grid gap-4 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 lg:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 enterprise-mobile-stack">
-                {["Cashmere Turtleneck","Midi Wrap Dress","Leather Ankle Boots"].map((x) => (
-                  <div key={x}>
-                    <div className="aspect-[4/3] rounded-xl border border-slate-200 dark:border-white/10 bg-white/[0.07] transition-colors duration-200 motion-reduce:transition-none" />
-                    <p className="mt-3 font-black">{x}</p>
-                    <p className="text-sm text-white/45">Luxury Essentials</p>
-                    <p className="mt-1 font-black">$149.99</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </main>
+function productTitle(item: AnyRecord) {
+  return item?.name || item?.product?.name || item?.title || "Recommended Product";
+}
+
+function productPrice(item: AnyRecord) {
+  return item?.discountPrice || item?.price || item?.product?.price || 0;
+}
+
+function productImage(item: AnyRecord) {
+  return normalizeUploadUrl(
+    item?.thumbnail ||
+      item?.image ||
+      item?.imageUrl ||
+      item?.url ||
+      item?.images?.[0]?.url ||
+      item?.product?.thumbnail ||
+      item?.product?.image ||
+      item?.product?.imageUrl ||
+      item?.product?.url ||
+      item?.product?.images?.[0]?.url ||
+      item?.product?.media?.[0]?.url
   );
 }
 
 
+export default async function AccountOverviewPage() {
+  let dashboard: AnyRecord | null = null;
+  let error = "";
 
+  try {
+    dashboard = await getAccountDashboard();
+  } catch (err) {
+    error = err instanceof Error ? err.message : "Unable to load account dashboard";
+  }
 
+  const profile = dashboard?.profile || {};
+  const name = getDisplayName(profile);
+  const membership = dashboard?.membership || {};
+  const rewards = dashboard?.rewards || {};
+  const loyaltyPoints = Number(membership?.stylePoints || rewards?.balance || 2450);
+  const membershipTier = String(membership?.tier || "Gold");
+  const recentOrders = Array.isArray(dashboard?.recentOrders) ? dashboard.recentOrders : [];
+  const wishlist = Array.isArray(dashboard?.wishlist) ? dashboard.wishlist : [];
+  const recommendations = Array.isArray(dashboard?.recommendations) ? dashboard.recommendations : [];
+  const avatarUrl = normalizeUploadUrl(profile?.avatarUrl || profile?.avatar);
 
+  const quickActions = [
+    { title: "Track Orders", subtitle: "View order status", href: "/account/orders", icon: "box", tone: "blue" },
+    { title: "My Wishlist", subtitle: `${wishlist.length || 0} saved items`, href: "/account/wishlist", icon: "heart", tone: "pink" },
+    { title: "Size Guide", subtitle: "Find perfect fit", href: "/size-fit-center", icon: "pin", tone: "green" },
+    { title: "Style Quiz", subtitle: "Update preferences", href: "/account/style-profile", icon: "spark", tone: "violet" },
+    { title: "My Rewards", subtitle: "Redeem points", href: "/account/rewards", icon: "gift", tone: "amber" },
+    { title: "Get Help", subtitle: "24/7 support", href: "/account/support", icon: "help", tone: "cyan" },
+  ];
 
+  const fallbackOrders = [
+    { id: "SH2024001", itemCount: 2, totalAmount: 189.99, status: "Delivered" },
+    { id: "SH2024002", itemCount: 3, totalAmount: 299.5, status: "Shipped" },
+    { id: "SH2024003", itemCount: 1, totalAmount: 125, status: "Processing" },
+  ];
 
+  const fallbackWishlist = [
+    { title: "Work Wardrobe", updated: "2 days ago" },
+    { title: "Weekend Looks", updated: "1 week ago" },
+    { title: "Special Occasions", updated: "Recently" },
+  ];
 
+  const fallbackRecommendations = [
+    { name: "Cashmere Turtleneck", price: 149.99, brand: "Luxury Essentials" },
+    { name: "Midi Wrap Dress", price: 149.99, brand: "Luxury Essentials" },
+    { name: "Leather Ankle Boots", price: 149.99, brand: "Luxury Essentials" },
+  ];
 
+  return (
+    <AccountPageShell active="Overview" eyebrow="" title="" description="">
+      {error && <div className="account-lux-notice">Account API fallback: {error}</div>}
 
+      <section className="account-hero-widget account-hero-widget-clean">
+        <LocalStorageAvatar fallback={initials(name)} name={name} className="account-avatar" />
+        <div className="account-hero-copy">
+          <h1>Welcome back, {name}!</h1>
+          <p>Member since {memberSince(profile)}</p>
+          <p className="account-support-ready">ISRA LIFESTYLE member support: Ready</p>
+        </div>
+
+        <div className="account-hero-stats">
+          <div>
+            <strong>{loyaltyPoints.toLocaleString("en-BD")}</strong>
+            <span>Style Points</span>
+          </div>
+          <div className="account-stat-divider" />
+          <div>
+            <strong>{membershipTier}</strong>
+            <span>Member Tier</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="account-quick-actions account-widget-panel">
+        <div className="account-section-head">
+          <h2>Quick Actions</h2>
+          <Link href="/account/settings">View All</Link>
+        </div>
+
+        <div className="account-action-grid">
+          {quickActions.map((action) => (
+            <Link
+              key={action.title}
+              href={action.href}
+              className={`account-action-card account-tone-${action.tone}`}
+            >
+              <span className="account-action-icon"><AccountGlyph icon={action.icon} /></span>
+              <strong>{action.title}</strong>
+              <small>{action.subtitle}</small>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="account-widget-panel account-order-panel">
+        <div className="account-section-head">
+          <h2>Recent Orders</h2>
+          <Link href="/account/orders">View All Orders</Link>
+        </div>
+
+        <div className="account-order-list">
+          {(recentOrders.length ? recentOrders.slice(0, 3) : fallbackOrders).map(
+            (order: AnyRecord, index: number) => (
+              <Link href="/account/orders" key={order?.id || index} className="account-order-row">
+                <div>
+                  <strong>Order {orderCode(order, index)}</strong>
+                  <span>
+                    {orderItems(order)}, {currency(orderTotal(order))}
+                  </span>
+                </div>
+                <em>{orderStatus(order)}</em>
+                <span className="account-row-arrow">&gt;</span>
+              </Link>
+            )
+          )}
+        </div>
+      </section>
+
+      <section className="account-widget-panel">
+        <div className="account-section-head">
+          <div>
+            <h2>My Wishlists</h2>
+            <p>{wishlist.length || 0} items saved</p>
+          </div>
+          <Link href="/account/wishlist">+ New List</Link>
+        </div>
+
+        <div className="account-wishlist-grid">
+          {(wishlist.length ? wishlist.slice(0, 3) : fallbackWishlist).map(
+            (item: AnyRecord, index: number) => (
+              <Link href="/account/wishlist" key={item?.id || index} className="account-wishlist-card">
+                {productImage(item) && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="account-wishlist-thumb" src={productImage(item)} alt={wishlistTitle(item, index)} />
+                )}
+                <span className="account-wishlist-heart"><AccountGlyph icon="heart" /></span>
+                <strong>{wishlistTitle(item, index)}</strong>
+                <small>{item?.updated || item?.product?.name || item?.productId || "Saved product collection"}</small>
+              </Link>
+            )
+          )}
+        </div>
+      </section>
+
+      <section className="account-widget-panel">
+        <div className="account-section-head">
+          <div>
+            <h2>Recommended For You</h2>
+            <p>Based on your style profile and purchase history</p>
+          </div>
+          <Link href="/shop">View All</Link>
+        </div>
+
+        <div className="account-reco-grid">
+          {(recommendations.length ? recommendations.slice(0, 3) : fallbackRecommendations).map(
+            (item: AnyRecord, index: number) => {
+              const image = productImage(item);
+              return (
+                <Link
+                  href={item?.id ? `/product/${item.id}` : "/shop"}
+                  key={item?.id || index}
+                  className="account-reco-card"
+                >
+                  <div className="account-reco-image">
+                    {image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={image} alt={productTitle(item)} />
+                    ) : null}
+                  </div>
+                  <strong>{productTitle(item)}</strong>
+                  <span>{item?.brand?.name || item?.brand || "Luxury Essentials"}</span>
+                  <em>{currency(productPrice(item))}</em>
+                </Link>
+              );
+            }
+          )}
+        </div>
+      </section>
+    </AccountPageShell>
+  );
+}

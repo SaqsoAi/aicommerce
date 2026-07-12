@@ -1,264 +1,0 @@
-
--------------------------------------------------------------------------------
-   ROBOCOPY     ::     Robust File Copy for Windows                              
--------------------------------------------------------------------------------
-
-  Started : Thursday, July 9, 2026 1:05:55 AM
-   Source : D:\AI-ECOMMERCE\server\
-     Dest : D:\AI-ECOMMERCE\AI-CommerceLIVE\server\
-
-    Files : *.*
-	    
-Exc Files : *.log
-	    *.tmp
-	    *.bak
-	    *.zip
-	    
- Exc Dirs : node_modules
-	    .next
-	    dist
-	    build
-	    coverage
-	    .git
-	    .turbo
-	    .cache
-	    .vscode
-	    logs
-	    tmp
-	    temp
-	    
-  Options : *.* /S /E /DCOPY:DA /COPY:DAT /R:2 /W:2 
-
-------------------------------------------------------------------------------
-
-	                  19	D:\AI-ECOMMERCE\server\
-	    Older     		    1224	.env100%  
-	                   3	D:\AI-ECOMMERCE\server\prisma\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260522201203_init\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260522214653_ecommerce_full\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260527224614_supplier_added\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260527232001_campaign_upgrade\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260527233624_order_upgrade\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260528022612_fix_relations\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260528033436_stabilization\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260528102217_product_variants\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260529211846_init\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531132210_template_system\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531144830_add_template_settings\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531153243_fix_template_unique\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531153851_add_store_relation\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531161858_template_lifecycle\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531180537_add_countdown_hero\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531183136_hero_slides\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531183624_hero_schedule\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260531183903_responsive_hero_images\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260603150803_hero_slides\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260603151424_hero_builder_upgrade\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260603160905_media_library\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260603191442_hero_cta_builder\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260604030157_add_hero_metrics\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260604035438_add_store_template\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260606004102_hero_init\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260607202136_product_v2_fields\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260607204311_variant_engine_pro\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260607211659_product_media_engine\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260607212917_product_gallery_manager\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608001010_inventory_engine_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608004732_rbac_permissions_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608005232_supplier_management_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608010430_purchase_order_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608011014_inventory_transaction_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608050153_product_master_engine_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608050722_product_code_engine_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608153618_supplier_return_v1\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608163159_supplier_return_variant_relation\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260608182901_add_product_seo_fields\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260610114736_add_rbac_roles\
-	                   1	D:\AI-ECOMMERCE\server\prisma\migrations\20260611120000_product_specs_attributes\
-	                   0	D:\AI-ECOMMERCE\server\public\
-	                   0	D:\AI-ECOMMERCE\server\public\uploads\
-	                   2	D:\AI-ECOMMERCE\server\public\uploads\brands\
-	                  88	D:\AI-ECOMMERCE\server\public\uploads\homepage-hero\
-	                   8	D:\AI-ECOMMERCE\server\scripts\
-	                   3	D:\AI-ECOMMERCE\server\src\
-	    Older     		  58.6 m	app.ts  1.7%  3.4%  5.1%  6.8%  8.5% 10.2% 11.9% 13.6% 15.3% 17.0% 18.7% 20.4% 22.1% 23.8% 25.5% 27.2% 28.9% 30.6% 32.3% 34.1% 35.8% 37.5% 39.2% 40.9% 42.6% 44.3% 46.0% 47.7% 49.4% 51.1% 52.8% 54.5% 56.2% 57.9% 59.6% 61.3% 63.0% 64.7% 66.4% 68.2% 69.9% 71.6% 73.3% 75.0% 76.7% 78.4% 80.1% 81.8% 83.5% 85.2% 86.9% 88.6% 90.3% 92.0% 93.7% 95.4% 97.1% 98.8%100%  
-	                  16	D:\AI-ECOMMERCE\server\src\ai\
-	                   3	D:\AI-ECOMMERCE\server\src\ai\business-intelligence\
-	    Older     		    1120	businessIntelligence.routes.ts100%  
-	    Older     		    6588	businessIntelligence.service.ts100%  
-	    Older     		    1558	businessIntelligence.types.ts100%  
-	                   4	D:\AI-ECOMMERCE\server\src\ai\content\
-	    Older     		     142	index.ts100%  
-	    Older     		     566	routes.ts100%  
-	    Older     		    8463	service.ts100%  
-	    Older     		    2223	types.ts100%  
-	                  14	D:\AI-ECOMMERCE\server\src\ai\core\
-	    Older     		     866	auditEngine.ts100%  
-	    Older     		    2518	budgetEngine.ts100%  
-	    Older     		     727	cacheLayer.ts100%  
-	    Older     		     400	costEngine.ts100%  
-	    Older     		     646	featureFlags.ts100%  
-	    Older     		    7737	gateway.ts100%  
-	    Older     		     610	index.ts100%  
-	    Older     		    1941	modelRegistry.ts100%  
-	    Older     		    2477	promptRegistry.ts100%  
-	    Older     		    4049	providerRegistry.ts100%  
-	    Older     		     561	queueLayer.ts100%  
-	    Older     		    1810	safetyEngine.ts100%  
-	    Older     		    3338	types.ts100%  
-	    Older     		    1760	usageEngine.ts100%  
-	                   3	D:\AI-ECOMMERCE\server\src\ai\creative\
-	    Older     		      56	index.ts100%  
-	    Older     		    5998	service.ts100%  
-	    Older     		    1885	types.ts100%  
-	                   4	D:\AI-ECOMMERCE\server\src\ai\customerExperience\
-	    Older     		      81	index.ts100%  
-	    Older     		    4895	rules.ts100%  
-	    Older     		    9442	service.ts100%  
-	    Older     		    2325	types.ts100%  
-	                   3	D:\AI-ECOMMERCE\server\src\ai\developmentCopilot\
-	    Older     		      57	index.ts100%  
-	    Older     		    5852	service.ts100%  
-	    Older     		    2127	types.ts100%  
-	                   0	D:\AI-ECOMMERCE\server\src\ai\engines\
-	                   0	D:\AI-ECOMMERCE\server\src\ai\gateways\
-	                   4	D:\AI-ECOMMERCE\server\src\ai\marketing\
-	    Older     		      82	index.ts100%  
-	    Older     		     960	routes.ts100%  
-	    Older     		    4289	service.ts100%  
-	    Older     		    1655	types.ts100%  
-	                   4	D:\AI-ECOMMERCE\server\src\ai\search\
-	    Older     		    2752	controller.ts100%  
-	    Older     		     454	routes.ts100%  
-	    Older     		   12083	service.ts100%  
-	    Older     		    2558	types.ts100%  
-	                   3	D:\AI-ECOMMERCE\server\src\ai\security-automation\
-	    Older     		      56	index.ts100%  
-	    Older     		    3001	service.ts100%  
-	    Older     		    1436	types.ts100%  
-	                   0	D:\AI-ECOMMERCE\server\src\ai\services\
-	                   4	D:\AI-ECOMMERCE\server\src\ai\social\
-	    Older     		      51	index.ts100%  
-	    Older     		    1949	routes.ts100%  
-	    Older     		   12359	service.ts100%  
-	    Older     		    3237	types.ts100%  
-	                   1	D:\AI-ECOMMERCE\server\src\ai\types\
-	                   3	D:\AI-ECOMMERCE\server\src\ai\vector\
-	                   4	D:\AI-ECOMMERCE\server\src\ai\vision\
-	    Older     		     125	index.ts100%  
-	    Older     		    3308	routes.ts100%  
-	    Older     		   12417	service.ts100%  
-	    Older     		    2789	types.ts100%  
-	                   5	D:\AI-ECOMMERCE\server\src\config\
-	                   2	D:\AI-ECOMMERCE\server\src\constants\
-	                  17	D:\AI-ECOMMERCE\server\src\controllers\
-	    Older     		    1969	aiPersonalization.controller.ts100%  
-	                   1	D:\AI-ECOMMERCE\server\src\lib\
-	                   8	D:\AI-ECOMMERCE\server\src\middleware\
-	                   0	D:\AI-ECOMMERCE\server\src\modules\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\account\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\ai-content\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\ai-control\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\ai-product\
-	                   2	D:\AI-ECOMMERCE\server\src\modules\ai-review\
-	                   2	D:\AI-ECOMMERCE\server\src\modules\ai-size\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\analytics\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\audit-log\
-	                  10	D:\AI-ECOMMERCE\server\src\modules\auth\
-	    Older     		    8427	auth.service.ts100%  
-	                   2	D:\AI-ECOMMERCE\server\src\modules\auth-provider-center\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\checkout\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\customer-intelligence\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\customer-profile-builder\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\dashboard\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\discount-policy\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\enterprise-auth-identity\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\enterprise-auth-provider\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\enterprise-product-normalization\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\enterprise-settings\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\hero\
-	                  10	D:\AI-ECOMMERCE\server\src\modules\homepage-hero\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\homepage-section\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\identity\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\integration-engine\
-	                   8	D:\AI-ECOMMERCE\server\src\modules\inventory\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\inventory-dashboard\
-	                   6	D:\AI-ECOMMERCE\server\src\modules\landing\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\lookbook\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\media\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\media\dto\
-	                   2	D:\AI-ECOMMERCE\server\src\modules\media\upload\
-	                   6	D:\AI-ECOMMERCE\server\src\modules\membership\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\notification-providers\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\notifications\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\omnichannel\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\order-engine\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\permission\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\product-catalog\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\product-code\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\product-engine\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\product-master\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\purchase\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\rewards\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\role\
-	                   7	D:\AI-ECOMMERCE\server\src\modules\saas-foundation\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\saved-look\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\search\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\settings-v2\
-	                   6	D:\AI-ECOMMERCE\server\src\modules\size-fit-center\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\social-feed-settings\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\stock-adjustment\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\stock-transfer\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\store-settings\
-	                   1	D:\AI-ECOMMERCE\server\src\modules\super-admin-center\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\supplier\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\supplier-return\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\template\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\template-install\
-	                   4	D:\AI-ECOMMERCE\server\src\modules\template-lifecycle\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\template-settings\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\theme-settings\
-	                   5	D:\AI-ECOMMERCE\server\src\modules\virtual-tryon\
-	                   3	D:\AI-ECOMMERCE\server\src\modules\wishlist\
-	                   6	D:\AI-ECOMMERCE\server\src\modules\workflow-automation\
-	                   1	D:\AI-ECOMMERCE\server\src\prisma\
-	                  42	D:\AI-ECOMMERCE\server\src\routes\
-	    Older     		     817	aiCreative.routes.ts100%  
-	    Older     		    4352	aiCustomerExperience.routes.ts100%  
-	    Older     		    1178	aiDevelopmentCopilot.routes.ts100%  
-	    Older     		     502	aiPersonalization.routes.ts100%  
-	    Older     		     962	aiSecurityAutomation.routes.ts100%  
-	                   7	D:\AI-ECOMMERCE\server\src\scripts\
-	    Older     		    1615	seed-role-demo-users.ts100%  
-	    Older     		    1085	seed.ts100%  
-	                  12	D:\AI-ECOMMERCE\server\src\services\
-	    Older     		    7005	aiPersonalization.service.ts100%  
-	                   0	D:\AI-ECOMMERCE\server\src\socket\
-	                   0	D:\AI-ECOMMERCE\server\src\types\
-	                   1	D:\AI-ECOMMERCE\server\src\types\express\
-	                   3	D:\AI-ECOMMERCE\server\src\utils\
-	    Older     		    2854	enterpriseBI.ts100%  
-	                   2	D:\AI-ECOMMERCE\server\src\validators\
-	                   0	D:\AI-ECOMMERCE\server\uploads\
-	                 103	D:\AI-ECOMMERCE\server\uploads\branding\
-	  *EXTRA File 		  562839	brand-1783351912180-p3dq2n24.png
-	    New File  		  562839	brand-1782968970905-szrf3u7t.png 46%   93%  100%  
-	                   1	D:\AI-ECOMMERCE\server\uploads\brands\
-	                   7	D:\AI-ECOMMERCE\server\uploads\categories\
-	                  27	D:\AI-ECOMMERCE\server\uploads\products\
-	                   2	D:\AI-ECOMMERCE\server\uploads\store\
-
-------------------------------------------------------------------------------
-
-               Total    Copied   Skipped  Mismatch    FAILED    Extras
-    Dirs :       154         0       154         0         0         0
-   Files :       722        64       658         0         0         1
-   Bytes :  855.10 m   59.35 m  795.74 m         0         0   549.6 k
-   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
-
-
-   Speed :           1778345999 Bytes/sec.
-   Speed :           101757.774 MegaBytes/min.
-   Ended : Thursday, July 9, 2026 1:05:55 AM
-

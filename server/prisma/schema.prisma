@@ -2474,3 +2474,549 @@ model HeroDraft {
   @@index([scheduledAt])
   @@map("hero_drafts")
 }
+// ================= PHASE 8.10 ACCOUNT DATABASE =================
+model AccountProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String?
+  avatarUrl   String?
+  phone       String?
+  dateOfBirth DateTime?
+  gender      String?
+  joinedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  addresses   AccountAddress[]
+  membership  AccountMembership?
+  preferences AccountStylePreference?
+  rewards     AccountRewardLedger[]
+
+  @@index([userId])
+}
+
+model AccountAddress {
+  id          String   @id @default(cuid())
+  userId      String
+  profileId   String?
+  label       String   @default("Home")
+  fullName    String?
+  phone       String?
+  line1       String
+  line2       String?
+  city        String?
+  state       String?
+  postalCode  String?
+  country     String   @default("Bangladesh")
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([profileId])
+}
+
+model AccountMembership {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  profileId   String?  @unique
+  tier        String   @default("Bronze")
+  stylePoints Int      @default(0)
+  status      String   @default("ACTIVE")
+  startedAt   DateTime @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tier])
+}
+
+model AccountRewardLedger {
+  id          String   @id @default(cuid())
+  userId      String
+  profileId   String?
+  points      Int
+  type        String
+  reason      String?
+  referenceId String?
+  createdAt   DateTime @default(now())
+
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([profileId])
+  @@index([type])
+}
+
+model AccountStylePreference {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  profileId   String?  @unique
+  preferredFit String?
+  sizesJson   String?
+  colorsJson  String?
+  categoriesJson String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+
+enum PluginStatus {
+  DISCOVERED
+  VALIDATED
+  INSTALLED
+  ACTIVE
+  INACTIVE
+  FAILED
+  ROLLBACK_REQUIRED
+  UNINSTALLED
+}
+
+enum PluginInstallationStatus {
+  PLANNED
+  APPROVED
+  INSTALLING
+  SUCCEEDED
+  FAILED
+  ROLLED_BACK
+}
+
+model Plugin {
+  id              String   @id @default(cuid())
+  pluginKey       String   @unique
+  name            String
+  description     String?
+  vendorKey       String
+  currentVersion  String?
+  status          PluginStatus @default(DISCOVERED)
+  tenantScope     String
+  manifest        Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  versions        PluginVersion[]
+  installations   PluginInstallation[]
+  dependencies    PluginDependency[] @relation("PluginDependencies")
+  dependants      PluginDependency[] @relation("PluginDependants")
+  permissions     PluginPermission[]
+  settings        PluginSetting[]
+  tenantAccess    PluginTenantAccess[]
+  files           PluginFile[]
+  migrations      PluginMigration[]
+  healthChecks    PluginHealthCheck[]
+  settingValues   PluginSettingValue[]
+  auditEvents     PluginAuditEvent[]
+  transactions    PluginInstallTransaction[]
+  marketplaceEntries PluginMarketplaceEntry[]
+}
+
+
+model PluginVersion {
+  id             String   @id @default(cuid())
+  pluginId       String
+  version        String
+  manifest       Json
+  packageSha256  String
+  signatureKeyId String?
+  createdAt      DateTime @default(now())
+  plugin         Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  installations  PluginInstallation[]
+  @@unique([pluginId, version])
+  @@index([pluginId])
+  marketplaceEntries PluginMarketplaceEntry[]
+}
+
+model PluginInstallation {
+  id             String @id @default(cuid())
+  pluginId       String
+  pluginVersionId String
+  status         PluginInstallationStatus @default(PLANNED)
+  planFingerprint String @unique
+  plan           Json
+  requestedBy    String
+  approvedBy     String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  errorCode      String?
+  errorMessage   String?
+  createdAt      DateTime @default(now())
+  plugin         Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  pluginVersion  PluginVersion @relation(fields: [pluginVersionId], references: [id], onDelete: Restrict)
+  backups        PluginBackup[]
+  rollbacks      PluginRollback[]
+  transactions    PluginInstallTransaction[]
+  @@index([pluginId, createdAt])
+}
+
+model PluginDependency {
+  id                 String @id @default(cuid())
+  pluginId           String
+  dependencyPluginId String
+  versionRange       String
+  optional           Boolean @default(false)
+  mustBeActive       Boolean @default(true)
+  plugin             Plugin @relation("PluginDependencies", fields: [pluginId], references: [id], onDelete: Cascade)
+  dependency         Plugin @relation("PluginDependants", fields: [dependencyPluginId], references: [id], onDelete: Restrict)
+  @@unique([pluginId, dependencyPluginId])
+}
+
+model PluginPermission {
+  id          String @id @default(cuid())
+  pluginId    String
+  permissionCode String
+  name        String
+  description String?
+  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, permissionCode])
+  @@unique([permissionCode])
+}
+
+model PluginSetting {
+  id          String @id @default(cuid())
+  pluginId    String
+  settingKey  String
+  scope       String
+  schema      Json
+  defaultValue Json?
+  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, settingKey])
+  @@unique([settingKey])
+}
+
+model PluginTenantAccess {
+  id          String @id @default(cuid())
+  pluginId    String
+  tenantId    String
+  enabled     Boolean @default(false)
+  configuration Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, tenantId])
+  @@index([tenantId, enabled])
+}
+
+model PluginFile {
+  id              String @id @default(cuid())
+  pluginId        String
+  owner           String
+  destinationPath String
+  sourcePath      String
+  sha256          String
+  sizeBytes       Int
+  installedVersion String
+  createdAt       DateTime @default(now())
+  plugin          Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([owner, destinationPath])
+  @@index([pluginId])
+}
+
+model PluginMigration {
+  id          String @id @default(cuid())
+  pluginId    String
+  version     String
+  operationId String
+  operationType String
+  status      String
+  plan        Json
+  appliedAt   DateTime?
+  rolledBackAt DateTime?
+  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, version, operationId])
+}
+
+model PluginBackup {
+  id             String @id @default(cuid())
+  installationId String
+  backupPath     String
+  sha256         String
+  createdAt      DateTime @default(now())
+  installation   PluginInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+}
+
+model PluginRollback {
+  id             String @id @default(cuid())
+  installationId String
+  reason         String
+  requestedBy    String
+  status         String
+  details        Json?
+  createdAt      DateTime @default(now())
+  completedAt    DateTime?
+  installation   PluginInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+}
+
+model PluginAuditEvent {
+  id          String @id @default(cuid())
+  pluginId    String?
+  actorId     String?
+  action      String
+  outcome     String
+  reason      String?
+  metadata    Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  plugin      Plugin? @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+  @@index([pluginId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+model PluginHealthCheck {
+  id          String @id @default(cuid())
+  pluginId    String
+  checkKey    String
+  type        String
+  target      String?
+  required    Boolean @default(true)
+  lastStatus  String?
+  lastMessage String?
+  checkedAt   DateTime?
+  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, checkKey])
+}
+
+model PluginSettingValue {
+  id          String   @id @default(cuid())
+  pluginId    String
+  settingKey  String
+  scope       String
+  tenantId    String?
+  value       Json
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  plugin      Plugin   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  @@unique([pluginId, settingKey, scope, tenantId])
+  @@index([pluginId, tenantId])
+}
+
+enum PluginTransactionStatus {
+  PREPARING
+  VALIDATING
+  BACKING_UP
+  APPLYING_FILES
+  MIGRATION_REVIEW_REQUIRED
+  VERIFYING
+  COMMITTING
+  SUCCEEDED
+  FAILED
+  ROLLING_BACK
+  ROLLED_BACK
+}
+
+model PluginInstallTransaction {
+  id               String                  @id @default(cuid())
+  pluginId         String
+  installationId   String
+  status           PluginTransactionStatus @default(PREPARING)
+  planFingerprint  String
+  packageSha256    String
+  stagingPath      String
+  backupPath       String?
+  journal          Json?
+  migrationGate    Json?
+  errorCode        String?
+  errorMessage     String?
+  requestedBy      String
+  startedAt        DateTime                @default(now())
+  completedAt      DateTime?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  plugin           Plugin                 @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  installation     PluginInstallation      @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  fileOperations   PluginFileOperation[]
+  logs             PluginTransactionLog[]
+  @@index([pluginId, createdAt])
+  @@index([installationId])
+  @@index([status, createdAt])
+}
+
+model PluginFileOperation {
+  id              String   @id @default(cuid())
+  transactionId   String
+  sequence        Int
+  owner           String
+  destinationPath String
+  operation       String
+  previousSha256  String?
+  expectedSha256  String
+  appliedSha256   String?
+  status          String
+  errorMessage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  transaction     PluginInstallTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  @@unique([transactionId, sequence])
+  @@index([transactionId, status])
+}
+
+model PluginTransactionLog {
+  id            String   @id @default(cuid())
+  transactionId String
+  level         String
+  event         String
+  message       String
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  transaction   PluginInstallTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  @@index([transactionId, createdAt])
+}
+
+enum PluginVendorStatus {
+  PENDING
+  TRUSTED
+  SUSPENDED
+  REVOKED
+}
+
+enum PluginTrustLevel {
+  UNTRUSTED
+  VERIFIED
+  TRUSTED
+  PLATFORM
+}
+
+enum PluginRepositoryStatus {
+  ACTIVE
+  DISABLED
+  REVOKED
+}
+
+enum PluginReleaseChannel {
+  STABLE
+  LTS
+  BETA
+  PREVIEW
+  DEVELOPMENT
+}
+
+enum PluginPackageTrustDecision {
+  TRUSTED
+  TRUSTED_WITH_WARNING
+  UNTRUSTED
+  REVOKED
+  UNSUPPORTED
+  INCOMPATIBLE
+}
+
+model PluginVendor {
+  id            String             @id @default(cuid())
+  vendorKey     String             @unique
+  name          String
+  websiteUrl    String?
+  contactEmail  String?
+  status        PluginVendorStatus @default(PENDING)
+  trustLevel    PluginTrustLevel   @default(UNTRUSTED)
+  metadata      Json?
+  approvedBy    String?
+  approvedAt    DateTime?
+  revokedReason String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  signingKeys   PluginSigningKey[]
+  entries       PluginMarketplaceEntry[]
+  @@index([status, trustLevel])
+}
+
+model PluginSigningKey {
+  id           String       @id @default(cuid())
+  vendorId     String
+  keyId        String
+  algorithm    String
+  publicKeyPem String
+  fingerprint  String
+  active       Boolean      @default(true)
+  expiresAt    DateTime?
+  revokedAt    DateTime?
+  revokedReason String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  vendor       PluginVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  entries      PluginMarketplaceEntry[]
+  @@unique([vendorId, keyId])
+  @@unique([fingerprint])
+  @@index([vendorId, active])
+}
+
+model PluginRepository {
+  id            String                 @id @default(cuid())
+  repositoryKey String                 @unique
+  name          String
+  baseUrl       String?
+  kind          String
+  status        PluginRepositoryStatus @default(ACTIVE)
+  trusted       Boolean                @default(false)
+  allowedChannels PluginReleaseChannel[]
+  metadata      Json?
+  createdBy     String
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  entries       PluginMarketplaceEntry[]
+  downloads     PluginDownloadHistory[]
+}
+
+model PluginMarketplaceEntry {
+  id                    String                     @id @default(cuid())
+  pluginId              String?
+  pluginVersionId       String?
+  vendorId              String
+  signingKeyId          String?
+  repositoryId          String
+  pluginKey             String
+  name                  String
+  version               String
+  channel               PluginReleaseChannel
+  description           String?
+  minimumPlatformVersion String
+  maximumPlatformVersion String
+  packageSha256         String
+  packageSizeBytes      Int
+  signatureAlgorithm    String?
+  signatureBase64       String?
+  signedDigest          String?
+  trustDecision         PluginPackageTrustDecision @default(UNTRUSTED)
+  trustReasons          Json?
+  manifest              Json
+  changelog             String?
+  packageLocation       String?
+  publishedAt           DateTime?
+  revokedAt             DateTime?
+  revokedReason         String?
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
+  plugin                Plugin?                     @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+  pluginVersion         PluginVersion?              @relation(fields: [pluginVersionId], references: [id], onDelete: SetNull)
+  vendor                PluginVendor                @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  signingKey            PluginSigningKey?           @relation(fields: [signingKeyId], references: [id], onDelete: SetNull)
+  repository            PluginRepository            @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+  downloads             PluginDownloadHistory[]
+  @@unique([repositoryId, pluginKey, version, channel])
+  @@index([pluginKey, channel, publishedAt])
+  @@index([trustDecision, publishedAt])
+}
+
+model PluginDownloadHistory {
+  id             String                 @id @default(cuid())
+  marketplaceEntryId String
+  repositoryId   String
+  actorId        String
+  purpose        String
+  outcome        String
+  packageSha256  String
+  trustDecision  PluginPackageTrustDecision
+  metadata       Json?
+  createdAt      DateTime               @default(now())
+  marketplaceEntry PluginMarketplaceEntry @relation(fields: [marketplaceEntryId], references: [id], onDelete: Cascade)
+  repository     PluginRepository       @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+  @@index([actorId, createdAt])
+  @@index([marketplaceEntryId, createdAt])
+}

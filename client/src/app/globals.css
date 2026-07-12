@@ -1004,3 +1004,2239 @@ html.dark [data-page="cart"] [class*="muted"] {
   main section:first-of-type, [data-saqso-hero="true"] { padding-top: 0 !important; min-height: calc(100svh - 118px) !important; }
 }
 /* === ANDROID_HEADER_FORCE_FIX_BOTH_ROOTS_END === */
+
+/* PHASE 8.14 ACCOUNT FINAL POLISH */
+.account-final-focus :is(a, button, input, select, textarea):focus-visible,
+main :is(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid rgba(251, 191, 36, 0.9);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  main[class*="min-h-screen"] {
+    overflow-x: hidden;
+  }
+
+  .account-mobile-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* PHASE 8.15 ACCOUNT WIDGET RESTORATION */
+.account-hero-widget {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 28px;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(245, 190, 95, .42), transparent 36%),
+    linear-gradient(135deg, rgba(255,255,255,.1), rgba(255,255,255,.025));
+  box-shadow: 0 28px 80px rgba(0,0,0,.42);
+}
+
+.account-avatar {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  background: #fff;
+  color: #090909;
+  font-size: 1.55rem;
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-hero-copy h1 {
+  font-size: clamp(1.35rem, 2vw, 2.1rem);
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.account-hero-copy p {
+  margin-top: .35rem;
+  color: rgba(255,255,255,.72);
+  font-size: .9rem;
+}
+
+.account-support-ready {
+  color: rgba(250, 204, 21, .85) !important;
+  font-size: .78rem !important;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.account-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  text-align: right;
+}
+
+.account-hero-stats strong {
+  display: block;
+  font-size: 1.45rem;
+  font-weight: 950;
+}
+
+.account-hero-stats span {
+  display: block;
+  color: rgba(255,255,255,.68);
+  font-size: .85rem;
+}
+
+.account-stat-divider {
+  width: 1px;
+  height: 46px;
+  background: rgba(255,255,255,.16);
+}
+
+.account-widget-panel {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 28px;
+  padding: 1.55rem;
+  background:
+    radial-gradient(circle at 0% 100%, rgba(244, 63, 94, .16), transparent 34%),
+    rgba(255,255,255,.045);
+  box-shadow: 0 20px 70px rgba(0,0,0,.34);
+}
+
+.account-section-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.account-section-head h2 {
+  font-size: 1.35rem;
+  font-weight: 950;
+}
+
+.account-section-head p,
+.account-section-head a {
+  color: rgba(255,255,255,.62);
+  font-size: .82rem;
+}
+
+.account-action-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: .9rem;
+}
+
+.account-action-card {
+  display: flex;
+  min-height: 120px;
+  flex-direction: column;
+  justify-content: center;
+  gap: .45rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  padding: 1.1rem;
+  background: rgba(255,255,255,.045);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.account-action-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(250, 204, 21, .42);
+  background: rgba(255,255,255,.075);
+}
+
+.account-action-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  margin-bottom: .35rem;
+  background: rgba(255,255,255,.08);
+  font-weight: 900;
+}
+
+.account-action-card strong {
+  font-size: .95rem;
+  font-weight: 950;
+}
+
+.account-action-card small {
+  color: rgba(255,255,255,.55);
+}
+
+.account-tone-blue .account-action-icon { color: #60a5fa; background: rgba(37,99,235,.18); }
+.account-tone-pink .account-action-icon { color: #f472b6; background: rgba(219,39,119,.18); }
+.account-tone-green .account-action-icon { color: #34d399; background: rgba(16,185,129,.18); }
+.account-tone-violet .account-action-icon { color: #a78bfa; background: rgba(124,58,237,.18); }
+.account-tone-amber .account-action-icon { color: #f59e0b; background: rgba(217,119,6,.18); }
+.account-tone-cyan .account-action-icon { color: #22d3ee; background: rgba(8,145,178,.18); }
+
+.account-order-list {
+  display: grid;
+  gap: .8rem;
+}
+
+.account-order-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 18px;
+  padding: 1.1rem;
+  background: rgba(0,0,0,.72);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.account-order-row strong {
+  display: block;
+  font-weight: 950;
+}
+
+.account-order-row span {
+  display: block;
+  margin-top: .3rem;
+  color: rgba(255,255,255,.62);
+}
+
+.account-order-row em {
+  border-radius: 999px;
+  padding: .35rem .75rem;
+  background: rgba(16,185,129,.22);
+  color: #34d399;
+  font-size: .78rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.account-row-arrow {
+  color: rgba(255,255,255,.5) !important;
+  font-size: 1.5rem;
+}
+
+.account-wishlist-grid,
+.account-reco-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-wishlist-card {
+  position: relative;
+  min-height: 120px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.75);
+  padding: 1.2rem;
+  overflow: hidden;
+}
+
+.account-wishlist-card span {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.account-wishlist-card strong {
+  display: block;
+  margin-top: 2.2rem;
+  font-weight: 950;
+}
+
+.account-wishlist-card small {
+  display: block;
+  margin-top: .55rem;
+  color: rgba(255,255,255,.55);
+}
+
+.account-reco-card {
+  display: block;
+  border-radius: 18px;
+}
+
+.account-reco-image {
+  height: 210px;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.035)),
+    #252525;
+}
+
+.account-reco-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-reco-card strong {
+  display: block;
+  margin-top: .95rem;
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.account-reco-card span {
+  display: block;
+  margin-top: .25rem;
+  color: rgba(255,255,255,.55);
+  font-size: .86rem;
+}
+
+.account-reco-card em {
+  display: block;
+  margin-top: .55rem;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.account-lux-notice {
+  border: 1px solid rgba(250,204,21,.22);
+  border-radius: 18px;
+  padding: 1rem;
+  background: rgba(250,204,21,.1);
+  color: rgba(255,255,255,.8);
+}
+
+@media (max-width: 1180px) {
+  .account-action-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 780px) {
+  .account-hero-widget {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .account-avatar {
+    margin-inline: auto;
+  }
+
+  .account-hero-stats {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .account-action-grid,
+  .account-wishlist-grid,
+  .account-reco-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-order-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* PHASE 8.16 ACCOUNT RICH DATA UX */
+.account-hero-widget-clean {
+  margin-top: 0 !important;
+}
+
+main .account-hero-widget + .account-widget-panel {
+  margin-top: 1.2rem;
+}
+
+.account-hero-widget-clean .account-hero-copy h1 {
+  text-wrap: balance;
+}
+
+.account-reco-image img {
+  background: rgba(255,255,255,.06);
+}
+
+.account-reco-image:empty::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+}
+
+.account-widget-panel {
+  scroll-margin-top: 120px;
+}
+
+/* PHASE 8.16B ACCOUNT PAGE REPAIR */
+.account-hero-widget-clean {
+  margin-top: 0 !important;
+}
+
+.account-reco-image:empty::after {
+  content: "";
+  display: block;
+  height: 100%;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025));
+}
+
+/* PHASE 8.17 ACCOUNT RESPONSIVE MOBILE POLISH */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 1024px) {
+  main:has(.account-hero-widget) {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+  }
+
+  main:has(.account-hero-widget) section.mx-auto {
+    max-width: 100% !important;
+  }
+
+  main:has(.account-hero-widget) .mt-6.grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  main:has(.account-hero-widget) aside {
+    position: relative !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px !important;
+    padding: 0.65rem !important;
+  }
+
+  main:has(.account-hero-widget) aside nav {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.45rem !important;
+  }
+
+  main:has(.account-hero-widget) aside nav a {
+    min-height: 44px !important;
+    padding: 0.65rem 0.75rem !important;
+    font-size: 0.72rem !important;
+    border-radius: 14px !important;
+  }
+
+  main:has(.account-hero-widget) aside nav a span {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+  }
+
+  main:has(.account-hero-widget) aside > div {
+    border-radius: 18px !important;
+    padding: 0.9rem !important;
+  }
+
+  main:has(.account-hero-widget) aside > div p,
+  main:has(.account-hero-widget) aside > div a,
+  main:has(.account-hero-widget) aside form button,
+  main:has(.account-hero-widget) aside > a {
+    font-size: 0.72rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  main:has(.account-hero-widget) {
+    padding-top: 5.8rem !important;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  main:has(.account-hero-widget) > section {
+    padding-inline: 0 !important;
+  }
+
+  .account-hero-widget {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    padding: 1.35rem 1rem !important;
+    gap: 0.9rem !important;
+    text-align: center !important;
+    border-radius: 22px !important;
+  }
+
+  .account-avatar {
+    width: 58px !important;
+    height: 58px !important;
+    margin-inline: auto !important;
+    font-size: 1rem !important;
+  }
+
+  .account-hero-copy h1 {
+    font-size: 1.05rem !important;
+    line-height: 1.22 !important;
+    max-width: 18rem !important;
+    margin-inline: auto !important;
+  }
+
+  .account-hero-copy p {
+    font-size: 0.68rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .account-support-ready {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .account-hero-stats {
+    justify-content: center !important;
+    gap: 0.9rem !important;
+    text-align: center !important;
+  }
+
+  .account-hero-stats strong {
+    font-size: 1rem !important;
+  }
+
+  .account-hero-stats span {
+    font-size: 0.62rem !important;
+  }
+
+  .account-stat-divider {
+    height: 34px !important;
+  }
+
+  .account-widget-panel {
+    padding: 1rem !important;
+    border-radius: 20px !important;
+  }
+
+  .account-section-head {
+    margin-bottom: 0.85rem !important;
+  }
+
+  .account-section-head h2 {
+    font-size: 1rem !important;
+  }
+
+  .account-section-head p,
+  .account-section-head a {
+    font-size: 0.66rem !important;
+  }
+
+  .account-action-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  .account-action-card {
+    min-height: 74px !important;
+    padding: 0.85rem !important;
+    border-radius: 14px !important;
+  }
+
+  .account-action-icon {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 10px !important;
+  }
+
+  .account-action-card strong {
+    font-size: 0.75rem !important;
+  }
+
+  .account-action-card small {
+    font-size: 0.62rem !important;
+  }
+
+  .account-order-list {
+    gap: 0.55rem !important;
+  }
+
+  .account-order-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.55rem !important;
+    padding: 0.85rem !important;
+    border-radius: 14px !important;
+  }
+
+  .account-order-row strong {
+    font-size: 0.76rem !important;
+  }
+
+  .account-order-row span {
+    font-size: 0.68rem !important;
+  }
+
+  .account-order-row em {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 0.58rem !important;
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  .account-row-arrow {
+    font-size: 1rem !important;
+  }
+
+  .account-wishlist-grid,
+  .account-reco-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .account-wishlist-card {
+    min-height: 96px !important;
+    padding: 0.9rem !important;
+    border-radius: 14px !important;
+  }
+
+  .account-wishlist-card strong {
+    margin-top: 1.5rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .account-wishlist-card small {
+    font-size: 0.62rem !important;
+  }
+
+  .account-reco-image {
+    height: 168px !important;
+    border-radius: 14px !important;
+  }
+
+  .account-reco-card strong {
+    font-size: 0.78rem !important;
+  }
+
+  .account-reco-card span,
+  .account-reco-card em {
+    font-size: 0.68rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  main:has(.account-hero-widget) {
+    padding-left: 0.55rem !important;
+    padding-right: 0.55rem !important;
+  }
+
+  main:has(.account-hero-widget) aside nav {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-widget-panel {
+    padding: 0.85rem !important;
+  }
+
+  .account-reco-image {
+    height: 145px !important;
+  }
+}
+
+/* PHASE 8.18 ACCOUNT FINAL UX POLISH */
+main:has(.account-hero-widget) {
+  --account-gold: rgba(245, 190, 95, .88);
+  --account-rose: rgba(244, 63, 94, .18);
+  --account-panel: rgba(255,255,255,.045);
+}
+
+main:has(.account-hero-widget) > section > div:first-child:not(.mt-6) {
+  display: none !important;
+}
+
+main:has(.account-hero-widget) .mt-6.grid {
+  margin-top: 0 !important;
+}
+
+.account-hero-widget {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.account-hero-widget::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 84% 35%, rgba(245,190,95,.42), transparent 25%),
+    radial-gradient(circle at 0% 100%, rgba(244,63,94,.15), transparent 30%);
+  filter: blur(2px);
+}
+
+.account-hero-widget,
+.account-widget-panel,
+main:has(.account-hero-widget) aside {
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+}
+
+.account-hero-widget:hover,
+.account-widget-panel:hover {
+  border-color: rgba(245,190,95,.22);
+  box-shadow: 0 26px 85px rgba(0,0,0,.44), 0 0 0 1px rgba(245,190,95,.04) inset;
+}
+
+main:has(.account-hero-widget) aside nav a {
+  position: relative;
+}
+
+main:has(.account-hero-widget) aside nav a::after {
+  content: "";
+  position: absolute;
+  left: .75rem;
+  right: .75rem;
+  bottom: .35rem;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, rgba(245,190,95,.9), transparent);
+  transition: transform .18s ease;
+}
+
+main:has(.account-hero-widget) aside nav a:hover::after {
+  transform: scaleX(1);
+}
+
+main:has(.account-hero-widget) aside nav a:hover {
+  background: rgba(255,255,255,.08) !important;
+}
+
+.account-section-head a:hover,
+.account-row-arrow:hover {
+  color: rgba(245,190,95,.95) !important;
+}
+
+.account-action-card,
+.account-order-row,
+.account-wishlist-card,
+.account-reco-card {
+  will-change: transform;
+}
+
+.account-action-card:hover,
+.account-order-row:hover,
+.account-wishlist-card:hover,
+.account-reco-card:hover {
+  transform: translateY(-3px);
+}
+
+.account-reco-grid {
+  align-items: start;
+}
+
+.account-reco-image {
+  aspect-ratio: 1.42 / 1;
+  height: auto !important;
+  min-height: 198px;
+}
+
+.account-reco-image img {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.account-reco-image:not(:has(img)) {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)),
+    radial-gradient(circle at 30% 20%, rgba(245,190,95,.08), transparent 32%),
+    #2a2a2a;
+}
+
+.account-reco-image:not(:has(img))::after {
+  content: "Image syncing";
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgba(255,255,255,.32);
+  font-size: .75rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.account-order-row em {
+  min-width: 92px;
+  text-align: center;
+}
+
+.account-wishlist-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.account-lux-notice {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1280px) {
+  main:has(.account-hero-widget) section.mx-auto {
+    max-width: 1260px !important;
+  }
+
+  main:has(.account-hero-widget) .mt-6.grid {
+    grid-template-columns: 300px minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  main:has(.account-hero-widget) .mt-6.grid {
+    grid-template-columns: 260px minmax(0, 1fr) !important;
+  }
+
+  .account-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .account-reco-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  main:has(.account-hero-widget) {
+    padding-top: 5.25rem !important;
+  }
+
+  main:has(.account-hero-widget) .mt-6.grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  main:has(.account-hero-widget) aside {
+    order: 1;
+  }
+
+  main:has(.account-hero-widget) section.space-y-6 {
+    order: 2;
+  }
+
+  .account-hero-widget {
+    order: -1;
+  }
+
+  .account-action-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .account-reco-grid,
+  .account-wishlist-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-reco-image {
+    min-height: 190px;
+  }
+}
+
+@media (max-width: 520px) {
+  main:has(.account-hero-widget) {
+    padding-left: .5rem !important;
+    padding-right: .5rem !important;
+    padding-top: 4.6rem !important;
+  }
+
+  main:has(.account-hero-widget) .mt-6.grid {
+    gap: .75rem !important;
+  }
+
+  main:has(.account-hero-widget) aside {
+    border-radius: 18px !important;
+    padding: .55rem !important;
+  }
+
+  main:has(.account-hero-widget) aside nav {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-hero-widget {
+    border-radius: 18px !important;
+    padding: 1.15rem .85rem !important;
+  }
+
+  .account-widget-panel {
+    border-radius: 18px !important;
+    padding: .9rem !important;
+  }
+
+  .account-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-action-card {
+    min-height: 70px !important;
+  }
+
+  .account-reco-image {
+    min-height: 156px;
+  }
+
+  .account-section-head {
+    align-items: center !important;
+  }
+}
+
+/* PHASE 8.19A ACCOUNT ICON SIZE FIX */
+main:has(.account-hero-widget) aside nav a span {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  font-size: 0.95rem !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045) !important;
+}
+
+.account-action-icon {
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  border-radius: 18px !important;
+  font-size: 1.35rem !important;
+  margin-bottom: 0.65rem !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,.28);
+}
+
+.account-action-card {
+  min-height: 142px !important;
+  align-items: flex-start !important;
+}
+
+.account-action-card strong {
+  font-size: 1rem !important;
+}
+
+.account-action-card small {
+  font-size: 0.76rem !important;
+}
+
+@media (max-width: 640px) {
+  main:has(.account-hero-widget) aside nav a span {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .account-action-icon {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    border-radius: 14px !important;
+    font-size: 1rem !important;
+  }
+
+  .account-action-card {
+    min-height: 96px !important;
+  }
+}
+
+/* PHASE 8.19B 8.20 LUXURY ACCOUNT ICON POPUP */
+.account-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 50px;
+  border-radius: 18px;
+  padding: 0.65rem 0.8rem;
+  color: rgba(255,255,255,.88);
+  transition: background .2s ease, transform .2s ease, color .2s ease;
+}
+
+.account-sidebar-link:hover {
+  transform: translateX(3px);
+  background: rgba(255,255,255,.08);
+}
+
+.account-sidebar-link-active {
+  background: #fff !important;
+  color: #050505 !important;
+}
+
+.account-sidebar-icon {
+  display: grid;
+  place-items: center;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 40%),
+    rgba(255,255,255,.06);
+  font-size: 1.08rem !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.28);
+}
+
+.account-sidebar-link-active .account-sidebar-icon {
+  border-color: rgba(0,0,0,.12);
+  background: rgba(0,0,0,.04);
+}
+
+.account-action-icon {
+  width: 66px !important;
+  height: 66px !important;
+  min-width: 66px !important;
+  border-radius: 24px !important;
+  font-size: 1.8rem !important;
+  margin-bottom: 0.9rem !important;
+  box-shadow: 0 18px 36px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.account-action-card {
+  min-height: 158px !important;
+  padding: 1.35rem !important;
+}
+
+.account-action-card strong {
+  font-size: 1.04rem !important;
+}
+
+.account-action-card small {
+  font-size: .78rem !important;
+  line-height: 1.45;
+}
+
+.account-member-card {
+  margin-top: 1.2rem;
+  border-radius: 24px;
+  border: 1px solid rgba(245,190,95,.25);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(245,190,95,.20), transparent 34%),
+    rgba(245,190,95,.10);
+  padding: 1.1rem;
+}
+
+.account-mini-crown {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(245,190,95,.18);
+  color: rgb(245,190,95);
+}
+
+.account-help-card {
+  margin-top: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.055);
+  padding: 1.1rem;
+}
+
+.account-help-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  padding: .55rem .7rem;
+  text-align: center;
+  color: rgba(255,255,255,.82);
+}
+
+.account-help-pill:hover {
+  background: rgba(255,255,255,.10);
+}
+
+.account-reward-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(12px);
+}
+
+.account-reward-popup {
+  width: min(560px, 100%);
+  border: 1px solid rgba(245,190,95,.28);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(245,190,95,.28), transparent 35%),
+    linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04)),
+    #090909;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 40px 120px rgba(0,0,0,.65);
+}
+
+.account-reward-burst {
+  margin-inline: auto;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  background: rgba(245,190,95,.16);
+  font-size: 2.4rem;
+}
+
+@media (max-width: 640px) {
+  .account-sidebar-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    font-size: .95rem !important;
+  }
+
+  .account-action-icon {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    border-radius: 18px !important;
+    font-size: 1.35rem !important;
+  }
+
+  .account-action-card {
+    min-height: 118px !important;
+  }
+}
+
+/* PHASE 8.21 BUTTON AVATAR ALIGNMENT REPAIR */
+.account-sidebar-link-active {
+  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(235,235,235,.94)) !important;
+  color: #050505 !important;
+}
+
+.account-sidebar-link-active b,
+.account-sidebar-link-active span {
+  color: #050505 !important;
+}
+
+.account-sidebar-link-active .account-sidebar-icon {
+  background: #fff !important;
+  color: #050505 !important;
+  box-shadow: 0 10px 24px rgba(255,255,255,.12);
+}
+
+.account-action-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 1rem !important;
+  align-items: stretch !important;
+}
+
+.account-action-card {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+  min-height: 158px !important;
+  padding: 1.2rem 1rem !important;
+  text-align: left !important;
+}
+
+.account-action-icon {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  margin: 0 0 1rem 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  line-height: 1 !important;
+}
+
+.account-action-card strong {
+  display: block !important;
+  min-height: 2.35em !important;
+  line-height: 1.15 !important;
+  margin: 0 0 0.35rem 0 !important;
+}
+
+.account-action-card small {
+  display: block !important;
+  min-height: 1.5em !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+
+.account-member-card .inline-flex,
+.account-member-card a,
+.account-help-card a,
+.account-upload-button,
+.account-reward-popup a,
+.account-reward-popup button,
+button {
+  color: #fff;
+}
+
+.account-member-card a,
+.account-upload-button {
+  background: linear-gradient(135deg, #f0064f, #ff2d68) !important;
+  color: #fff !important;
+}
+
+.account-help-pill {
+  color: #fff !important;
+}
+
+.account-avatar-uploader {
+  display: grid;
+  grid-template-columns: 116px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(245,190,95,.16), transparent 35%),
+    rgba(255,255,255,.035);
+  padding: 1.2rem;
+}
+
+.account-avatar-preview {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+  color: #070707;
+  font-size: 1.8rem;
+  font-weight: 950;
+  box-shadow: 0 18px 48px rgba(0,0,0,.35);
+}
+
+.account-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-avatar-upload-copy h3 {
+  font-size: 1.3rem;
+  font-weight: 950;
+}
+
+.account-avatar-upload-copy p {
+  margin-top: .35rem;
+  color: rgba(255,255,255,.62);
+  font-size: .86rem;
+  line-height: 1.55;
+}
+
+.account-upload-button {
+  position: relative;
+  margin-top: .85rem;
+  display: inline-flex;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: .8rem 1.2rem;
+  font-size: .82rem;
+  font-weight: 950;
+}
+
+.account-upload-button input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.account-avatar-upload-copy small {
+  display: block;
+  margin-top: .55rem;
+  color: rgba(255,255,255,.45);
+}
+
+@media (max-width: 1180px) {
+  .account-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-action-card {
+    min-height: 112px !important;
+  }
+
+  .account-action-icon {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+  }
+
+  .account-avatar-uploader {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .account-avatar-preview {
+    margin-inline: auto;
+  }
+}
+
+/* PHASE 8.22 MENU WHITE AVATAR LOCALSTORAGE */
+.account-sidebar {
+  width: 310px !important;
+}
+
+.account-sidebar-link {
+  min-height: 54px !important;
+  border-radius: 18px !important;
+  padding: 0.75rem 0.95rem !important;
+}
+
+.account-sidebar-link-active {
+  background: #ffffff !important;
+  color: #050505 !important;
+  box-shadow: 0 14px 32px rgba(255,255,255,.12), inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+.account-sidebar-link-active *,
+.account-sidebar-link-active b,
+.account-sidebar-link-active span {
+  color: #050505 !important;
+}
+
+.account-sidebar-link-active .account-sidebar-icon {
+  background: #ffffff !important;
+  color: #050505 !important;
+  border-color: rgba(0,0,0,.10) !important;
+}
+
+.account-sidebar-icon {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  font-size: 1rem !important;
+}
+
+.account-action-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+.account-action-card {
+  min-height: 150px !important;
+  padding: 1.15rem !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+.account-action-icon {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  border-radius: 22px !important;
+  font-size: 1.65rem !important;
+  margin-bottom: 0.85rem !important;
+}
+
+.account-action-card strong {
+  line-height: 1.15 !important;
+  min-height: 2.3em !important;
+}
+
+.account-avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+}
+
+.account-avatar-remove {
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  padding: .8rem 1.2rem;
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 950;
+  background: rgba(255,255,255,.06);
+}
+
+.account-avatar-remove:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.account-upload-button {
+  color: #ffffff !important;
+}
+
+@media (max-width: 1180px) {
+  .account-sidebar {
+    width: 100% !important;
+  }
+
+  .account-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-sidebar-link {
+    min-height: 48px !important;
+  }
+
+  .account-action-card {
+    min-height: 112px !important;
+  }
+}
+
+/* PHASE 8.23 MAROON BUTTON AVATAR CROP RESPONSIVE */
+.account-sidebar-link-active {
+  background:
+    linear-gradient(135deg, rgba(108, 34, 46, .98), rgba(55, 18, 26, .98)) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(244, 63, 94, .36) !important;
+  box-shadow: 0 18px 36px rgba(127, 29, 29, .24), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+
+.account-sidebar-link-active *,
+.account-sidebar-link-active b,
+.account-sidebar-link-active span {
+  color: #ffffff !important;
+}
+
+.account-sidebar-link-active .account-sidebar-icon {
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,.18), transparent 40%),
+    rgba(244, 63, 94, .22) !important;
+  color: #ffffff !important;
+  border-color: rgba(244, 63, 94, .34) !important;
+}
+
+.account-member-card a,
+.account-upload-button,
+.account-theme-button,
+.account-reward-popup a:first-child {
+  background:
+    linear-gradient(135deg, #7f1d1d, #be123c 58%, #fb7185) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(251, 113, 133, .35) !important;
+  box-shadow: 0 16px 34px rgba(190, 18, 60, .22) !important;
+}
+
+.account-upload-button:hover,
+.account-theme-button:hover,
+.account-member-card a:hover {
+  filter: brightness(1.08);
+}
+
+.account-theme-button {
+  border-radius: 999px;
+  padding: .8rem 1.2rem;
+  font-size: .82rem;
+  font-weight: 950;
+}
+
+.account-avatar-remove {
+  color: #ffffff !important;
+}
+
+.account-avatar-crop-stage {
+  display: grid;
+  gap: .8rem;
+  justify-items: center;
+}
+
+.account-avatar-crop-preview {
+  position: relative;
+}
+
+.account-avatar-crop-preview img {
+  transform-origin: center;
+}
+
+.account-crop-control {
+  display: grid;
+  gap: .4rem;
+  width: min(220px, 100%);
+  color: rgba(255,255,255,.65);
+  font-size: .72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.account-crop-control input[type="range"] {
+  accent-color: #be123c;
+  width: 100%;
+}
+
+.account-avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .account-avatar-uploader {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+
+  .account-avatar-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-avatar-uploader {
+    padding: 1rem !important;
+  }
+
+  .account-avatar-preview {
+    width: 92px !important;
+    height: 92px !important;
+  }
+
+  .account-avatar-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .account-upload-button,
+  .account-theme-button,
+  .account-avatar-remove {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* PHASE 8.24 LAYOUT GAP MANUAL CROP */
+.account-shell {
+  padding-top: 6.25rem !important;
+}
+
+.account-shell > section.mx-auto {
+  max-width: 1280px !important;
+}
+
+.account-shell .mt-6.grid {
+  align-items: stretch !important;
+  gap: 1.35rem !important;
+  grid-template-columns: 320px minmax(0, 1fr) !important;
+}
+
+.account-sidebar {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  align-self: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.account-sidebar nav {
+  flex: 0 0 auto !important;
+}
+
+.account-member-card {
+  margin-top: auto !important;
+}
+
+.account-help-card {
+  flex: 0 0 auto !important;
+}
+
+.account-shell section.space-y-6 {
+  min-width: 0 !important;
+}
+
+.account-shell .account-hero-widget,
+.account-shell .account-widget-panel {
+  width: 100% !important;
+}
+
+.account-avatar-manual-crop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #fff;
+  color: #070707;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 18px 50px rgba(0,0,0,.42);
+}
+
+.account-avatar-manual-crop.is-dragging {
+  cursor: grabbing;
+}
+
+.account-avatar-manual-crop img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.account-avatar-manual-crop span {
+  font-size: 2rem;
+  font-weight: 950;
+}
+
+.account-avatar-crop-mask {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.75),
+    inset 0 0 0 999px rgba(0,0,0,0);
+}
+
+.account-crop-hint {
+  color: rgba(255,255,255,.52);
+  font-size: .72rem;
+  text-align: center;
+}
+
+.account-avatar-uploader-manual {
+  grid-template-columns: 260px 1fr !important;
+}
+
+@media (min-width: 1440px) {
+  .account-shell > section.mx-auto {
+    max-width: 1320px !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .account-shell .mt-6.grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-sidebar {
+    min-height: auto !important;
+  }
+
+  .account-member-card {
+    margin-top: 1rem !important;
+  }
+
+  .account-avatar-uploader-manual {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-shell {
+    padding-top: 5rem !important;
+  }
+
+  .account-avatar-manual-crop {
+    width: 180px;
+    height: 180px;
+  }
+
+  .account-avatar-manual-crop img {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* PHASE 8.24 V2 LAYOUT GAP MANUAL CROP */
+.account-shell {
+  padding-top: 6.25rem !important;
+}
+
+.account-shell > section.mx-auto {
+  max-width: 1280px !important;
+}
+
+.account-shell .mt-6.grid {
+  align-items: stretch !important;
+  gap: 1.35rem !important;
+  grid-template-columns: 320px minmax(0, 1fr) !important;
+}
+
+.account-sidebar {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  align-self: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.account-member-card {
+  margin-top: auto !important;
+}
+
+.account-shell section.space-y-6 {
+  min-width: 0 !important;
+}
+
+.account-avatar-manual-crop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #fff;
+  color: #070707;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 18px 50px rgba(0,0,0,.42);
+}
+
+.account-avatar-manual-crop.is-dragging {
+  cursor: grabbing;
+}
+
+.account-avatar-manual-crop img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.account-avatar-manual-crop span {
+  font-size: 2rem;
+  font-weight: 950;
+}
+
+.account-avatar-crop-mask {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.75);
+}
+
+.account-crop-hint {
+  color: rgba(255,255,255,.52);
+  font-size: .72rem;
+  text-align: center;
+}
+
+.account-avatar-uploader-manual {
+  grid-template-columns: 260px 1fr !important;
+}
+
+@media (max-width: 1180px) {
+  .account-shell .mt-6.grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .account-sidebar {
+    min-height: auto !important;
+  }
+
+  .account-member-card {
+    margin-top: 1rem !important;
+  }
+
+  .account-avatar-uploader-manual {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-shell {
+    padding-top: 5rem !important;
+  }
+
+  .account-avatar-manual-crop {
+    width: 180px;
+    height: 180px;
+  }
+
+  .account-avatar-manual-crop img {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* PHASE 8.24 FINAL V3 ACCOUNT FIX */
+.account-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.account-sidebar nav {
+  flex: 1 1 auto !important;
+}
+
+.account-sidebar-bottom {
+  margin-top: auto !important;
+}
+
+.account-sidebar-link-active {
+  background: linear-gradient(135deg, rgba(92, 24, 37, .98), rgba(124, 31, 50, .96)) !important;
+  color: #ffffff !important;
+}
+
+.account-sidebar-link-active *,
+.account-sidebar-link-active b,
+.account-sidebar-link-active span,
+.account-sidebar-link-active i {
+  color: #ffffff !important;
+}
+
+.account-glyph {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+}
+
+.account-glyph::before,
+.account-glyph::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+  border-color: currentColor;
+}
+
+.account-glyph-home::before { left: 3px; top: 7px; width: 12px; height: 9px; border: 2px solid currentColor; border-top: 0; border-radius: 2px; }
+.account-glyph-home::after { left: 4px; top: 2px; width: 10px; height: 10px; border-left: 2px solid currentColor; border-top: 2px solid currentColor; transform: rotate(45deg); }
+.account-glyph-box::before { inset: 3px; border: 2px solid currentColor; border-radius: 3px; }
+.account-glyph-heart::before { left: 3px; top: 4px; width: 12px; height: 12px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); border-radius: 0 0 0 4px; }
+.account-glyph-user::before { left: 6px; top: 2px; width: 6px; height: 6px; border: 2px solid currentColor; border-radius: 999px; }
+.account-glyph-user::after { left: 3px; top: 10px; width: 12px; height: 6px; border: 2px solid currentColor; border-radius: 999px 999px 0 0; border-bottom: 0; }
+.account-glyph-gift::before { left: 3px; top: 7px; width: 12px; height: 9px; border: 2px solid currentColor; border-radius: 2px; }
+.account-glyph-gift::after { left: 8px; top: 3px; width: 2px; height: 13px; background: currentColor; }
+.account-glyph-pin::before { left: 5px; top: 2px; width: 8px; height: 12px; border: 2px solid currentColor; border-radius: 999px 999px 999px 0; transform: rotate(-45deg); }
+.account-glyph-card::before { left: 2px; top: 5px; width: 14px; height: 10px; border: 2px solid currentColor; border-radius: 3px; }
+.account-glyph-card::after { left: 4px; top: 8px; width: 10px; height: 2px; background: currentColor; }
+.account-glyph-gear::before { inset: 5px; border: 2px solid currentColor; border-radius: 999px; }
+.account-glyph-gear::after { left: 8px; top: 1px; width: 2px; height: 16px; background: currentColor; transform: rotate(45deg); }
+.account-glyph-signout::before { left: 2px; top: 4px; width: 9px; height: 10px; border: 2px solid currentColor; border-right: 0; border-radius: 3px; }
+.account-glyph-signout::after { left: 8px; top: 7px; width: 8px; height: 4px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
+
+.account-row-arrow {
+  color: rgba(255,255,255,.55) !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 1.35rem !important;
+}
+
+.account-avatar-actions-final {
+  display: flex !important;
+  align-items: center !important;
+  gap: .8rem !important;
+  flex-wrap: wrap !important;
+}
+
+.account-avatar-actions-final .account-upload-button,
+.account-avatar-actions-final .account-theme-button,
+.account-avatar-actions-final .account-avatar-remove,
+.account-form-submit {
+  min-height: 46px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.25rem !important;
+  border-radius: 999px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  background: linear-gradient(135deg, #7f1d1d, #be123c 58%, #fb7185) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(251, 113, 133, .35) !important;
+}
+
+.account-avatar-saved-mode .account-avatar-manual-crop {
+  cursor: default !important;
+}
+
+.account-avatar-saved-mode .account-avatar-manual-crop img {
+  transform: none !important;
+}
+
+@media (max-width: 640px) {
+  .account-avatar-actions-final {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* PHASE 8.24 FINAL V4 AVATAR BUTTON ALIGNMENT ONLY */
+.account-avatar-actions,
+.account-avatar-actions-final {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.85rem !important;
+  flex-wrap: wrap !important;
+  margin-top: 1rem !important;
+}
+
+.account-avatar-actions .account-upload-button,
+.account-avatar-actions .account-theme-button,
+.account-avatar-actions .account-avatar-remove,
+.account-avatar-actions-final .account-upload-button,
+.account-avatar-actions-final .account-theme-button,
+.account-avatar-actions-final .account-avatar-remove {
+  height: 50px !important;
+  min-height: 50px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.55rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+}
+
+.account-avatar-actions .account-upload-button input,
+.account-avatar-actions-final .account-upload-button input {
+  position: absolute !important;
+  inset: 0 !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+}
+
+.account-avatar-upload-copy small {
+  display: block !important;
+  margin-top: 0.55rem !important;
+}
+
+@media (max-width: 720px) {
+  .account-avatar-actions,
+  .account-avatar-actions-final {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.7rem !important;
+  }
+
+  .account-avatar-actions .account-upload-button,
+  .account-avatar-actions .account-theme-button,
+  .account-avatar-actions .account-avatar-remove,
+  .account-avatar-actions-final .account-upload-button,
+  .account-avatar-actions-final .account-theme-button,
+  .account-avatar-actions-final .account-avatar-remove {
+    width: 100% !important;
+  }
+}
+
+
+/* PHASE 8.24 FINAL V5 SIDEBAR TOP ALIGNMENT ONLY */
+.account-shell {
+  padding-top: 5.35rem !important;
+}
+
+.account-shell > section.mx-auto {
+  max-width: 1280px !important;
+}
+
+.account-shell .mt-6.grid {
+  margin-top: 1.05rem !important;
+  align-items: start !important;
+}
+
+.account-sidebar {
+  align-self: start !important;
+  margin-top: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .account-sidebar {
+    position: sticky !important;
+    top: 5.25rem !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .account-shell {
+    padding-top: 4.75rem !important;
+  }
+
+  .account-shell .mt-6.grid {
+    margin-top: 0.85rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-shell {
+    padding-top: 4.35rem !important;
+  }
+}
+
+
+/* =========================================================
+   CLIENT HEADER POLISH FIX
+   - Restore flat logo style, no forced round logo
+   - Reduce desktop/mobile header height
+   - Better Android icon alignment
+   - Remove mobile black gap above hero
+   - More transparent sticky header on scroll
+   ========================================================= */
+
+.saqso-header,
+.saqso-premium-header,
+.site-header,
+.client-header,
+header[class*="header"] {
+  min-height: 78px !important;
+  height: 78px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background: rgba(0,0,0,.82) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+/* logo old style: no round wrapper */
+.saqso-header img,
+.saqso-premium-header img,
+.site-header img,
+.client-header img,
+header[class*="header"] img {
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+}
+
+.saqso-header [class*="logo"],
+.saqso-premium-header [class*="logo"],
+.site-header [class*="logo"],
+.client-header [class*="logo"],
+header[class*="header"] [class*="logo"] {
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* desktop nav polish */
+.saqso-header nav,
+.saqso-premium-header nav,
+.site-header nav,
+.client-header nav {
+  height: 46px !important;
+  align-items: center !important;
+}
+
+/* right icon group alignment */
+.saqso-header [class*="action"],
+.saqso-premium-header [class*="action"],
+.site-header [class*="action"],
+.client-header [class*="action"] {
+  align-items: center !important;
+}
+
+/* mobile/android */
+@media (max-width: 768px) {
+  .saqso-header,
+  .saqso-premium-header,
+  .site-header,
+  .client-header,
+  header[class*="header"] {
+    height: 74px !important;
+    min-height: 74px !important;
+    padding: 0 16px !important;
+  }
+
+  .saqso-header img,
+  .saqso-premium-header img,
+  .site-header img,
+  .client-header img,
+  header[class*="header"] img {
+    max-height: 44px !important;
+    width: auto !important;
+  }
+
+  /* icon buttons perfect round and aligned */
+  .saqso-header button,
+  .saqso-premium-header button,
+  .site-header button,
+  .client-header button,
+  header[class*="header"] button {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  /* remove black gap before hero */
+  .saqso-hero,
+  .hero,
+  section[class*="hero"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+}
+
+/* sticky transparency while scrolling */
+.saqso-header.is-scrolled,
+.saqso-premium-header.is-scrolled,
+.site-header.is-scrolled,
+.client-header.is-scrolled,
+header[class*="header"].is-scrolled {
+  background: rgba(0,0,0,.64) !important;
+  backdrop-filter: blur(22px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(130%) !important;
+}
+
+
+/* PHASE 8.24 FINAL V6 ICON + WISHLIST IMAGE REPAIR */
+.account-action-icon {
+  color: transparent !important;
+  font-size: 0 !important;
+  position: relative !important;
+}
+
+.account-action-icon > .account-glyph {
+  width: 30px !important;
+  height: 30px !important;
+  color: var(--qa-icon-color, currentColor) !important;
+}
+
+.account-glyph-spark::before {
+  left: 7px;
+  top: 1px;
+  width: 4px;
+  height: 16px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.account-glyph-spark::after {
+  left: 1px;
+  top: 7px;
+  width: 16px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.account-glyph-help::before {
+  content: "?";
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  color: currentColor;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.account-tone-blue .account-action-icon > .account-glyph { --qa-icon-color: #60a5fa; }
+.account-tone-pink .account-action-icon > .account-glyph { --qa-icon-color: #f472b6; }
+.account-tone-green .account-action-icon > .account-glyph { --qa-icon-color: #34d399; }
+.account-tone-violet .account-action-icon > .account-glyph { --qa-icon-color: #a78bfa; }
+.account-tone-amber .account-action-icon > .account-glyph { --qa-icon-color: #f59e0b; }
+.account-tone-cyan .account-action-icon > .account-glyph { --qa-icon-color: #22d3ee; }
+
+.account-row-arrow {
+  font-family: Arial, sans-serif !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+  color: rgba(255, 255, 255, .56) !important;
+}
+
+.account-wishlist-heart {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: rgba(255,255,255,.72);
+  z-index: 2;
+}
+
+.account-wishlist-heart .account-glyph {
+  width: 18px;
+  height: 18px;
+}
+
+.account-wishlist-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.account-wishlist-thumb {
+  display: block;
+  width: 100%;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: .85rem;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.06);
+}
+
+.account-wishlist-products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-wishlist-product-card {
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.35);
+  padding: 1rem;
+}
+
+.account-wishlist-product-image {
+  display: grid;
+  place-items: center;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.55);
+}
+
+.account-wishlist-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-wishlist-product-card h3 {
+  margin-top: .9rem;
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.account-wishlist-product-card p {
+  margin-top: .25rem;
+  color: rgba(255,255,255,.55);
+  font-size: .82rem;
+}
+
+.account-wishlist-product-card strong {
+  display: block;
+  margin-top: .6rem;
+  font-weight: 950;
+}
+
+@media (max-width: 900px) {
+  .account-wishlist-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .account-wishlist-products {
+    grid-template-columns: 1fr;
+  }
+}
+

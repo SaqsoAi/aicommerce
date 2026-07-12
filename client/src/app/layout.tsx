@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
@@ -129,7 +129,7 @@ export default function RootLayout({
 
               <SaqsoHeader />
 
-              <main className="min-h-screen overflow-x-hidden pt-[88px]">
+              <main className="min-h-screen overflow-x-hidden pt-[56px] sm:pt-[64px] lg:pt-[72px]">
                 {children}
               </main>
             </AuthProvider>
@@ -143,3 +143,5 @@ export default function RootLayout({
 export const viewport = {
   themeColor: "#c74b21"
 };
+
+

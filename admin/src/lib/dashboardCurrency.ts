@@ -1,4 +1,4 @@
-export type StoreCurrency = {
+﻿export type StoreCurrency = {
   code: string;
   symbol: string;
   locale: string;
@@ -6,16 +6,16 @@ export type StoreCurrency = {
 
 export const fallbackCurrency: StoreCurrency = {
   code: "BDT",
-  symbol: "৳",
+  symbol: "à§³",
   locale: "bn-BD",
 };
 
 const currencySymbols: Record<string, string> = {
-  BDT: "৳",
+  BDT: "à§³",
   USD: "$",
-  EUR: "€",
-  GBP: "£",
-  INR: "₹",
+  EUR: "â‚¬",
+  GBP: "Â£",
+  INR: "â‚¹",
 };
 
 export function resolveStoreCurrency(settings?: Record<string, unknown> | null): StoreCurrency {
@@ -49,7 +49,7 @@ export function formatStoreMoney(value: unknown, currency: StoreCurrency = fallb
         ? Number(value)
         : 0;
 
-  if (!Number.isFinite(amount)) return ${currency.symbol}0;
+  if (!Number.isFinite(amount)) return `${currency.symbol}0`;
 
   try {
     return new Intl.NumberFormat(currency.locale, {
@@ -58,15 +58,15 @@ export function formatStoreMoney(value: unknown, currency: StoreCurrency = fallb
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return ${currency.symbol};
+    return `${currency.symbol}`;
   }
 }
 
 export async function fetchStoreCurrency(apiBase: string): Promise<StoreCurrency> {
   const endpoints = [
-    ${apiBase}/enterprise-settings,
-    ${apiBase}/store-settings,
-    ${apiBase}/settings/store,
+    `${apiBase}/enterprise-settings`,
+    `${apiBase}/store-settings`,
+    `${apiBase}/settings/store`,
   ];
 
   for (const url of endpoints) {
@@ -81,3 +81,5 @@ export async function fetchStoreCurrency(apiBase: string): Promise<StoreCurrency
 
   return fallbackCurrency;
 }
+
+

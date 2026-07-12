@@ -1,0 +1,1829 @@
+/*
+  SAQSO Dashboard Reference Shell Plugin
+  Visual-only, role-aware shell alignment.
+  Canonical DashboardLayout, Sidebar, Topbar and DashboardShell remain owners.
+*/
+
+:root {
+  --plugin-shell-header-height: 72px;
+  --plugin-shell-sidebar-width: 224px;
+  --plugin-shell-panel: rgba(7, 18, 33, 0.94);
+  --plugin-shell-panel-strong: rgba(5, 14, 27, 0.98);
+  --plugin-shell-border: rgba(122, 164, 218, 0.2);
+  --plugin-shell-muted: #9eafc8;
+}
+
+/* Header spans the complete viewport. Workspace begins below it. */
+.ds-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: var(--plugin-shell-header-height) minmax(0, 1fr) !important;
+  min-height: 100dvh !important;
+  background:
+    radial-gradient(circle at 30% -15%, rgba(0, 229, 255, 0.07), transparent 34rem),
+    radial-gradient(circle at 78% -8%, rgba(124, 58, 237, 0.09), transparent 34rem),
+    #020812 !important;
+}
+
+.ds-shell.collapsed {
+  --sidebar-width: 78px !important;
+}
+
+.ds-topbar {
+  grid-row: 1 !important;
+  grid-column: 1 !important;
+  position: sticky !important;
+  inset: 0 0 auto 0 !important;
+  width: 100% !important;
+  height: var(--plugin-shell-header-height) !important;
+  min-height: var(--plugin-shell-header-height) !important;
+  z-index: 90 !important;
+  display: grid !important;
+  grid-template-columns: minmax(300px, 390px) minmax(360px, 520px) minmax(360px, 1fr) !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 0 20px !important;
+  border-bottom: 1px solid var(--plugin-shell-border) !important;
+  background:
+    linear-gradient(90deg, rgba(3, 10, 22, 0.99), rgba(2, 8, 18, 0.97)),
+    #020812 !important;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.24) !important;
+  backdrop-filter: blur(22px) !important;
+}
+
+.ds-topbar::before {
+  background:
+    linear-gradient(90deg, rgba(0, 229, 255, 0.025), transparent 32%, rgba(124, 58, 237, 0.035)) !important;
+}
+
+.ds-topbar-left {
+  min-width: 0 !important;
+  gap: 13px !important;
+}
+
+.ds-topbar-brand {
+  display: flex !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.ds-topbar-brand i {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  border: 1px solid rgba(34, 211, 238, 0.74) !important;
+  color: #22d3ee !important;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(34, 211, 238, 0.2), transparent 55%),
+    linear-gradient(145deg, rgba(0, 229, 255, 0.09), rgba(124, 58, 237, 0.2)) !important;
+  box-shadow:
+    0 0 0 4px rgba(34, 211, 238, 0.035),
+    0 0 28px rgba(34, 211, 238, 0.24) !important;
+  font-size: 18px !important;
+  font-style: normal !important;
+  font-weight: 950 !important;
+}
+
+.ds-topbar-brand.admin i {
+  border-color: rgba(249, 115, 22, 0.72) !important;
+  color: #fb923c !important;
+  background: rgba(249, 115, 22, 0.11) !important;
+  box-shadow: 0 0 28px rgba(249, 115, 22, 0.2) !important;
+}
+
+.ds-topbar-brand.manager i {
+  border-color: rgba(34, 197, 94, 0.72) !important;
+  color: #4ade80 !important;
+  background: rgba(34, 197, 94, 0.11) !important;
+  box-shadow: 0 0 28px rgba(34, 197, 94, 0.18) !important;
+}
+
+.ds-topbar-brand strong {
+  display: block !important;
+  color: #f8fafc !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.035em !important;
+}
+
+.ds-topbar-brand small {
+  display: block !important;
+  max-width: 260px !important;
+  margin-top: 5px !important;
+  overflow: hidden !important;
+  color: #b4c1d6 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ds-search {
+  width: 100% !important;
+  max-width: 520px !important;
+  height: 42px !important;
+  justify-self: center !important;
+  border-radius: 10px !important;
+  border-color: rgba(132, 165, 214, 0.22) !important;
+  background: rgba(10, 20, 36, 0.8) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+.ds-actions {
+  gap: 8px !important;
+}
+
+.ds-actions .ds-square {
+  width: 38px !important;
+  height: 38px !important;
+  border-color: transparent !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+}
+
+.ds-actions .ds-square:hover {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  background: rgba(15, 23, 42, 0.72) !important;
+}
+
+.ds-profile > button {
+  min-width: 195px !important;
+  height: 50px !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+}
+
+.ds-profile > button:hover {
+  background: rgba(15, 23, 42, 0.58) !important;
+}
+
+/* Main workspace: reference-style sidebar + dashboard + right rail. */
+.ds-workspace {
+  grid-row: 2 !important;
+  grid-column: 1 !important;
+  display: grid !important;
+  grid-template-columns: var(--sidebar-width, var(--plugin-shell-sidebar-width)) minmax(0, 1fr) !important;
+  min-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+}
+
+.ds-sidebar {
+  position: sticky !important;
+  inset: var(--plugin-shell-header-height) auto auto 0 !important;
+  top: 0 !important;
+  width: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  min-width: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+  min-height: 0 !important;
+  z-index: 70 !important;
+  padding: 9px 10px 12px !important;
+  border-right: 1px solid var(--plugin-shell-border) !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(124, 58, 237, 0.08), transparent 22rem),
+    linear-gradient(180deg, #061024 0%, #040b17 100%) !important;
+  box-shadow: 12px 0 32px rgba(0, 0, 0, 0.18) !important;
+}
+
+.ds-sidebar.admin {
+  background:
+    radial-gradient(circle at 0 0, rgba(249, 115, 22, 0.055), transparent 22rem),
+    linear-gradient(180deg, #061024 0%, #040b17 100%) !important;
+}
+
+.ds-sidebar.manager {
+  background:
+    radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.055), transparent 22rem),
+    linear-gradient(180deg, #061024 0%, #040b17 100%) !important;
+}
+
+/* Brand now belongs to full-width Topbar. */
+.ds-sidebar > .ds-brand,
+.ds-sidebar > .ds-menu-search {
+  display: none !important;
+}
+
+.ds-sidebar nav {
+  padding: 1px 0 94px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(112, 136, 178, 0.52) transparent !important;
+}
+
+.ds-sidebar nav section {
+  margin-bottom: 17px !important;
+}
+
+.ds-sidebar h3 {
+  margin: 0 8px 8px !important;
+  color: #c084fc !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.22em !important;
+}
+
+.ds-sidebar.admin h3 {
+  color: #fb923c !important;
+}
+
+.ds-sidebar.manager h3 {
+  color: #4ade80 !important;
+}
+
+.ds-sidebar a {
+  min-height: 36px !important;
+  height: 36px !important;
+  margin: 0 0 3px !important;
+  padding: 0 10px !important;
+  gap: 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  color: #e4eaf5 !important;
+  font-size: 12.5px !important;
+  font-weight: 750 !important;
+}
+
+.ds-sidebar a svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: #b8c5d9 !important;
+}
+
+.ds-sidebar a:hover {
+  border-color: rgba(148, 163, 184, 0.12) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+.ds-sidebar a.active {
+  border-color: rgba(34, 211, 238, 0.34) !important;
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.2), rgba(109, 40, 217, 0.62)) !important;
+  box-shadow:
+    inset 3px 0 0 #22d3ee,
+    0 8px 24px rgba(79, 70, 229, 0.18) !important;
+}
+
+.ds-sidebar.admin a.active {
+  border-color: rgba(249, 115, 22, 0.4) !important;
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.24), rgba(194, 65, 12, 0.5)) !important;
+  box-shadow:
+    inset 3px 0 0 #f97316,
+    0 8px 24px rgba(249, 115, 22, 0.14) !important;
+}
+
+.ds-sidebar.manager a.active {
+  border-color: rgba(34, 197, 94, 0.4) !important;
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.23), rgba(21, 128, 61, 0.5)) !important;
+  box-shadow:
+    inset 3px 0 0 #22c55e,
+    0 8px 24px rgba(34, 197, 94, 0.13) !important;
+}
+
+.ds-status {
+  position: absolute !important;
+  inset: auto 10px 10px 10px !important;
+  min-height: 78px !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  border-radius: 11px !important;
+  border-color: rgba(34, 211, 238, 0.32) !important;
+  background:
+    linear-gradient(145deg, rgba(6, 78, 105, 0.34), rgba(6, 24, 45, 0.92)) !important;
+}
+
+.ds-sidebar.admin .ds-status {
+  border-color: rgba(249, 115, 22, 0.3) !important;
+  background: linear-gradient(145deg, rgba(124, 45, 18, 0.28), rgba(6, 24, 45, 0.92)) !important;
+}
+
+.ds-sidebar.manager .ds-status {
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  background: linear-gradient(145deg, rgba(20, 83, 45, 0.27), rgba(6, 24, 45, 0.92)) !important;
+}
+
+.ds-status b {
+  height: 5px !important;
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6) !important;
+}
+
+.ds-content {
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  overflow: hidden !important;
+}
+
+.ds-page {
+  min-width: 0 !important;
+  max-width: none !important;
+  padding: 20px 22px 26px !important;
+}
+
+/* Dashboard red-mark areas: main, right rail and content cards. */
+.dashboard-system {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: auto !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 14px !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.dashboard-system.admin,
+.dashboard-system.manager {
+  grid-template-columns: minmax(0, 1fr) 310px !important;
+}
+
+.ds-main {
+  display: flex !important;
+  min-width: 0 !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.ds-right {
+  gap: 12px !important;
+  align-self: start !important;
+}
+
+.ds-hero {
+  min-height: 86px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 16px !important;
+  margin: 0 !important;
+  padding: 14px 17px !important;
+  border-radius: 9px !important;
+  background:
+    linear-gradient(90deg, rgba(5, 18, 32, 0.98), rgba(7, 15, 29, 0.96)),
+    var(--plugin-shell-panel) !important;
+}
+
+.ds-hero-copy p {
+  margin-bottom: 5px !important;
+  font-size: 9px !important;
+}
+
+.ds-hero h1 {
+  font-size: clamp(24px, 2vw, 32px) !important;
+  letter-spacing: -0.045em !important;
+}
+
+.ds-hero span {
+  margin-top: 4px !important;
+  font-size: 12px !important;
+}
+
+.ds-hero-actions {
+  align-self: start !important;
+}
+
+.ds-hero button,
+.ds-panel header button {
+  height: 35px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+}
+
+.ds-kpi-grid {
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+.ds-kpi-grid.super {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+}
+
+.ds-kpi-grid.commerce {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+.ds-small-kpi-grid {
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.ds-kpi,
+.ds-small-kpi,
+.ds-panel,
+.ds-role-bar {
+  border-radius: 9px !important;
+  border-color: var(--plugin-shell-border) !important;
+  background:
+    linear-gradient(180deg, rgba(7, 19, 35, 0.96), rgba(3, 10, 21, 0.97)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.018),
+    0 12px 32px rgba(0,0,0,.22) !important;
+}
+
+.ds-kpi {
+  min-height: 126px !important;
+  padding: 12px !important;
+}
+
+.ds-small-kpi {
+  min-height: 58px !important;
+  padding: 9px 10px !important;
+}
+
+.ds-panel {
+  padding: 11px !important;
+}
+
+.ds-panel > header {
+  min-height: 32px !important;
+  margin-bottom: 9px !important;
+}
+
+.ds-panel > header h2 {
+  font-size: 13px !important;
+}
+
+.ds-super-content {
+  grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.9fr) !important;
+  gap: 12px !important;
+  margin: 0 !important;
+}
+
+.ds-commerce-content {
+  grid-template-columns: minmax(0, 1.42fr) minmax(270px, .88fr) minmax(270px, .88fr) !important;
+  gap: 12px !important;
+  margin: 0 !important;
+}
+
+.dashboard-system.manager .ds-commerce-content {
+  grid-template-columns: minmax(0, 1.55fr) minmax(290px, .9fr) !important;
+}
+
+.ds-project-layout,
+.ds-chat {
+  gap: 12px !important;
+}
+
+.ds-project-layout {
+  grid-template-columns: 210px minmax(0, 1fr) !important;
+}
+
+.ds-chat {
+  grid-template-columns: 205px minmax(0, 1fr) !important;
+}
+
+.ds-empty-state {
+  min-height: 98px !important;
+  border-radius: 8px !important;
+}
+
+.ds-ai-orb {
+  width: 148px !important;
+  height: 148px !important;
+  margin: 8px auto 15px !important;
+}
+
+.ds-right h3 {
+  font-size: 15px !important;
+}
+
+.ds-right p {
+  font-size: 12px !important;
+}
+
+.ds-ai-actions {
+  gap: 7px !important;
+}
+
+.ds-ai-actions button,
+.ds-quick button {
+  min-height: 37px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+}
+
+.ds-activity-row {
+  gap: 8px !important;
+}
+
+.ds-activity-row article {
+  border-radius: 8px !important;
+  padding: 10px !important;
+}
+
+.ds-role-bar {
+  min-height: 44px !important;
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+/* Collapsed reference behavior. */
+.ds-shell.collapsed .ds-sidebar {
+  padding-inline: 7px !important;
+}
+
+.ds-shell.collapsed .ds-sidebar a {
+  justify-content: center !important;
+}
+
+.ds-shell.collapsed .ds-status {
+  padding: 7px !important;
+}
+
+/* Responsive acceptance sizes. */
+@media (max-width: 1536px) {
+  .ds-topbar {
+    grid-template-columns: minmax(270px, 340px) minmax(330px, 470px) minmax(320px, 1fr) !important;
+  }
+
+  .dashboard-system {
+    grid-template-columns: minmax(0, 1fr) 330px !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) 288px !important;
+  }
+
+  .ds-kpi-grid.super {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .ds-topbar {
+    grid-template-columns: minmax(250px, 310px) minmax(280px, 1fr) auto !important;
+  }
+
+  .ds-profile > button {
+    min-width: 150px !important;
+  }
+
+  .dashboard-system,
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .ds-right {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ds-right > .ds-panel:first-child {
+    grid-row: span 2 !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .ds-shell {
+    display: block !important;
+  }
+
+  .ds-topbar {
+    position: sticky !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    height: 66px !important;
+    min-height: 66px !important;
+    padding: 0 10px !important;
+  }
+
+  .ds-topbar-brand span,
+  .ds-search,
+  .ds-actions > .ds-square:nth-of-type(n + 2),
+  .ds-profile span {
+    display: none !important;
+  }
+
+  .ds-profile > button {
+    min-width: auto !important;
+    grid-template-columns: 38px auto !important;
+    padding: 4px !important;
+  }
+
+  .ds-workspace {
+    display: block !important;
+  }
+
+  .ds-sidebar {
+    position: fixed !important;
+    top: 66px !important;
+    left: 0 !important;
+    width: min(286px, 88vw) !important;
+    min-width: min(286px, 88vw) !important;
+    height: calc(100dvh - 66px) !important;
+    transform: translateX(-105%) !important;
+    transition: transform .2s ease !important;
+  }
+
+  .ds-shell.mobile-open .ds-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .ds-content {
+    width: 100% !important;
+  }
+
+  .ds-page {
+    padding: 12px !important;
+  }
+
+  .ds-right,
+  .ds-super-content,
+  .ds-commerce-content,
+  .dashboard-system.manager .ds-commerce-content {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ds-commerce-content > .ds-panel:first-child {
+    grid-column: auto !important;
+  }
+
+  .ds-right > .ds-panel:first-child {
+    grid-row: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ds-kpi-grid.super,
+  .ds-kpi-grid.commerce,
+  .ds-small-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ds-project-layout,
+  .ds-chat,
+  .ds-activity-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ds-chat aside {
+    padding-right: 0 !important;
+    border-right: 0 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .ds-page {
+    padding: 9px !important;
+  }
+
+  .ds-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ds-hero-actions {
+    width: 100% !important;
+  }
+
+  .ds-hero-actions button {
+    flex: 1 !important;
+  }
+
+  .ds-kpi-grid.super,
+  .ds-kpi-grid.commerce,
+  .ds-small-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   SAQSO DASHBOARD REFERENCE SHELL — 1.1.0 SURGICAL UPDATE
+   ========================================================= */
+
+/* Remove the unintended empty band below the full-width header. */
+.ds-workspace {
+  position: relative !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ds-content,
+.ds-page,
+.dashboard-system,
+.ds-main {
+  margin-top: 0 !important;
+}
+
+.ds-content {
+  align-self: stretch !important;
+  min-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+}
+
+.ds-page {
+  padding: 10px 14px 22px !important;
+}
+
+.dashboard-system {
+  align-items: start !important;
+}
+
+.ds-hero {
+  margin-top: 0 !important;
+}
+
+/* Force the full brand lockup to remain visible at desktop widths. */
+.ds-topbar-brand,
+.ds-topbar-brand span {
+  min-width: 0 !important;
+}
+
+.ds-topbar-brand span {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.ds-topbar-left {
+  overflow: visible !important;
+}
+
+/* Reference-style sidebar: compact groups, clear rows and no status overlap. */
+.ds-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 8px 8px 10px !important;
+}
+
+.ds-sidebar nav {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 0 3px 12px !important;
+  margin: 0 !important;
+  scrollbar-gutter: stable !important;
+}
+
+.ds-sidebar nav section {
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+}
+
+.ds-sidebar nav section:first-child {
+  margin-top: 0 !important;
+}
+
+.ds-sidebar h3 {
+  margin: 10px 7px 7px !important;
+  padding: 0 !important;
+  font-size: 9px !important;
+  line-height: 1.25 !important;
+  letter-spacing: .2em !important;
+}
+
+.ds-sidebar a {
+  width: 100% !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  margin: 0 0 2px !important;
+  padding: 0 9px !important;
+  gap: 9px !important;
+  border-radius: 7px !important;
+  line-height: 1 !important;
+  font-size: 11.5px !important;
+  font-weight: 720 !important;
+  white-space: nowrap !important;
+}
+
+.ds-sidebar a svg {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+}
+
+.ds-sidebar a span {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.ds-status {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-height: 72px !important;
+  margin: 7px 3px 0 !important;
+  padding: 9px !important;
+  overflow: hidden !important;
+}
+
+.ds-status small {
+  display: block !important;
+  max-height: 31px !important;
+  overflow: hidden !important;
+  line-height: 1.3 !important;
+}
+
+.ds-status b {
+  position: absolute !important;
+  left: 9px !important;
+  right: 9px !important;
+  bottom: 7px !important;
+  width: auto !important;
+}
+
+/* Better reference proportions at 1366–1920 widths. */
+@media (min-width: 1281px) {
+  .dashboard-system {
+    grid-template-columns: minmax(0, 1fr) 350px !important;
+    gap: 10px !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) 290px !important;
+  }
+
+  .ds-super-content {
+    grid-template-columns: minmax(0, 1.62fr) minmax(300px, .82fr) !important;
+    gap: 10px !important;
+  }
+
+  .ds-page {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+/* Keep collapsed and mobile behavior deterministic. */
+.ds-shell.collapsed .ds-status {
+  min-height: 54px !important;
+  margin-inline: 0 !important;
+}
+
+@media (max-width: 980px) {
+  .ds-page {
+    padding: 9px !important;
+  }
+
+  .ds-topbar-brand span {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   SAQSO DASHBOARD REFERENCE SHELL — 1.2.0
+   FIXED SIDEBAR + LIVE SUPER ADMIN DATA
+   ========================================================= */
+
+@media (min-width: 981px) {
+  .ds-workspace {
+    display: block !important;
+    min-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+  }
+
+  .ds-sidebar {
+    position: fixed !important;
+    top: var(--plugin-shell-header-height) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    z-index: 75 !important;
+    width: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+  }
+
+  .ds-content {
+    width: auto !important;
+    min-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+    margin-left: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  }
+
+  .ds-shell.collapsed .ds-content {
+    margin-left: 78px !important;
+  }
+
+  .ds-sidebar nav {
+    overscroll-behavior: contain !important;
+  }
+}
+
+/* Prevent KPI subtext from colliding with values on compact cards. */
+.ds-kpi strong,
+.ds-small-kpi strong {
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+.ds-kpi small,
+.ds-small-kpi small {
+  display: block !important;
+  position: static !important;
+  margin-top: 4px !important;
+  line-height: 1.25 !important;
+}
+
+/* =========================================================
+   SAQSO DASHBOARD REFERENCE SHELL 1.0.2
+   Sidebar first-item visibility and compact menu hierarchy.
+   ========================================================= */
+
+/* The role menu always starts from Dashboard after route/role changes. */
+.ds-sidebar nav {
+  display: block !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scroll-padding-top: 0 !important;
+  padding: 0 0 104px !important;
+}
+
+/* Prevent the first role group from being clipped above the viewport. */
+.ds-sidebar nav > section:first-child {
+  display: block !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.ds-sidebar nav > section:first-child > a:first-child {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-top: 0 !important;
+}
+
+/* Category titles are slightly larger and more prominent than menu labels. */
+.ds-sidebar h3 {
+  margin: 13px 9px 6px !important;
+  padding: 0 !important;
+  font-size: 11.5px !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.15em !important;
+}
+
+.ds-sidebar nav > section:first-child h3 {
+  margin-top: 0 !important;
+}
+
+/* Menu items stay close and organized like the approved reference. */
+.ds-sidebar nav section {
+  margin-bottom: 10px !important;
+}
+
+.ds-sidebar a {
+  height: 34px !important;
+  min-height: 34px !important;
+  margin: 0 0 1px !important;
+  padding: 0 10px !important;
+  gap: 9px !important;
+  border-radius: 7px !important;
+  font-size: 11.8px !important;
+  line-height: 1 !important;
+}
+
+.ds-sidebar a svg {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+}
+
+/* Dashboard remains the clear first active role route. */
+.ds-sidebar nav > section:first-child > a:first-child.active {
+  box-shadow:
+    inset 3px 0 0 currentColor,
+    0 7px 20px rgba(79, 70, 229, 0.17) !important;
+}
+
+/* Keep every role group and item rendered; scrolling handles long menus. */
+.ds-sidebar nav section,
+.ds-sidebar nav section > a {
+  flex-shrink: 0 !important;
+}
+
+/* Compact scrollbar without covering labels. */
+.ds-sidebar nav::-webkit-scrollbar {
+  width: 5px !important;
+}
+
+.ds-sidebar nav::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.ds-sidebar nav::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: rgba(105, 128, 165, 0.52) !important;
+}
+
+@media (min-width: 821px) {
+  .ds-sidebar nav {
+    scroll-behavior: auto !important;
+  }
+
+  .ds-sidebar nav > section:first-child > a:first-child,
+  .ds-sidebar nav > section:first-child > a:nth-child(2) {
+    display: flex !important;
+  }
+}
+
+/* =========================================================
+   Dashboard reference shell 1.0.4 — stable collapse boundary
+   ========================================================= */
+.ds-shell {
+  --sidebar-width: 214px !important;
+  min-width: 0 !important;
+  min-height: 100dvh !important;
+}
+
+.ds-shell.collapsed {
+  --sidebar-width: 72px !important;
+}
+
+.ds-workspace {
+  min-width: 0 !important;
+}
+
+.ds-content,
+.ds-page,
+.dashboard-system,
+.dashboard-system > .ds-main {
+  min-width: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.ds-sidebar-toggle {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(120, 160, 220, .22) !important;
+  border-radius: 10px !important;
+}
+
+.ds-sidebar-toggle:focus-visible {
+  outline: 2px solid var(--ds-accent, #22d3ee) !important;
+  outline-offset: 2px !important;
+}
+
+@media (min-width: 981px) {
+  .ds-workspace {
+    display: grid !important;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr) !important;
+    margin-top: 68px !important;
+    transition: grid-template-columns .22s ease !important;
+  }
+
+  .ds-sidebar {
+    position: sticky !important;
+    top: 68px !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+    height: calc(100dvh - 68px) !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .ds-content,
+  .ds-shell.collapsed .ds-content {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    margin-left: 0 !important;
+    min-height: calc(100dvh - 68px) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .ds-sidebar-toggle {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .ds-workspace {
+    display: block !important;
+    margin-top: 62px !important;
+  }
+
+  .ds-content,
+  .ds-shell.collapsed .ds-content {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .ds-shell.mobile-open .ds-sidebar {
+    transform: translateX(0) !important;
+  }
+}
+
+/* =========================================================
+   Dashboard Reference Shell 1.0.5 — fixed shell + modern polish
+   Authoritative final overrides. Keep this block last.
+   ========================================================= */
+:root {
+  --plugin-shell-header-height: 72px;
+  --plugin-shell-sidebar-width: 232px;
+  --plugin-shell-sidebar-collapsed-width: 72px;
+}
+
+.ds-shell {
+  display: block !important;
+  min-width: 0 !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
+}
+
+.ds-shell.collapsed {
+  --sidebar-width: var(--plugin-shell-sidebar-collapsed-width) !important;
+}
+
+/* Header is fixed once. No second row or artificial top spacer. */
+.ds-topbar {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: var(--plugin-shell-header-height) !important;
+  min-height: var(--plugin-shell-header-height) !important;
+  z-index: 100 !important;
+  grid-template-columns: minmax(260px, 390px) minmax(300px, 520px) minmax(340px, 1fr) !important;
+  padding: 0 18px !important;
+  overflow: visible !important;
+}
+
+.ds-topbar-left {
+  min-width: 250px !important;
+  overflow: visible !important;
+}
+
+.ds-topbar-brand {
+  width: auto !important;
+  min-width: 180px !important;
+  max-width: 300px !important;
+  overflow: visible !important;
+}
+
+.ds-topbar-brand span {
+  display: block !important;
+  width: auto !important;
+  min-width: 118px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  overflow: visible !important;
+}
+
+.ds-topbar-brand strong,
+.ds-topbar-brand small {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Sidebar and page scroll independently. The dashboard never drags the menu. */
+.ds-workspace {
+  display: block !important;
+  min-width: 0 !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: var(--plugin-shell-header-height) 0 0 !important;
+}
+
+.ds-sidebar {
+  position: fixed !important;
+  top: var(--plugin-shell-header-height) !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 80 !important;
+  width: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  min-width: var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+  max-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+  transform: none !important;
+  overflow: hidden !important;
+  transition: width .22s ease, min-width .22s ease !important;
+}
+
+.ds-sidebar nav {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+  padding: 0 3px 16px !important;
+}
+
+.ds-content,
+.ds-shell.collapsed .ds-content {
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: calc(100dvh - var(--plugin-shell-header-height)) !important;
+  margin: 0 0 0 var(--sidebar-width, var(--plugin-shell-sidebar-width)) !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  transition: margin-left .22s ease !important;
+}
+
+.ds-page {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 14px 16px 28px !important;
+}
+
+/* Modern reference-style density and depth, without changing dashboard data. */
+.dashboard-system {
+  gap: 12px !important;
+}
+
+.ds-main,
+.ds-right-rail {
+  gap: 12px !important;
+}
+
+.ds-hero,
+.ds-kpi,
+.ds-small-kpi,
+.ds-panel,
+.ds-rail-card,
+.ds-activity,
+.ds-role-footer {
+  border-color: rgba(105, 146, 204, .22) !important;
+  background:
+    linear-gradient(145deg, rgba(7, 20, 38, .97), rgba(3, 12, 25, .96)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .025),
+    0 12px 34px rgba(0, 0, 0, .2) !important;
+}
+
+.ds-hero {
+  border-radius: 12px !important;
+  padding: 17px 18px !important;
+}
+
+.ds-hero h1 {
+  letter-spacing: -.04em !important;
+}
+
+.ds-kpi,
+.ds-small-kpi,
+.ds-panel,
+.ds-rail-card {
+  border-radius: 11px !important;
+}
+
+.ds-sidebar a {
+  min-height: 35px !important;
+  height: 35px !important;
+  margin-bottom: 2px !important;
+  font-size: 12px !important;
+}
+
+.ds-sidebar h3 {
+  margin-top: 12px !important;
+  margin-bottom: 6px !important;
+  font-size: 10.5px !important;
+}
+
+.ds-status {
+  margin-top: 8px !important;
+}
+
+/* Collapsed rail keeps icons centered and accessible. */
+.ds-shell.collapsed .ds-sidebar {
+  width: var(--plugin-shell-sidebar-collapsed-width) !important;
+  min-width: var(--plugin-shell-sidebar-collapsed-width) !important;
+  padding-inline: 8px !important;
+}
+
+.ds-shell.collapsed .ds-sidebar h3,
+.ds-shell.collapsed .ds-sidebar a span,
+.ds-shell.collapsed .ds-status div {
+  display: none !important;
+}
+
+.ds-shell.collapsed .ds-sidebar a {
+  justify-content: center !important;
+  padding-inline: 0 !important;
+}
+
+.ds-shell.collapsed .ds-sidebar a svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+}
+
+.ds-shell.collapsed .ds-status {
+  display: grid !important;
+  place-items: center !important;
+  min-height: 52px !important;
+  padding: 6px !important;
+}
+
+.ds-shell.collapsed .ds-content {
+  margin-left: var(--plugin-shell-sidebar-collapsed-width) !important;
+}
+
+@media (max-width: 1180px) {
+  .ds-topbar {
+    grid-template-columns: minmax(200px, 270px) minmax(260px, 1fr) auto !important;
+    gap: 12px !important;
+  }
+
+  .ds-topbar-brand small {
+    display: none !important;
+  }
+
+  .ds-profile > button {
+    min-width: 152px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .ds-topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 0 10px !important;
+  }
+
+  .ds-topbar-brand {
+    min-width: 0 !important;
+  }
+
+  .ds-topbar-brand span {
+    display: none !important;
+  }
+
+  .ds-workspace {
+    padding-top: 64px !important;
+  }
+
+  .ds-sidebar {
+    top: 64px !important;
+    width: min(292px, 86vw) !important;
+    min-width: min(292px, 86vw) !important;
+    height: calc(100dvh - 64px) !important;
+    max-height: calc(100dvh - 64px) !important;
+    transform: translateX(-105%) !important;
+    box-shadow: 22px 0 60px rgba(0, 0, 0, .48) !important;
+  }
+
+  .ds-shell.mobile-open .ds-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .ds-content,
+  .ds-shell.collapsed .ds-content {
+    width: 100% !important;
+    margin-left: 0 !important;
+    min-height: calc(100dvh - 64px) !important;
+  }
+
+  .ds-page {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .ds-search span,
+  .ds-search kbd,
+  .ds-actions > .ds-square:nth-child(n+3) {
+    display: none !important;
+  }
+
+  .ds-search {
+    width: 44px !important;
+    min-width: 44px !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  .ds-profile > button {
+    min-width: 0 !important;
+    padding-inline: 4px !important;
+  }
+
+  .ds-profile > button span,
+  .ds-profile > button > svg {
+    display: none !important;
+  }
+}
+
+
+/* =========================================================
+   SAQSO DASHBOARD REFERENCE SHELL 1.0.7
+   FINAL AUTHORITATIVE DESKTOP LAYOUT BOUNDARY
+
+   One layout model only:
+   - fixed full-width topbar
+   - fixed sidebar below topbar
+   - absolutely bounded main content between sidebar and viewport edge
+
+   This block intentionally wins over legacy grid/margin rules.
+   ========================================================= */
+
+:root {
+  --saqso-shell-topbar-height: 72px;
+  --saqso-shell-sidebar-expanded: 214px;
+  --saqso-shell-sidebar-collapsed: 72px;
+}
+
+.ds-shell {
+  --saqso-shell-sidebar-current: var(--saqso-shell-sidebar-expanded);
+}
+
+.ds-shell.collapsed {
+  --saqso-shell-sidebar-current: var(--saqso-shell-sidebar-collapsed);
+}
+
+.ds-shell,
+.ds-shell *,
+.ds-workspace,
+.ds-content,
+.ds-page,
+.dashboard-system,
+.ds-main,
+.ds-right,
+.ds-right-rail {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+
+@media (min-width: 981px) {
+  html,
+  body {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .ds-shell,
+  .ds-shell.collapsed {
+    position: relative !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .ds-topbar {
+    position: fixed !important;
+    inset: 0 0 auto 0 !important;
+    z-index: 100 !important;
+    display: grid !important;
+    grid-template-columns: minmax(230px, auto) minmax(300px, 520px) minmax(360px, 1fr) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: var(--saqso-shell-topbar-height) !important;
+    min-height: var(--saqso-shell-topbar-height) !important;
+    margin: 0 !important;
+  }
+
+  .ds-actions {
+    min-width: 0 !important;
+    justify-self: end !important;
+  }
+
+  .ds-workspace,
+  .ds-shell.collapsed .ds-workspace {
+    position: fixed !important;
+    inset:
+      var(--saqso-shell-topbar-height)
+      0
+      0
+      0 !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: calc(100dvh - var(--saqso-shell-topbar-height)) !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .ds-sidebar,
+  .ds-shell.collapsed .ds-sidebar {
+    position: absolute !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 80 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: var(--saqso-shell-sidebar-current) !important;
+    min-width: var(--saqso-shell-sidebar-current) !important;
+    max-width: var(--saqso-shell-sidebar-current) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    overflow: hidden !important;
+    transition:
+      width .22s ease,
+      min-width .22s ease,
+      max-width .22s ease !important;
+  }
+
+  .ds-sidebar nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .ds-content,
+  .ds-shell.collapsed .ds-content {
+    position: absolute !important;
+    inset:
+      0
+      0
+      0
+      var(--saqso-shell-sidebar-current) !important;
+    z-index: 1 !important;
+    display: block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    transition: left .22s ease !important;
+  }
+
+  .ds-page {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .dashboard-system {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 320px) !important;
+  }
+
+  .dashboard-system > *,
+  .ds-main > *,
+  .ds-right > *,
+  .ds-right-rail > *,
+  .ds-super-content > *,
+  .ds-commerce-content > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ds-main,
+  .ds-right,
+  .ds-right-rail {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ds-shell.collapsed .ds-sidebar .ds-brand > div,
+  .ds-shell.collapsed .ds-menu-search,
+  .ds-shell.collapsed .ds-sidebar h3,
+  .ds-shell.collapsed .ds-sidebar a span,
+  .ds-shell.collapsed .ds-status > div,
+  .ds-shell.collapsed .ds-status > b {
+    display: none !important;
+  }
+
+  .ds-shell.collapsed .ds-sidebar .ds-brand,
+  .ds-shell.collapsed .ds-sidebar a,
+  .ds-shell.collapsed .ds-status {
+    justify-content: center !important;
+  }
+
+  .ds-shell.collapsed .ds-sidebar a {
+    padding-inline: 0 !important;
+  }
+}
+
+@media (max-width: 1280px) and (min-width: 981px) {
+  .ds-topbar {
+    grid-template-columns: minmax(210px, auto) minmax(260px, 1fr) auto !important;
+  }
+
+  .dashboard-system,
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 290px) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  html,
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .ds-shell,
+  .ds-shell.collapsed {
+    display: block !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    overflow-x: hidden !important;
+  }
+
+  .ds-workspace,
+  .ds-shell.collapsed .ds-workspace {
+    display: block !important;
+    width: 100% !important;
+    min-height: calc(100dvh - 64px) !important;
+    margin: 0 !important;
+    padding-top: 64px !important;
+    overflow: visible !important;
+  }
+
+  .ds-sidebar,
+  .ds-shell.collapsed .ds-sidebar {
+    position: fixed !important;
+    top: 64px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: min(292px, 88vw) !important;
+    min-width: min(292px, 88vw) !important;
+    max-width: min(292px, 88vw) !important;
+    height: calc(100dvh - 64px) !important;
+    transform: translateX(-105%) !important;
+  }
+
+  .ds-shell.mobile-open .ds-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .ds-content,
+  .ds-shell.collapsed .ds-content {
+    position: relative !important;
+    inset: auto !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: calc(100dvh - 64px) !important;
+    margin: 0 !important;
+    transform: none !important;
+    overflow-x: hidden !important;
+  }
+
+  .dashboard-system,
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+
+/* =========================================================
+   SAQSO DASHBOARD REFERENCE SHELL 1.0.8
+   TOPBAR CONTROL SIZE + TRUE CENTER SEARCH ALIGNMENT
+   ========================================================= */
+
+@media (min-width: 981px) {
+  .ds-topbar {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(360px, 520px)
+      minmax(0, 1fr) !important;
+    column-gap: 24px !important;
+    padding-inline: 16px !important;
+  }
+
+  .ds-topbar-left {
+    justify-self: start !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ds-search {
+    grid-column: 2 !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    min-width: 360px !important;
+    margin-inline: auto !important;
+  }
+
+  .ds-actions {
+    grid-column: 3 !important;
+    justify-self: end !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .ds-sidebar-toggle {
+    width: 46px !important;
+    min-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 0 !important;
+    border-width: 1px !important;
+    border-color: rgba(148, 163, 184, 0.34) !important;
+    border-radius: 12px !important;
+    background: rgba(8, 18, 32, 0.92) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .ds-sidebar-toggle svg {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    stroke-width: 2.2 !important;
+  }
+
+  .ds-sidebar-toggle:hover {
+    border-color: var(--ds-accent, #22d3ee) !important;
+    background: rgba(15, 28, 48, 0.96) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .ds-sidebar-toggle:active {
+    transform: translateY(0) scale(0.98) !important;
+  }
+
+  .ds-topbar-brand {
+    min-width: 0 !important;
+    max-width: min(300px, calc(100vw / 3 - 100px)) !important;
+  }
+
+  .ds-topbar-brand span {
+    min-width: 0 !important;
+    max-width: 220px !important;
+  }
+
+  .ds-topbar-brand strong,
+  .ds-topbar-brand small {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 981px) {
+  .ds-topbar {
+    grid-template-columns:
+      minmax(210px, 1fr)
+      minmax(300px, 440px)
+      minmax(300px, 1fr) !important;
+    column-gap: 14px !important;
+  }
+
+  .ds-search {
+    min-width: 300px !important;
+    max-width: 440px !important;
+  }
+
+  .ds-actions {
+    gap: 4px !important;
+  }
+
+  .ds-profile > button {
+    min-width: 170px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .ds-sidebar-toggle {
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  .ds-sidebar-toggle svg {
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px !important;
+    stroke-width: 2.2 !important;
+  }
+}

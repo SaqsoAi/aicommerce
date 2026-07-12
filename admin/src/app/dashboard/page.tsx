@@ -1,6 +1,6 @@
 "use client";
 
-import DashboardRouter from "@/components/dashboard/role-wise/DashboardRouter";
+import DashboardRouter from "@/components/dashboard/DashboardRouter";
 
 export default function DashboardPage() {
   return <DashboardRouter />;

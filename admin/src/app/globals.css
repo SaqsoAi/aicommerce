@@ -1378,3 +1378,663 @@ select optgroup {
   }
   .ds-sidebar.mobile-open { transform: translateX(0); }
 }
+
+/* =========================================================
+   DASHBOARD SINGLE SHELL / GAP FIX
+   Keeps only role-wise dashboard shell on /dashboard
+   ========================================================= */
+
+body:has(.role-dashboard-shell),
+html:has(.role-dashboard-shell) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+.role-dashboard-shell {
+  min-height: 100vh !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 214px minmax(0, 1fr) !important;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(124,58,237,.14), transparent 32%),
+    radial-gradient(circle at 90% 0%, rgba(0,229,255,.10), transparent 28%),
+    #020812 !important;
+}
+
+.role-dashboard-shell .role-sidebar {
+  width: 214px !important;
+  min-width: 214px !important;
+  max-width: 214px !important;
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  z-index: 50 !important;
+  margin: 0 !important;
+}
+
+.role-dashboard-shell .role-main,
+.role-dashboard-shell .dashboard-main,
+.role-dashboard-shell main {
+  margin-left: 214px !important;
+  width: calc(100vw - 214px) !important;
+  max-width: calc(100vw - 214px) !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+}
+
+.role-dashboard-shell .role-topbar {
+  height: 68px !important;
+  width: calc(100vw - 214px) !important;
+  margin: 0 !important;
+  padding: 0 24px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+}
+
+.role-dashboard-shell .role-content,
+.role-dashboard-shell .dashboard-content {
+  padding: 18px 24px 24px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.role-dashboard-shell .dashboard-grid,
+.role-dashboard-shell .role-dashboard-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+/* Remove accidental legacy shell visual residue */
+body:has(.role-dashboard-shell) .admin-sidebar:not(.role-sidebar),
+body:has(.role-dashboard-shell) .dashboard-sidebar:not(.role-sidebar),
+body:has(.role-dashboard-shell) aside:not(.role-sidebar) {
+  display: none !important;
+}
+
+/* Fix dashboard text rendering */
+.role-dashboard-shell {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  text-rendering: geometricPrecision;
+}
+
+.role-dashboard-shell .dashboard-card {
+  border-radius: 12px !important;
+  border: 1px solid rgba(120,160,220,.18) !important;
+  background: linear-gradient(180deg, rgba(10,25,42,.96), rgba(5,13,24,.96)) !important;
+}
+
+
+/* =========================================================
+   FINAL DASHBOARD GAP + DOUBLE OFFSET FIX
+   Problem: fixed sidebar + grid column + main margin caused double left gap.
+   Solution: dashboard shell = block, sidebar fixed, main only one 214px offset.
+   ========================================================= */
+
+body:has(.role-dashboard-shell) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+/* Do NOT use grid here. Grid + fixed sidebar causes double gap. */
+.role-dashboard-shell {
+  display: block !important;
+  position: relative !important;
+  width: 100vw !important;
+  min-height: 100vh !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+/* One sidebar only */
+.role-dashboard-shell .role-sidebar {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 214px !important;
+  min-width: 214px !important;
+  max-width: 214px !important;
+  margin: 0 !important;
+  z-index: 60 !important;
+}
+
+/* Main starts exactly after sidebar */
+.role-dashboard-shell .role-main,
+.role-dashboard-shell .dashboard-main,
+.role-dashboard-shell > main {
+  position: relative !important;
+  margin-left: 214px !important;
+  padding: 0 !important;
+  width: calc(100vw - 214px) !important;
+  max-width: calc(100vw - 214px) !important;
+  min-height: 100vh !important;
+  transform: none !important;
+}
+
+/* Topbar no extra left gap */
+.role-dashboard-shell .role-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  height: 68px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 24px !important;
+  z-index: 50 !important;
+}
+
+/* Content starts immediately under topbar */
+.role-dashboard-shell .role-content,
+.role-dashboard-shell .dashboard-content {
+  margin: 0 !important;
+  padding: 24px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  transform: none !important;
+}
+
+/* Remove any accidental second offset inside dashboard */
+.role-dashboard-shell .role-content > *,
+.role-dashboard-shell .dashboard-content > *,
+.role-dashboard-shell .dashboard-grid,
+.role-dashboard-shell .role-dashboard-grid {
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+/* Hide old layout sidebar/topbar only when role dashboard exists */
+body:has(.role-dashboard-shell) .admin-layout-sidebar,
+body:has(.role-dashboard-shell) .admin-sidebar,
+body:has(.role-dashboard-shell) .dashboard-layout-sidebar,
+body:has(.role-dashboard-shell) .layout-sidebar,
+body:has(.role-dashboard-shell) .app-sidebar,
+body:has(.role-dashboard-shell) [data-layout-sidebar="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+}
+
+/* But never hide the new role sidebar */
+body:has(.role-dashboard-shell) .role-sidebar {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Fix broken UTF/currency visual until source is cleaned */
+.role-dashboard-shell {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+
+/* PHASE 8.25 Reference Dashboard Restoration */
+.ed25{--side:214px;--accent:#7c3aed;--accent2:#00e5ff;--glow:rgba(124,58,237,.35);min-height:100vh;background:#020812;color:#f8fafc;font-family:Inter,system-ui,sans-serif}.ed25.orange{--accent:#ff7a00;--accent2:#f59e0b;--glow:rgba(255,122,0,.32)}.ed25.green{--accent:#22c55e;--accent2:#00e5a8;--glow:rgba(34,197,94,.32)}.ed25-sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:linear-gradient(180deg,#071126,#050b18);border-right:1px solid rgba(120,160,220,.18);z-index:60;display:flex;flex-direction:column}.ed25-brand{height:76px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(120,160,220,.14)}.ed25-brand h1{font-size:24px;margin:0}.ed25-brand p{font-size:12px;margin:2px 0 0;color:#b7c2d8}.ed25-brand button{margin-left:auto;background:#0d1728;border:1px solid #263854;color:white;border-radius:8px;padding:7px}.ed25-ai-logo{width:42px;height:42px;border:1px solid var(--accent2);border-radius:12px;display:grid;place-items:center;font-weight:900;color:var(--accent2);box-shadow:0 0 22px var(--glow)}.ed25-nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 10px}.ed25-group h4{font-size:11px;letter-spacing:.12em;color:#7f8aa5;margin:18px 8px 8px}.ed25-group a{height:36px;display:flex;align-items:center;gap:11px;color:#dbe7ff;text-decoration:none;border-radius:9px;padding:0 10px;font-size:14px;font-weight:700}.ed25-group a.active{background:linear-gradient(90deg,var(--accent),rgba(0,229,255,.16));color:white}.ed25-group a:hover{background:rgba(255,255,255,.06)}.ed25-side-bottom{padding:10px}.ed25-mini-status{border:1px solid rgba(120,160,220,.2);background:#0b1a2d;border-radius:12px;padding:10px;min-height:80px;position:relative}.ed25-mini-status b{font-size:14px}.ed25-mini-status p{font-size:10px;color:#b7c2d8;margin:5px 0}.ed25-dot{width:9px;height:9px;background:#22c55e;border-radius:50%;display:inline-block;margin-right:8px}.ed25-mini-status .ed-spark{height:24px}.resize-handle{position:absolute;right:-9px;top:80px;width:18px;height:42px;border-radius:9px;border:1px solid #263854;background:#0d1728;color:white}.ed25.collapsed .ed25-sidebar{width:82px}.ed25.collapsed .ed25-brand h1,.ed25.collapsed .ed25-brand p,.ed25.collapsed .ed25-group h4,.ed25.collapsed .ed25-group a span,.ed25.collapsed .ed25-mini-status b,.ed25.collapsed .ed25-mini-status p{display:none}.ed25-main{margin-left:var(--side);min-height:100vh}.ed25-topbar{height:68px;position:sticky;top:0;z-index:50;background:rgba(3,8,18,.92);border-bottom:1px solid rgba(120,160,220,.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;backdrop-filter:blur(18px)}.ed25-search{height:44px;width:min(520px,42vw);border:1px solid #263854;background:#0c1322;border-radius:12px;display:flex;align-items:center;gap:12px;padding:0 14px;color:#9fb0ca}.ed25-search kbd{margin-left:auto;border:1px solid #2b3b56;border-radius:6px;padding:3px 10px;color:white}.ed25-top-actions{display:flex;align-items:center;gap:15px}.ed25-profile summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}.ed25-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#8b5cf6);font-weight:900}.ed25-profile b{font-size:13px}.ed25-profile p{margin:0;color:#b7c2d8;font-size:11px}.ed25-dropdown{position:absolute;right:20px;top:58px;background:#081426;border:1px solid #263854;border-radius:12px;padding:10px;width:200px}.ed25-dropdown button{display:flex;gap:7px;align-items:center;width:100%;height:36px;background:transparent;border:0;color:white;font-weight:700}.ed25-dropdown .danger{color:#fb7185}.ed25-page{padding:22px 24px}.ed25-hero{border:1px solid rgba(120,160,220,.18);border-radius:14px;background:linear-gradient(180deg,rgba(10,25,42,.95),rgba(5,13,24,.95));padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.ed25-hero h2{font-size:24px;margin:0}.ed25-hero p{color:#b7c2d8;margin:6px 0 0}.ed25-hero button,.ed25-actions button{height:38px;border:1px solid #263854;background:#101b2d;color:white;border-radius:9px;padding:0 16px;font-weight:800}.ed25-hero .primary{background:linear-gradient(135deg,var(--accent),#3b1b88)}.kpi-row{display:grid;gap:12px;margin-bottom:12px}.six{grid-template-columns:repeat(6,1fr)}.five{grid-template-columns:repeat(5,1fr)}.ed25-kpi,.ed25-card,.ed25-mini{border:1px solid rgba(120,160,220,.18);border-radius:12px;background:linear-gradient(180deg,rgba(10,25,42,.95),rgba(5,13,24,.95));padding:15px;position:relative}.ed25-kpi svg:first-child{color:var(--accent2);background:rgba(255,255,255,.06);padding:7px;border-radius:10px;box-sizing:content-box}.ed25-kpi h3{font-size:28px;margin:18px 0 4px}.ed25-kpi b{font-size:13px}.ed25-kpi p{color:#00e883;font-size:12px}.ed25-kpi .ed-spark{position:absolute;right:16px;bottom:12px;width:90px;height:38px}.danger h3{color:#ff5b5b}.warning h3{color:#ffbd3d}.status-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px}.ed25-mini{display:flex;gap:10px;align-items:center}.ed25-mini p{margin:0;color:var(--accent2)}.two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px}.bottom-grid,.commerce-layout{display:grid;grid-template-columns:1fr 330px;gap:14px}.ed25-card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.ed25-card-title h3{margin:0;font-size:17px}.ed25-card-title a{font-size:12px;color:var(--accent)}.ed25-big-chart{height:210px;background:#101c2b;border-radius:12px;display:grid;place-items:center}.ed25-big-chart .ed-spark{width:55%;height:45%}.ed25-big-chart.small{height:190px}.ed25-overview{display:grid;grid-template-columns:240px 1fr;gap:20px}.ed25-overview li{display:flex;justify-content:space-between;line-height:32px;color:#b7c2d8}.ed25-overview b{color:white}.ed25-insights p,.ed25-list p,.ed25-activity-row p{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(120,160,220,.12);padding:10px 0;margin:0}.ed25-chat{display:grid;grid-template-columns:240px 1fr;gap:16px}.ed25-chat aside{background:#070d1c;padding:12px}.ed25-chat main{border:1px solid #263854;border-radius:10px;padding:16px}.ed25-input{height:44px;border:1px solid #263854;border-radius:10px;margin-top:12px;color:#9fb0ca;display:flex;align-items:center;padding-left:16px}.ed25-input button{margin-left:auto;height:100%;padding:0 20px;background:var(--accent);color:white;border:0;border-radius:8px}.ed25-right{display:flex;flex-direction:column;gap:12px}.ed25-orb{width:150px;height:150px;margin:12px auto;display:grid;place-items:center;border-radius:50%;border:1px solid var(--accent2);font-size:36px;font-weight:900;color:var(--accent2);background:radial-gradient(circle,rgba(0,229,255,.18),rgba(124,58,237,.22));box-shadow:0 0 50px var(--glow)}.ed25-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ed25-monitor{display:grid;grid-template-columns:1fr 1fr;gap:10px}.commerce-panels{display:grid;grid-template-columns:1.35fr .9fr .9fr;gap:12px;margin-bottom:12px}.ed25-donut{display:flex;align-items:center;gap:20px}.ed25-donut>div{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 68%,#26384c 0)}.ed25-footer-brand{margin-top:14px;border:1px solid rgba(120,160,220,.18);border-radius:12px;background:#0b1a2d;padding:15px 20px;color:#dbe7ff}@media(max-width:1200px){.six,.five{grid-template-columns:repeat(2,1fr)}.bottom-grid,.commerce-layout,.two-col{grid-template-columns:1fr}.ed25-right{display:grid;grid-template-columns:1fr}.commerce-panels{grid-template-columns:1fr}.ed25-sidebar{width:82px}.ed25-main{margin-left:82px}.ed25-brand h1,.ed25-brand p,.ed25-group h4,.ed25-group a span{display:none}}
+
+/* PHASE 8.25 V2 Reference Dashboard Restoration */
+.ed{--side:214px;--accent:#7c3aed;--accent2:#00e5ff;--glow:rgba(124,58,237,.35);min-height:100vh;background:radial-gradient(circle at 18% 0%,rgba(124,58,237,.12),transparent 32%),radial-gradient(circle at 90% 0%,rgba(0,229,255,.09),transparent 30%),#020812;color:#f8fafc;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+.ed.orange{--accent:#ff7a00;--accent2:#f59e0b;--glow:rgba(255,122,0,.32)}
+.ed.green{--accent:#22c55e;--accent2:#00e5a8;--glow:rgba(34,197,94,.32)}
+.ed-sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:linear-gradient(180deg,#071126,#050b18);border-right:1px solid rgba(120,160,220,.18);z-index:60;display:flex;flex-direction:column;transition:width .22s ease}
+.ed-brand{height:76px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(120,160,220,.14)}
+.ed-brand h1{font-size:24px;margin:0;line-height:1}.ed-brand p{font-size:12px;margin:3px 0 0;color:#b7c2d8;white-space:nowrap}.ed-icon-btn{margin-left:auto;background:#0d1728;border:1px solid #263854;color:white;border-radius:8px;padding:7px;cursor:pointer}
+.ed-ai-logo{width:42px;height:42px;min-width:42px;border:1px solid var(--accent2);border-radius:12px;display:grid;place-items:center;font-weight:900;color:var(--accent2);box-shadow:0 0 22px var(--glow), inset 0 0 18px rgba(0,229,255,.08);background:radial-gradient(circle at center,rgba(0,229,255,.12),rgba(124,58,237,.16))}
+.ed-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 10px;scrollbar-width:thin}.ed-group h4{font-size:11px;letter-spacing:.12em;color:#7f8aa5;margin:18px 8px 8px}.ed-group a{height:36px;display:flex;align-items:center;gap:11px;color:#dbe7ff;text-decoration:none;border-radius:9px;padding:0 10px;font-size:14px;font-weight:700;white-space:nowrap}.ed-group a.active{background:linear-gradient(90deg,var(--accent),rgba(0,229,255,.16));color:white;box-shadow:0 10px 30px var(--glow)}.ed-group a:hover{background:rgba(255,255,255,.06)}
+.ed-side-bottom{padding:10px}.ed-mini-status{border:1px solid rgba(120,160,220,.2);background:#0b1a2d;border-radius:12px;padding:10px;min-height:78px;position:relative;overflow:hidden}.ed-mini-status b{font-size:14px}.ed-mini-status p{font-size:10px;color:#b7c2d8;margin:5px 0}.dot{width:9px;height:9px;background:#22c55e;border-radius:50%;display:inline-block;margin-right:8px}.ed-mini-status .spark{height:24px}.ed-resize-handle{position:absolute;right:-9px;top:80px;width:18px;height:42px;border-radius:9px;border:1px solid #263854;background:#0d1728;color:white;display:grid;place-items:center;cursor:ew-resize}
+.ed.collapsed .ed-sidebar{width:82px}.ed.collapsed .ed-brand h1,.ed.collapsed .ed-brand p,.ed.collapsed .ed-group h4,.ed.collapsed .ed-group a span,.ed.collapsed .ed-mini-status b,.ed.collapsed .ed-mini-status p{display:none}
+.ed-main{margin-left:var(--side);min-height:100vh;transition:margin-left .22s ease}.ed.collapsed .ed-main{margin-left:82px}.ed-topbar{height:68px;position:sticky;top:0;z-index:50;background:rgba(3,8,18,.92);border-bottom:1px solid rgba(120,160,220,.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;backdrop-filter:blur(18px)}
+.ed-search{height:44px;width:min(520px,42vw);border:1px solid #263854;background:#0c1322;border-radius:12px;display:flex;align-items:center;gap:12px;padding:0 14px;color:#9fb0ca}.ed-search kbd{margin-left:auto;border:1px solid #2b3b56;border-radius:6px;padding:3px 10px;color:white}.ed-top-actions{display:flex;align-items:center;gap:15px}.ed-profile summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}.ed-profile summary::-webkit-details-marker{display:none}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#8b5cf6);font-weight:900}.ed-profile b{font-size:13px}.ed-profile p{margin:0;color:#b7c2d8;font-size:11px}.ed-dropdown{position:absolute;right:20px;top:58px;background:#081426;border:1px solid #263854;border-radius:12px;padding:10px;width:200px;box-shadow:0 20px 60px rgba(0,0,0,.45)}.ed-dropdown button{display:flex;gap:7px;align-items:center;width:100%;height:36px;background:transparent;border:0;color:white;font-weight:700;cursor:pointer}.ed-dropdown .danger{color:#fb7185}
+.ed-page{padding:22px 24px}.hero{border:1px solid rgba(120,160,220,.18);border-radius:14px;background:linear-gradient(180deg,rgba(10,25,42,.95),rgba(5,13,24,.95));padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.hero h2{font-size:24px;margin:0}.hero p{color:#b7c2d8;margin:6px 0 0}.hero-actions{display:flex;gap:10px}.hero button,.actions button{height:38px;border:1px solid #263854;background:#101b2d;color:white;border-radius:9px;padding:0 16px;font-weight:800;cursor:pointer}.hero .primary{background:linear-gradient(135deg,var(--accent),#3b1b88)}
+.kpi-row{display:grid;gap:12px;margin-bottom:12px}.six{grid-template-columns:repeat(6,minmax(0,1fr))}.five{grid-template-columns:repeat(5,minmax(0,1fr))}.kpi,.card,.mini{border:1px solid rgba(120,160,220,.18);border-radius:12px;background:linear-gradient(180deg,rgba(10,25,42,.95),rgba(5,13,24,.95));padding:15px;position:relative}.kpi svg:first-child{color:var(--accent2);background:rgba(255,255,255,.06);padding:7px;border-radius:10px;box-sizing:content-box}.kpi h3{font-size:28px;margin:18px 0 4px}.kpi b{font-size:13px}.kpi p{color:#00e883;font-size:12px}.kpi .spark{position:absolute;right:16px;bottom:12px;width:90px;height:38px}.danger h3{color:#ff5b5b}.warning h3{color:#ffbd3d}
+.status-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:14px}.mini{display:flex;gap:10px;align-items:center}.mini p{margin:0;color:var(--accent2)}
+.two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px}.bottom-grid,.commerce-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.card-title h3{margin:0;font-size:17px}.card-title a{font-size:12px;color:var(--accent)}
+.spark{width:100%;height:40px}.big-chart{height:210px;background:#101c2b;border-radius:12px;display:grid;place-items:center}.big-chart .spark{width:55%;height:45%}.big-chart.small{height:190px}.overview{display:grid;grid-template-columns:240px 1fr;gap:20px}.overview ul{padding:0;margin:0;list-style:none}.overview li{display:flex;justify-content:space-between;line-height:32px;color:#b7c2d8}.overview b{color:white}.insights p,.list p,.activity-row p{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(120,160,220,.12);padding:10px 0;margin:0}.chat{display:grid;grid-template-columns:240px 1fr;gap:16px}.chat aside{background:#070d1c;padding:12px;border-radius:10px}.chat aside p{margin:0 0 10px}.chat main{border:1px solid #263854;border-radius:10px;padding:16px}.input{height:44px;border:1px solid #263854;border-radius:10px;margin-top:12px;color:#9fb0ca;display:flex;align-items:center;padding-left:16px}.input button{margin-left:auto;height:100%;padding:0 20px;background:var(--accent);color:white;border:0;border-radius:8px}
+.right{display:flex;flex-direction:column;gap:12px}.orb{width:150px;height:150px;margin:12px auto;display:grid;place-items:center;border-radius:50%;border:1px solid var(--accent2);font-size:36px;font-weight:900;color:var(--accent2);background:radial-gradient(circle,rgba(0,229,255,.18),rgba(124,58,237,.22));box-shadow:0 0 50px var(--glow), inset 0 0 30px rgba(0,229,255,.08)}.assistant-copy{text-align:center;color:#b7c2d8}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.monitor{display:grid;grid-template-columns:1fr 1fr;gap:10px}.monitor .kpi h3{font-size:22px}.commerce-panels{display:grid;grid-template-columns:1.35fr .9fr .9fr;gap:12px;margin-bottom:12px}.donut{display:flex;align-items:center;gap:20px}.donut>div{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 68%,#26384c 0)}.donut>div b{font-size:24px}.donut>div span{font-size:11px;color:#b7c2d8}.footer-brand{margin-top:14px;border:1px solid rgba(120,160,220,.18);border-radius:12px;background:#0b1a2d;padding:15px 20px;color:#dbe7ff;text-align:center;font-weight:800}
+@media(max-width:1200px){.six,.five{grid-template-columns:repeat(2,minmax(0,1fr))}.bottom-grid,.commerce-layout,.two-col{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr}.commerce-panels{grid-template-columns:1fr}.ed-sidebar{width:82px}.ed-main{margin-left:82px}.ed-brand h1,.ed-brand p,.ed-group h4,.ed-group a span{display:none}.ed-search{width:50vw}}
+@media(max-width:720px){.ed-topbar{padding:0 12px}.ed-page{padding:14px}.ed-search kbd,.ed-profile div:not(.avatar){display:none}.hero{display:block}.kpi-row{grid-template-columns:1fr!important}.status-row{grid-template-columns:1fr 1fr}.overview,.chat{grid-template-columns:1fr}}
+
+/* Enterprise Dashboard Reference Restoration */
+.enterprise-dashboard{--side:214px;--accent:#7c3aed;--accent2:#00e5ff;--glow:rgba(124,58,237,.36);min-height:100vh;background:#020812;color:#f8fafc;font-family:Inter,ui-sans-serif,system-ui,sans-serif;overflow-x:hidden}.enterprise-dashboard.orange{--accent:#ff7a00;--accent2:#f59e0b;--glow:rgba(255,122,0,.32)}.enterprise-dashboard.green{--accent:#22c55e;--accent2:#00e5a8;--glow:rgba(34,197,94,.32)}
+.enterprise-sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:linear-gradient(180deg,#071126,#050b18);border-right:1px solid rgba(120,160,220,.18);display:flex;flex-direction:column;z-index:70}.enterprise-brand{height:78px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(120,160,220,.14)}.enterprise-logo{width:44px;height:44px;border:1px solid var(--accent2);border-radius:12px;display:grid;place-items:center;color:var(--accent2);font-weight:900;box-shadow:0 0 22px var(--glow)}.brand-copy h1{font-size:24px;line-height:1;margin:0}.brand-copy p{font-size:12px;margin:4px 0 0;color:#b7c2d8}.enterprise-brand button{margin-left:auto;border:1px solid #263854;background:#101827;color:white;border-radius:9px;width:34px;height:34px}.enterprise-menu{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 10px}.menu-group h4{font-size:11px;letter-spacing:.12em;color:#7f8aa5;margin:18px 8px 8px}.menu-group a{height:36px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:9px;color:#dbe7ff;text-decoration:none;font-weight:700;font-size:14px}.menu-group a.active{background:linear-gradient(90deg,var(--accent),rgba(0,229,255,.16));color:white}.menu-group a:hover{background:rgba(255,255,255,.06)}.sidebar-footer-card{margin:10px;border:1px solid rgba(120,160,220,.2);border-radius:12px;background:#0b1a2d;padding:10px;min-height:78px}.sidebar-footer-card b{font-size:14px}.sidebar-footer-card p{font-size:10px;color:#b7c2d8;margin:5px 0}.online-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:7px}.sidebar-resize{position:absolute;right:-9px;top:84px;width:18px;height:42px;border:1px solid #263854;border-radius:9px;background:#0d1728;color:white}.is-collapsed .enterprise-sidebar{width:78px}.is-collapsed .enterprise-main{margin-left:78px}.is-collapsed .brand-copy,.is-collapsed .menu-group h4,.is-collapsed .menu-group a span,.is-collapsed .sidebar-footer-card b,.is-collapsed .sidebar-footer-card p{display:none}.is-collapsed .enterprise-brand{justify-content:center;padding:10px 8px}.is-collapsed .enterprise-brand button{position:absolute;right:8px;top:16px}
+.enterprise-main{margin-left:var(--side);min-height:100vh}.enterprise-header{height:68px;position:sticky;top:0;z-index:60;background:rgba(3,8,18,.94);border-bottom:1px solid rgba(120,160,220,.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;backdrop-filter:blur(18px)}.enterprise-search{height:44px;width:min(560px,42vw);border:1px solid #263854;background:#0c1322;border-radius:12px;display:flex;align-items:center;gap:12px;padding:0 14px;color:#9fb0ca}.enterprise-search kbd{margin-left:auto;border:1px solid #2b3b56;border-radius:6px;padding:3px 10px;color:white}.header-actions{display:flex;align-items:center;gap:15px}.profile-menu summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}.profile-menu summary::-webkit-details-marker{display:none}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#8b5cf6);font-weight:900}.profile-menu b{font-size:13px}.profile-menu p{margin:0;color:#b7c2d8;font-size:11px}.profile-pop{position:absolute;right:20px;top:58px;background:#081426;border:1px solid #263854;border-radius:12px;padding:10px;width:200px}.profile-pop button{display:flex;gap:7px;align-items:center;width:100%;height:36px;background:transparent;border:0;color:white;font-weight:700;text-align:left}.profile-pop .danger{color:#fb7185}.enterprise-page{padding:22px 24px}.dash-hero,.dash-card,.kpi-card,.status-card{border:1px solid rgba(120,160,220,.18);border-radius:14px;background:linear-gradient(180deg,rgba(10,25,42,.96),rgba(5,13,24,.96))}.dash-hero{padding:22px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.dash-hero h2{font-size:24px;margin:0}.dash-hero p{margin:7px 0 0;color:#b7c2d8}.dash-hero button,.assistant-actions button{height:38px;border:1px solid #263854;background:#101b2d;color:white;border-radius:9px;padding:0 16px;font-weight:800}.dash-hero .primary{background:linear-gradient(135deg,var(--accent),#3b1b88)}.kpi-grid{display:grid;gap:12px;margin-bottom:12px}.kpi-grid.six{grid-template-columns:repeat(6,1fr)}.kpi-grid.five{grid-template-columns:repeat(5,1fr)}.kpi-card{padding:16px;min-height:150px;position:relative}.kpi-card>svg{color:var(--accent2);background:rgba(255,255,255,.06);padding:7px;border-radius:10px;box-sizing:content-box}.kpi-card h3{font-size:28px;margin:20px 0 4px}.kpi-card b{font-size:13px}.kpi-card p{color:#00e883;font-size:12px}.kpi-card .mini-line{position:absolute;right:14px;bottom:10px;width:90px;height:38px;color:var(--accent2)}.kpi-card.danger h3{color:#ff5b5b}.kpi-card.warning h3{color:#ffbd3d}.status-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px}.status-card{height:74px;padding:12px;display:flex;align-items:center;gap:10px}.status-card strong{margin-left:auto;color:var(--accent2)}.middle-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px}.bottom-layout{display:grid;grid-template-columns:1fr 330px;gap:14px}.dash-card{padding:16px;margin-bottom:12px}.dash-card header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.dash-card h3{margin:0;font-size:17px}.dash-card a{font-size:12px;color:var(--accent)}.project-overview{display:grid;grid-template-columns:240px 1fr;gap:18px}.project-overview p,.entity-list p,.insight-list p{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(120,160,220,.12);padding:10px 0;margin:0;color:#dbe7ff}.project-overview span{text-transform:capitalize;color:#9fb0ca}.chart-panel{height:200px;background:#101c2b;border-radius:12px;display:grid;place-items:center}.chart-panel .mini-line{width:55%;height:48%;color:currentColor}.insight-list svg{color:var(--accent2)}.chat-console{display:grid;grid-template-columns:240px 1fr;gap:16px}.chat-console aside{background:#070d1c;border-radius:10px;padding:12px}.chat-console aside p{margin:0 0 10px}.chat-console main{border:1px solid #263854;border-radius:10px;padding:16px}.chat-input{height:44px;border:1px solid #263854;border-radius:10px;margin-top:12px;color:#9fb0ca;display:flex;align-items:center;padding-left:16px}.chat-input button{margin-left:auto;height:100%;padding:0 20px;background:var(--accent);color:white;border:0;border-radius:8px}.right-column{display:flex;flex-direction:column;gap:12px}.ai-orb{width:150px;height:150px;margin:12px auto;display:grid;place-items:center;border-radius:50%;border:1px solid var(--accent2);font-size:36px;font-weight:900;color:var(--accent2);background:radial-gradient(circle,rgba(0,229,255,.18),rgba(124,58,237,.22));box-shadow:0 0 50px var(--glow)}.assistant-copy{text-align:center}.assistant-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.monitor-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.commerce-shell{display:grid;grid-template-columns:1fr 330px;gap:14px}.commerce-cards{display:grid;grid-template-columns:1.35fr .9fr .9fr;gap:12px}.donut-panel{display:flex;align-items:center;gap:18px;min-height:160px}.donut-panel>div{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;text-align:center;background:conic-gradient(var(--accent) 68%,#26384c 0)}.donut-panel b{font-size:24px}.activity-strip{display:flex;gap:24px}.activity-strip p{display:flex;gap:10px;align-items:center}.system-branding{margin:12px 0;border:1px solid rgba(120,160,220,.18);border-radius:12px;background:#0b1a2d;padding:15px 20px;color:#dbe7ff}.empty-line{height:90px;border:1px solid #263854;border-radius:10px;display:grid;place-items:center;color:#9fb0ca}.mini-line{color:var(--accent2)}
+@media(max-width:1300px){.kpi-grid.six,.kpi-grid.five{grid-template-columns:repeat(2,1fr)}.middle-grid,.bottom-layout,.commerce-shell{grid-template-columns:1fr}.commerce-cards{grid-template-columns:1fr}.right-column{display:grid;grid-template-columns:1fr}.enterprise-sidebar{width:78px}.enterprise-main{margin-left:78px}.brand-copy,.menu-group h4,.menu-group a span{display:none}}
+
+/* PHASE 8.25 V4 RIGHT BLANK WIDTH FIX */
+.ed {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+.ed-main {
+  width: calc(100vw - var(--side)) !important;
+  max-width: calc(100vw - var(--side)) !important;
+  margin-left: var(--side) !important;
+}
+
+.ed.collapsed .ed-main {
+  width: calc(100vw - 82px) !important;
+  max-width: calc(100vw - 82px) !important;
+  margin-left: 82px !important;
+}
+
+.ed-page {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 22px 24px !important;
+}
+
+.super-grid,
+.commerce-grid {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.commerce-layout,
+.bottom-grid {
+  width: 100% !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 16px !important;
+}
+
+.commerce-panels {
+  width: 100% !important;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, .9fr) !important;
+}
+
+.right {
+  width: 360px !important;
+  min-width: 360px !important;
+  max-width: 360px !important;
+}
+
+.ed-topbar {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.hero,
+.kpi-row,
+.status-row,
+.two-col,
+.card {
+  max-width: none !important;
+}
+
+@media (max-width: 1200px) {
+  .commerce-layout,
+  .bottom-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .right {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+
+/* =========================================================
+   PHASE 8.25 V4 ACTIVE ENTERPRISE WIDTH FIX
+   Target actual active classes: enterprise-dashboard / enterprise-main / enterprise-page
+   Fix: remove right blank area, full-width role dashboard layout
+   ========================================================= */
+
+.enterprise-dashboard {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+
+.enterprise-main {
+  width: calc(100vw - var(--side)) !important;
+  max-width: calc(100vw - var(--side)) !important;
+  margin-left: var(--side) !important;
+  min-width: 0 !important;
+}
+
+.is-collapsed .enterprise-main {
+  width: calc(100vw - 78px) !important;
+  max-width: calc(100vw - 78px) !important;
+  margin-left: 78px !important;
+}
+
+.enterprise-header {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.enterprise-page {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 22px 24px !important;
+  min-width: 0 !important;
+}
+
+/* Super Admin reference layout */
+.middle-grid,
+.bottom-layout {
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 16px !important;
+}
+
+/* Admin/User Admin reference layout */
+.commerce-shell {
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 16px !important;
+}
+
+.commerce-cards {
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, .9fr) !important;
+  gap: 14px !important;
+}
+
+.right-column {
+  width: 360px !important;
+  min-width: 360px !important;
+  max-width: 360px !important;
+}
+
+.dash-hero,
+.kpi-grid,
+.status-grid,
+.middle-grid,
+.bottom-layout,
+.commerce-shell,
+.commerce-cards,
+.dash-card {
+  max-width: none !important;
+}
+
+@media (max-width: 1300px) {
+  .enterprise-sidebar {
+    width: var(--side) !important;
+  }
+
+  .enterprise-main {
+    margin-left: var(--side) !important;
+    width: calc(100vw - var(--side)) !important;
+    max-width: calc(100vw - var(--side)) !important;
+  }
+
+  .brand-copy,
+  .menu-group h4,
+  .menu-group a span {
+    display: block !important;
+  }
+
+  .middle-grid,
+  .bottom-layout,
+  .commerce-shell {
+    grid-template-columns: minmax(0, 1fr) 340px !important;
+  }
+
+  .right-column {
+    width: 340px !important;
+    min-width: 340px !important;
+    max-width: 340px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .middle-grid,
+  .bottom-layout,
+  .commerce-shell,
+  .commerce-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .right-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+
+/* V1R_REFERENCE_HEADER_REAL_MENU_START */
+/* Scoped V1 reference header/sidebar restoration. */
+.ds-shell{--sidebar-width:214px;display:grid;grid-template-columns:var(--sidebar-width) minmax(0,1fr);min-height:100vh;background:#020812}
+.ds-shell.collapsed{--sidebar-width:78px}
+.ds-sidebar{width:var(--sidebar-width)!important;min-width:var(--sidebar-width)!important;position:fixed!important;inset:0 auto 0 0!important;height:100dvh!important;z-index:70!important;display:flex!important;flex-direction:column!important;background:linear-gradient(180deg,#071126 0%,#050b18 100%)!important;border-right:1px solid rgba(120,160,220,.18)!important;transition:width .22s ease!important}
+.ds-content{grid-column:2;min-width:0;margin-left:0!important;width:auto!important}
+.ds-brand,.ds-topbar{height:68px!important;min-height:68px!important;background:rgba(3,8,18,.94)!important;border-bottom:1px solid rgba(120,160,220,.15)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+.ds-brand{display:flex!important;align-items:center!important;gap:11px!important;padding:0 14px!important}
+.ds-brand i{width:42px!important;height:42px!important;min-width:42px!important;border-radius:10px!important;display:grid!important;place-items:center!important;font-style:normal!important;font-weight:950!important;color:#00e5ff!important;border:1px solid rgba(0,229,255,.72)!important;background:linear-gradient(145deg,rgba(0,229,255,.12),rgba(124,58,237,.18))!important;box-shadow:0 0 20px rgba(0,229,255,.22)!important}
+.ds-sidebar.admin .ds-brand i{color:#fb923c!important;border-color:rgba(249,115,22,.65)!important;background:rgba(249,115,22,.11)!important;box-shadow:0 0 20px rgba(249,115,22,.16)!important}
+.ds-sidebar.manager .ds-brand i{color:#22c55e!important;border-color:rgba(34,197,94,.65)!important;background:rgba(34,197,94,.11)!important;box-shadow:0 0 20px rgba(34,197,94,.16)!important}
+.ds-brand strong{font-size:20px!important;line-height:1!important}.ds-brand small{display:block!important;margin-top:5px!important;font-size:10.5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#9fb0ca!important}
+.ds-topbar{position:sticky!important;top:0!important;z-index:60!important;padding:0 22px!important;box-sizing:border-box!important}
+.ds-topbar::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(124,58,237,.045),transparent 32%,rgba(0,229,255,.025));pointer-events:none}
+.ds-topbar-left,.ds-search,.ds-actions{position:relative;z-index:1}
+.ds-page{padding:20px 24px 24px!important;min-width:0!important;max-width:none!important}
+.ds-sidebar nav{flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;padding-bottom:12px!important;scrollbar-width:thin}
+.ds-sidebar a{min-height:36px!important}.ds-status{margin:8px 10px 10px!important;min-height:66px!important;padding:9px 10px!important;border-radius:11px!important}
+.ds-shell.collapsed .ds-brand{justify-content:center!important;padding:0!important}.ds-shell.collapsed .ds-brand>div,.ds-shell.collapsed .ds-menu-search,.ds-shell.collapsed .ds-sidebar h3,.ds-shell.collapsed .ds-sidebar a span,.ds-shell.collapsed .ds-status>div{display:none!important}.ds-shell.collapsed .ds-sidebar a{justify-content:center!important;padding:0!important}.ds-shell.collapsed .ds-status{display:grid!important;place-items:center!important;padding:6px!important}
+.dashboard-system{max-width:none!important;width:100%!important;margin:0!important}
+@media(max-width:980px){.ds-shell{display:block!important}.ds-sidebar{transform:translateX(-100%);width:214px!important}.ds-content{width:100%!important}.ds-page{padding:14px!important}.ds-topbar{padding:0 12px!important}.ds-title{display:none!important}.ds-search{width:min(54vw,420px)!important}}
+
+/* V1R_REFERENCE_HEADER_REAL_MENU_END */
+
+/* =========================================================
+   DASHBOARD SINGLE SHELL / GAP FIX
+   Keeps only role-wise dashboard shell on /dashboard
+   ========================================================= */
+
+body:has(.role-dashboard-shell),
+html:has(.role-dashboard-shell) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+.role-dashboard-shell {
+  min-height: 100vh !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 214px minmax(0, 1fr) !important;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(124,58,237,.14), transparent 32%),
+    radial-gradient(circle at 90% 0%, rgba(0,229,255,.10), transparent 28%),
+    #020812 !important;
+}
+
+.role-dashboard-shell .role-sidebar {
+  width: 214px !important;
+  min-width: 214px !important;
+  max-width: 214px !important;
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  z-index: 50 !important;
+  margin: 0 !important;
+}
+
+.role-dashboard-shell .role-main,
+.role-dashboard-shell .dashboard-main,
+.role-dashboard-shell main {
+  margin-left: 214px !important;
+  width: calc(100vw - 214px) !important;
+  max-width: calc(100vw - 214px) !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+}
+
+.role-dashboard-shell .role-topbar {
+  height: 68px !important;
+  width: calc(100vw - 214px) !important;
+  margin: 0 !important;
+  padding: 0 24px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+}
+
+.role-dashboard-shell .role-content,
+.role-dashboard-shell .dashboard-content {
+  padding: 18px 24px 24px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.role-dashboard-shell .dashboard-grid,
+.role-dashboard-shell .role-dashboard-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+/* Remove accidental legacy shell visual residue */
+body:has(.role-dashboard-shell) .admin-sidebar:not(.role-sidebar),
+body:has(.role-dashboard-shell) .dashboard-sidebar:not(.role-sidebar),
+body:has(.role-dashboard-shell) aside:not(.role-sidebar) {
+  display: none !important;
+}
+
+/* Fix dashboard text rendering */
+.role-dashboard-shell {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  text-rendering: geometricPrecision;
+}
+
+.role-dashboard-shell .dashboard-card {
+  border-radius: 12px !important;
+  border: 1px solid rgba(120,160,220,.18) !important;
+  background: linear-gradient(180deg, rgba(10,25,42,.96), rgba(5,13,24,.96)) !important;
+}
+
+
+/* =========================================================
+   FINAL DASHBOARD GAP + DOUBLE OFFSET FIX
+   Problem: fixed sidebar + grid column + main margin caused double left gap.
+   Solution: dashboard shell = block, sidebar fixed, main only one 214px offset.
+   ========================================================= */
+
+body:has(.role-dashboard-shell) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+/* Do NOT use grid here. Grid + fixed sidebar causes double gap. */
+.role-dashboard-shell {
+  display: block !important;
+  position: relative !important;
+  width: 100vw !important;
+  min-height: 100vh !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #020812 !important;
+}
+
+/* One sidebar only */
+.role-dashboard-shell .role-sidebar {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 214px !important;
+  min-width: 214px !important;
+  max-width: 214px !important;
+  margin: 0 !important;
+  z-index: 60 !important;
+}
+
+/* Main starts exactly after sidebar */
+.role-dashboard-shell .role-main,
+.role-dashboard-shell .dashboard-main,
+.role-dashboard-shell > main {
+  position: relative !important;
+  margin-left: 214px !important;
+  padding: 0 !important;
+  width: calc(100vw - 214px) !important;
+  max-width: calc(100vw - 214px) !important;
+  min-height: 100vh !important;
+  transform: none !important;
+}
+
+/* Topbar no extra left gap */
+.role-dashboard-shell .role-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  height: 68px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 24px !important;
+  z-index: 50 !important;
+}
+
+/* Content starts immediately under topbar */
+.role-dashboard-shell .role-content,
+.role-dashboard-shell .dashboard-content {
+  margin: 0 !important;
+  padding: 24px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  transform: none !important;
+}
+
+/* Remove any accidental second offset inside dashboard */
+.role-dashboard-shell .role-content > *,
+.role-dashboard-shell .dashboard-content > *,
+.role-dashboard-shell .dashboard-grid,
+.role-dashboard-shell .role-dashboard-grid {
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+/* Hide old layout sidebar/topbar only when role dashboard exists */
+body:has(.role-dashboard-shell) .admin-layout-sidebar,
+body:has(.role-dashboard-shell) .admin-sidebar,
+body:has(.role-dashboard-shell) .dashboard-layout-sidebar,
+body:has(.role-dashboard-shell) .layout-sidebar,
+body:has(.role-dashboard-shell) .app-sidebar,
+body:has(.role-dashboard-shell) [data-layout-sidebar="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+}
+
+/* But never hide the new role sidebar */
+body:has(.role-dashboard-shell) .role-sidebar {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Fix broken UTF/currency visual until source is cleaned */
+.role-dashboard-shell {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+

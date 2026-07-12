@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Mail, MapPin, Phone, ShieldCheck, Truck, Globe, MessageCircle, Share2 } from "lucide-react";
@@ -44,9 +44,7 @@ export default function SaqsoFooterPremium() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
           <div>
             <Link href="/" className="inline-flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-sm font-black text-white shadow-2xl">
-                SQ
-              </span>
+              <span className="grid h-10 w-auto min-w-0 place-items-center overflow-hidden rounded-xl bg-transparent text-sm font-black text-white shadow-2xl">{footerLogo ? <img src={footerLogo} alt={`${brand.storeName} logo`} className="h-[78%] w-[78%] object-contain" /> : initials}</span>
               <span>
                 <span className="block text-3xl font-black tracking-[-.08em]">{brand.storeName}</span>
                 <span className="block text-[10px] font-black uppercase tracking-[.3em] text-white/40">AI Commerce</span>
@@ -59,7 +57,7 @@ export default function SaqsoFooterPremium() {
 
             <div className="mt-6 flex gap-3">
               {[Globe, MessageCircle, Share2].map((Icon, i) => (
-                <a key={i} href="#" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/10 transition hover:-translate-y-1 hover:bg-white/20">
+                <a key={i} href="#" className="grid h-11 w-11 place-items-center rounded-md border border-white/10 bg-white/10 transition hover:-translate-y-1 hover:bg-white/20">
                   <Icon size={18} />
                 </a>
               ))}
@@ -81,22 +79,22 @@ export default function SaqsoFooterPremium() {
         </div>
 
         <div className="mt-12 grid gap-4 border-t border-white/10 pt-8 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 p-4">
             <Truck size={22} className="text-amber-300" />
             <span className="text-xs font-black uppercase tracking-[.16em] text-white/70">Fast Delivery</span>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 p-4">
             <ShieldCheck size={22} className="text-amber-300" />
             <span className="text-xs font-black uppercase tracking-[.16em] text-white/70">Secure Checkout</span>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 p-4">
             <Mail size={22} className="text-amber-300" />
             <span className="text-xs font-black uppercase tracking-[.16em] text-white/70">Premium Support</span>
           </div>
         </div>
 
         <div className="mt-8 flex flex-col justify-between gap-4 border-t border-white/10 pt-8 text-xs font-bold text-white/40 md:flex-row md:items-center">
-          <p>Â© {new Date().getFullYear()} {brand.storeName}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {brand.storeName}. All rights reserved.</p>
           <div className="flex flex-wrap gap-4">
             <span className="inline-flex items-center gap-2"><MapPin size={14} /> {brand.address || "Bangladesh"}</span>
             <span className="inline-flex items-center gap-2"><Phone size={14} /> {brand.contactPhone || "Support Ready"}</span>

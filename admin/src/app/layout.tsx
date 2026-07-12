@@ -1,6 +1,7 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import "./plugin-enterprise-dashboard.css";
 import AdminShellRouter from "@/components/layout/AdminShellRouter";
 
 export const metadata: Metadata = {
