@@ -62,6 +62,14 @@ model User {
   reviews        Review[]
   wishlist       Wishlist[]
   rewardWalletId String?
+
+  tenantId String?
+  storeId  String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  store    Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([storeId])
 }
 
 model Category {
@@ -491,12 +499,55 @@ model Analytics {
   updatedAt  DateTime @updatedAt
 }
 
+model Tenant {
+  id                String             @id @default(cuid())
+  name              String
+  slug              String             @unique
+  status            String             @default("ACTIVE")
+  storefrontEnabled Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  stores            Store[]
+  domains           StorefrontDomain[]
+  homepageSections  HomepageSection[]
+
+  users             User[]
+  @@index([status, storefrontEnabled])
+}
+
+model StorefrontDomain {
+  id        String   @id @default(cuid())
+  hostname  String   @unique
+  status    String   @default("ACTIVE")
+  isPrimary Boolean  @default(false)
+  tenantId  String
+  storeId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  store  Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, storeId])
+  @@index([status])
+}
 model Store {
-  id        String          @id @default(cuid())
-  name      String
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  templates StoreTemplate[]
+  id                String             @id @default(cuid())
+  name              String
+  tenantId          String?
+  status            String             @default("ACTIVE")
+  storefrontEnabled Boolean            @default(true)
+  primaryDomain     String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  tenant            Tenant?            @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  templates         StoreTemplate[]
+  domains           StorefrontDomain[]
+  homepageSections  HomepageSection[]
+
+  users             User[]
+  @@index([tenantId])
+  @@index([status, storefrontEnabled])
 }
 
 model Integration {
@@ -678,8 +729,16 @@ model HomepageSection {
   enabled   Boolean  @default(true)
   sortOrder Int      @default(0)
   data      Json?
+  tenantId  String?
+  storeId   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  store  Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, storeId, enabled, sortOrder])
+  @@index([storeId, slug])
 }
 
 model StoreSetting {

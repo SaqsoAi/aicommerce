@@ -10,7 +10,9 @@
                     "typecheck":  "tsc --noEmit",
                     "lint":  "eslint src --ext .ts",
                     "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
-                    "seed":  "ts-node src/scripts/seed.ts"
+                    "seed":  "ts-node src/scripts/seed.ts",
+                    "h3:backfill:check":  "ts-node scripts/h3-ownership-backfill.ts",
+                    "h3:backfill:apply":  "ts-node scripts/h3-ownership-backfill.ts -- --apply"
                 },
     "keywords":  [
 

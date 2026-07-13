@@ -1,126 +1,96 @@
-import { Request, Response } from "express";
-
+import type { Request, Response } from "express";
 import {
-  getHomepageSectionsService,
-  getActiveHomepageSectionsService,
   createHomepageSectionService,
-  updateHomepageSectionService,
   deleteHomepageSectionService,
+  getHomepageSectionsService,
   reorderHomepageSectionsService,
   toggleHomepageSectionService,
-} from './homepage-section.service';
+  updateHomepageSectionService,
+  type HomepageOwnershipScope,
+} from "./homepage-section.service";
+import { homepageSectionSchema } from "./homepage-section.validation";
 
-import { homepageSectionSchema } from './homepage-section.validation';
+function scopeFromRequest(req: Request): HomepageOwnershipScope {
+  const tenantId = String(req.user?.tenantId || "").trim();
+  const storeId = String(req.user?.storeId || "").trim();
 
-export const getHomepageSections = async (
-  req: Request,
-  res: Response
-) => {
+  if (!tenantId || !storeId) {
+    throw Object.assign(
+      new Error("Authenticated tenant and store context are required"),
+      { statusCode: 403 },
+    );
+  }
+
+  return { tenantId, storeId };
+}
+
+function fail(res: Response, error: unknown, fallback = 400) {
+  const candidate = error as { message?: string; statusCode?: number };
+
+  return res.status(candidate.statusCode || fallback).json({
+    success: false,
+    message: candidate.message || "Homepage operation failed",
+  });
+}
+
+export async function getHomepageSections(req: Request, res: Response) {
   try {
-    const data = await getHomepageSectionsService();
-
     return res.json({
       success: true,
-      data,
+      data: await getHomepageSectionsService(scopeFromRequest(req)),
     });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {
+    return fail(res, error, 500);
   }
-};
+}
 
-export const getActiveHomepageSections = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const data = await getActiveHomepageSectionsService();
-
-    return res.json({
-      success: true,
-      data,
-    });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const createHomepageSection = async (
-  req: Request,
-  res: Response
-) => {
+export async function createHomepageSection(req: Request, res: Response) {
   try {
     const body = homepageSectionSchema.parse(req.body);
 
-    const data = await createHomepageSectionService(body);
-
     return res.status(201).json({
       success: true,
-      data,
+      data: await createHomepageSectionService(scopeFromRequest(req), body),
     });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {
+    return fail(res, error);
   }
-};
+}
 
-export const updateHomepageSection = async (
-  req: Request,
-  res: Response
-) => {
+export async function updateHomepageSection(req: Request, res: Response) {
   try {
-    const data = await updateHomepageSectionService(
+    return res.json({
+      success: true,
+      data: await updateHomepageSectionService(
+        scopeFromRequest(req),
+        String(req.params.id),
+        req.body,
+      ),
+    });
+  } catch (error) {
+    return fail(res, error);
+  }
+}
+
+export async function deleteHomepageSection(req: Request, res: Response) {
+  try {
+    await deleteHomepageSectionService(
+      scopeFromRequest(req),
       String(req.params.id),
-      req.body
     );
 
-    return res.json({
-      success: true,
-      data,
-    });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return res.json({ success: true });
+  } catch (error) {
+    return fail(res, error);
   }
-};
+}
 
-export const deleteHomepageSection = async (
+export async function reorderHomepageSectionsController(
   req: Request,
-  res: Response
-) => {
+  res: Response,
+) {
   try {
-    await deleteHomepageSectionService(String(req.params.id));
-
-    return res.json({
-      success: true,
-    });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const reorderHomepageSectionsController =
-async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const items =
-      Array.isArray(req.body.items)
-        ? req.body.items
-        : [];
+    const items = Array.isArray(req.body.items) ? req.body.items : [];
 
     if (!items.length) {
       return res.status(400).json({
@@ -129,29 +99,24 @@ async (
       });
     }
 
-    const data =
-      await reorderHomepageSectionsService(items);
-
     return res.json({
       success: true,
-      data,
+      data: await reorderHomepageSectionsService(
+        scopeFromRequest(req),
+        items,
+      ),
     });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {
+    return fail(res, error, 500);
   }
-};
+}
 
-export const toggleHomepageSectionController =
-async (
+export async function toggleHomepageSectionController(
   req: Request,
-  res: Response
-) => {
+  res: Response,
+) {
   try {
-    const id =
-      String(req.params.id || "");
+    const id = String(req.params.id || "");
 
     if (!id) {
       return res.status(400).json({
@@ -160,28 +125,15 @@ async (
       });
     }
 
-    const data =
-      await toggleHomepageSectionService(
-        id,
-        Boolean(req.body.enabled)
-      );
-
     return res.json({
       success: true,
-      data,
+      data: await toggleHomepageSectionService(
+        scopeFromRequest(req),
+        id,
+        Boolean(req.body.enabled),
+      ),
     });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {
+    return fail(res, error, 500);
   }
-};
-
-
-
-
-
-
-
-
+}

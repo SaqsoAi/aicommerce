@@ -17,6 +17,16 @@ type LoginUserRecord = {
   role: string;
   emailVerified: boolean;
   provider: string | null;
+  tenantId: string | null;
+  storeId: string | null;
+};
+
+type TokenUser = {
+  id: string;
+  email: string;
+  role: string;
+  tenantId?: string | null;
+  storeId?: string | null;
 };
 
 const getJwtSecret = () => {
@@ -29,17 +39,19 @@ const getJwtSecret = () => {
   return jwtSecret;
 };
 
-const signToken = (user: any) => {
+const signToken = (user: TokenUser) => {
   return jwt.sign(
     {
       id: user.id,
       email: user.email,
       role: user.role,
+      tenantId: user.tenantId ?? undefined,
+      storeId: user.storeId ?? undefined,
     },
     getJwtSecret(),
     {
       expiresIn: "7d",
-    }
+    },
   );
 };
 
@@ -56,6 +68,8 @@ export const buildAuthResponse = (user: any) => {
       role: user.role,
       emailVerified: user.emailVerified,
       provider: user.provider,
+      tenantId: user.tenantId ?? null,
+      storeId: user.storeId ?? null,
     },
   };
 };
@@ -63,12 +77,10 @@ export const buildAuthResponse = (user: any) => {
 export const registerUser = async (
   name: string,
   email: string,
-  password: string
+  password: string,
 ) => {
   const existing = await prisma.user.findUnique({
-    where: {
-      email,
-    },
+    where: { email },
   });
 
   if (existing) {
@@ -77,7 +89,7 @@ export const registerUser = async (
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.create({
+  return prisma.user.create({
     data: {
       name,
       email,
@@ -86,20 +98,28 @@ export const registerUser = async (
       emailVerified: false,
     },
   });
-
-  return user;
 };
 
 export const loginUserService = async (
   email: string,
-  password: string
+  password: string,
 ) => {
   const result = await authPool.query<LoginUserRecord>(
-    `select id, name, email, password, phone, role::text as role, "emailVerified", provider
+    `select
+       id,
+       name,
+       email,
+       password,
+       phone,
+       role::text as role,
+       "emailVerified",
+       provider,
+       "tenantId",
+       "storeId"
      from "User"
      where lower(email) = lower($1)
      limit 1`,
-    [email]
+    [email],
   );
 
   const user = result.rows[0];
@@ -117,13 +137,11 @@ export const loginUserService = async (
   return user;
 };
 
-export const generateOtp = () => {
-  return String(Math.floor(100000 + Math.random() * 900000));
-};
+export const generateOtp = () =>
+  String(Math.floor(100000 + Math.random() * 900000));
 
 export const sendPhoneOtpService = async (phone: string) => {
   const otp = generateOtp();
-
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
   await prisma.otpVerification.create({
@@ -135,7 +153,9 @@ export const sendPhoneOtpService = async (phone: string) => {
     },
   });
 
-  console.log(`PHONE OTP for ${phone}: ${otp}`);
+  if (process.env.NODE_ENV !== "production") {
+    console.info(`PHONE OTP generated for ${phone}`);
+  }
 
   return {
     phone,
@@ -146,20 +166,16 @@ export const sendPhoneOtpService = async (phone: string) => {
 
 export const verifyPhoneOtpService = async (
   phone: string,
-  otp: string
+  otp: string,
 ) => {
   const record = await prisma.otpVerification.findFirst({
     where: {
       phone,
       otp,
       verified: false,
-      expiresAt: {
-        gt: new Date(),
-      },
+      expiresAt: { gt: new Date() },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
 
   if (!record) {
@@ -167,27 +183,18 @@ export const verifyPhoneOtpService = async (
   }
 
   await prisma.otpVerification.update({
-    where: {
-      id: record.id,
-    },
-    data: {
-      verified: true,
-    },
+    where: { id: record.id },
+    data: { verified: true },
   });
 
   let user = await prisma.user.findUnique({
-    where: {
-      phone,
-    },
+    where: { phone },
   });
 
   if (!user) {
     const pseudoEmail = `${phone.replace(/\D/g, "")}@phone.saqso.local`;
-
     const existingEmailUser = await prisma.user.findUnique({
-      where: {
-        email: pseudoEmail,
-      },
+      where: { email: pseudoEmail },
     });
 
     if (existingEmailUser) {
@@ -195,7 +202,7 @@ export const verifyPhoneOtpService = async (
     } else {
       const randomPassword = await bcrypt.hash(
         `${phone}-${Date.now()}-${Math.random()}`,
-        10
+        10,
       );
 
       user = await prisma.user.create({
@@ -222,67 +229,51 @@ export const createEmailVerificationToken = (user: any) => {
       purpose: "EMAIL_VERIFY",
     },
     getJwtSecret(),
-    {
-      expiresIn: "30m",
-    }
+    { expiresIn: "30m" },
   );
 };
 
 export const sendEmailVerificationService = async (userId: string) => {
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
   });
 
-  if (!user) {
-    throw new Error("User not found");
-  }
+  if (!user) throw new Error("User not found");
 
   if (user.emailVerified) {
-    return {
-      alreadyVerified: true,
-    };
+    return { alreadyVerified: true };
   }
 
   const token = createEmailVerificationToken(user);
-
   const baseUrl =
     process.env.CLIENT_URL ||
     process.env.FRONTEND_URL ||
     "http://localhost:3000";
 
   const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
-
   const result = await sendVerificationEmail(user.email, verifyUrl);
 
   return {
     sent: true,
     verifyUrl:
-      process.env.NODE_ENV === "production"
-        ? undefined
-        : verifyUrl,
+      process.env.NODE_ENV === "production" ? undefined : verifyUrl,
     result,
   };
 };
 
 export const verifyEmailService = async (token: string) => {
-  const decoded = jwt.verify(
-    token,
-    getJwtSecret()
-  ) as any;
+  const decoded = jwt.verify(token, getJwtSecret()) as {
+    id?: string;
+    purpose?: string;
+  };
 
-  if (decoded?.purpose !== "EMAIL_VERIFY") {
+  if (decoded.purpose !== "EMAIL_VERIFY" || !decoded.id) {
     throw new Error("Invalid verification token");
   }
 
   const user = await prisma.user.update({
-    where: {
-      id: decoded.id,
-    },
-    data: {
-      emailVerified: true,
-    },
+    where: { id: decoded.id },
+    data: { emailVerified: true },
   });
 
   return buildAuthResponse(user);
@@ -295,7 +286,7 @@ export const loginWithGoogleService = async (credential: string) => {
     throw new Error("GOOGLE_CLIENT_ID is not configured");
   }
 
-  const ticket: any = await googleClient.verifyIdToken({
+  const ticket = await googleClient.verifyIdToken({
     idToken: credential,
     audience: googleClientId,
   });
@@ -308,16 +299,12 @@ export const loginWithGoogleService = async (credential: string) => {
 
   const email = payload.email.toLowerCase();
 
-  let user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     const randomPassword = await bcrypt.hash(
       `GOOGLE-${payload.sub}-${Date.now()}`,
-      10
+      10,
     );
 
     user = await prisma.user.create({
@@ -333,14 +320,13 @@ export const loginWithGoogleService = async (credential: string) => {
     });
   } else {
     user = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
+      where: { id: user.id },
       data: {
         provider: user.provider || "GOOGLE",
         providerId: user.providerId || payload.sub,
         avatar: user.avatar || payload.picture || undefined,
-        emailVerified: user.emailVerified || Boolean(payload.email_verified),
+        emailVerified:
+          user.emailVerified || Boolean(payload.email_verified),
       },
     });
   }
@@ -350,31 +336,31 @@ export const loginWithGoogleService = async (credential: string) => {
 
 export const loginWithFacebookService = async (accessToken: string) => {
   const response = await fetch(
-    `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${accessToken}`
+    `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${accessToken}`,
   );
 
   if (!response.ok) {
     throw new Error("Invalid Facebook access token");
   }
 
-  const profile = await response.json();
+  const profile = (await response.json()) as {
+    id?: string;
+    name?: string;
+    email?: string;
+    picture?: { data?: { url?: string } };
+  };
 
-  if (!profile?.email) {
+  if (!profile.email || !profile.id) {
     throw new Error("Facebook account email not found");
   }
 
-  const email = String(profile.email).toLowerCase();
-
-  let user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const email = profile.email.toLowerCase();
+  let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     const randomPassword = await bcrypt.hash(
       `FACEBOOK-${profile.id}-${Date.now()}`,
-      10
+      10,
     );
 
     user = await prisma.user.create({
@@ -390,14 +376,12 @@ export const loginWithFacebookService = async (accessToken: string) => {
     });
   } else {
     user = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
+      where: { id: user.id },
       data: {
         provider: user.provider || "FACEBOOK",
         providerId: user.providerId || profile.id,
         avatar: user.avatar || profile.picture?.data?.url || undefined,
-        emailVerified: user.emailVerified || true,
+        emailVerified: true,
       },
     });
   }

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const homepageSectionSchema = z.object({
   title: z.string().min(2),
@@ -6,5 +6,5 @@ export const homepageSectionSchema = z.object({
   type: z.string().min(2),
   enabled: z.boolean().optional(),
   sortOrder: z.coerce.number().optional(),
-  data: z.any().optional(),
+  data: z.unknown().optional(),
 });

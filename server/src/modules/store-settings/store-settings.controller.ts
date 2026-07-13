@@ -1,102 +1,84 @@
-import {
-  Request,
-  Response,
-} from 'express';
-
+import type { Request, Response } from "express";
 import {
   getStoreSettingsService,
   updateStoreSettingsService,
-} from './store-settings.service';
+  type StoreSettingsScope,
+} from "./store-settings.service";
+import { storeSettingsSchema } from "./store-settings.validation";
 
-import {
-  storeSettingsSchema,
-} from './store-settings.validation';
+function scopeFromRequest(req: Request): StoreSettingsScope {
+  const tenantId = String(req.user?.tenantId || "").trim();
+  const storeId = String(req.user?.storeId || "").trim();
 
-export const getStoreSettings =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const data =
-        await getStoreSettingsService();
+  if (!tenantId || !storeId) {
+    throw Object.assign(
+      new Error("Authenticated tenant and store context are required"),
+      { statusCode: 403 },
+    );
+  }
 
-      return res.json({
-        success: true,
-        data,
-      });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+  return { tenantId, storeId };
+}
 
-export const updateStoreSettings =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const body =
-        storeSettingsSchema.parse(
-          req.body
-        );
+function fail(res: Response, error: unknown, fallback: number) {
+  const item = error as { message?: string; statusCode?: number };
 
-      const data =
-        await updateStoreSettingsService(
-          body
-        );
+  return res.status(item.statusCode || fallback).json({
+    success: false,
+    message: item.message || "Store settings operation failed",
+  });
+}
 
-      return res.json({
-        success: true,
-        data,
-      });
-    } catch (error: any) {
+export async function getStoreSettings(req: Request, res: Response) {
+  try {
+    const data = await getStoreSettingsService(scopeFromRequest(req));
+    return res.json({ success: true, data });
+  } catch (error) {
+    return fail(res, error, 500);
+  }
+}
+
+export async function updateStoreSettings(req: Request, res: Response) {
+  try {
+    const body = storeSettingsSchema.parse(req.body);
+    const data = await updateStoreSettingsService(
+      scopeFromRequest(req),
+      body,
+    );
+
+    return res.json({ success: true, data });
+  } catch (error) {
+    return fail(res, error, 400);
+  }
+}
+
+export async function uploadStoreLogo(req: Request, res: Response) {
+  try {
+    const file = req.file;
+
+    if (!file) {
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: "No file uploaded",
       });
     }
-  };
 
-export const uploadStoreLogo =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const file = req.file;
+    const baseUrl =
+      process.env.SERVER_URL ||
+      `${req.protocol}://${req.get("host")}`;
 
-      if (!file) {
-        return res.status(400).json({
-          success: false,
-          message: 'No file uploaded',
-        });
-      }
+    const logoUrl = `${baseUrl}/uploads/store/${file.filename}`;
+    const data = await updateStoreSettingsService(
+      scopeFromRequest(req),
+      { logoUrl },
+    );
 
-      const baseUrl =
-        process.env.SERVER_URL ||
-        `${req.protocol}://${req.get('host')}`;
-
-      const logoUrl =
-        `${baseUrl}/uploads/store/${file.filename}`;
-
-      const data =
-        await updateStoreSettingsService({
-          logoUrl,
-        });
-
-      return res.json({
-        success: true,
-        data,
-        logoUrl,
-      });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+    return res.json({
+      success: true,
+      data,
+      logoUrl,
+    });
+  } catch (error) {
+    return fail(res, error, 500);
+  }
+}

@@ -29,6 +29,32 @@ export default async function HomepageRuntimeOrchestrator() {
 
   const runtime = await resolveHomepageRuntime(context);
 
+  if (runtime.state === "unknown-domain") {
+    return (
+      <HomepageRuntimeState
+        title="Store not configured"
+        message={
+          runtime.message ||
+          "This domain is not connected to a storefront."
+        }
+      />
+    );
+  }
+
+  if (
+    runtime.state === "inactive" ||
+    runtime.state === "misconfigured"
+  ) {
+    return (
+      <HomepageRuntimeState
+        title="Store unavailable"
+        message={
+          runtime.message || "This storefront is currently unavailable."
+        }
+      />
+    );
+  }
+
   if (runtime.state === "api-error") {
     return (
       <HomepageRuntimeState
