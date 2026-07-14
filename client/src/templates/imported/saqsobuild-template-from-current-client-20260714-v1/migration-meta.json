@@ -1,0 +1,1700 @@
+{
+  "source": "SAQSOBUILD_TEMPLATE_FROM_CURRENT_CLIENT_20260714.zip",
+  "framework": "Next.js",
+  "tenantId": "99c6edd7-9d23-4bbb-a98c-cd24bb0ec1a6",
+  "storeId": "0641bd4a-5c28-4206-816c-1be67656d8cf",
+  "templateKey": "saqsobuild-template-from-current-client-20260714-v1",
+  "mode": "TEMPLATE_VARIANT",
+  "status": "DRAFT",
+  "workflow": "ONE_CLICK_ENTERPRISE_MIGRATION_2026_14",
+  "routes": [],
+  "pages": [
+    "home",
+    "product-list",
+    "category",
+    "search",
+    "cart",
+    "wishlist",
+    "lookbook"
+  ],
+  "missingPages": [
+    "login",
+    "register",
+    "product-detail",
+    "checkout",
+    "account",
+    "orders",
+    "404"
+  ],
+  "aiSignals": [
+    "assistant",
+    "recommendation",
+    "personalization",
+    "visual-search",
+    "try-on",
+    "tryon",
+    "vision",
+    "rag",
+    "voice",
+    "stylist"
+  ],
+  "responsiveAction": "PRESERVE",
+  "adminManagement": [
+    {
+      "key": "products",
+      "label": "Product Management",
+      "fields": [
+        "name",
+        "slug",
+        "description",
+        "categoryId",
+        "brandId",
+        "price",
+        "salePrice",
+        "sku",
+        "stock",
+        "images",
+        "status"
+      ],
+      "existingRoute": "/products",
+      "status": "REUSE"
+    },
+    {
+      "key": "categories",
+      "label": "Category Management",
+      "fields": [
+        "name",
+        "slug",
+        "description",
+        "parentId",
+        "image",
+        "sortOrder",
+        "status"
+      ],
+      "existingRoute": "/categories",
+      "status": "REUSE"
+    },
+    {
+      "key": "brands",
+      "label": "Brand Management",
+      "fields": [
+        "name",
+        "slug",
+        "logo",
+        "description",
+        "website",
+        "status"
+      ],
+      "existingRoute": "/brands",
+      "status": "REUSE"
+    },
+    {
+      "key": "orders",
+      "label": "Order Management",
+      "fields": [
+        "customerId",
+        "items",
+        "shippingAddress",
+        "billingAddress",
+        "paymentStatus",
+        "fulfillmentStatus",
+        "notes"
+      ],
+      "existingRoute": "/orders",
+      "status": "REUSE"
+    },
+    {
+      "key": "inventory",
+      "label": "Inventory Management",
+      "fields": [
+        "productId",
+        "variantId",
+        "quantity",
+        "warehouseId",
+        "reorderLevel",
+        "status"
+      ],
+      "existingRoute": "/inventory",
+      "status": "REUSE"
+    },
+    {
+      "key": "campaigns",
+      "label": "Campaign Management",
+      "fields": [
+        "name",
+        "slug",
+        "startAt",
+        "endAt",
+        "banner",
+        "products",
+        "discountType",
+        "discountValue",
+        "status"
+      ],
+      "existingRoute": "/campaigns",
+      "status": "REUSE"
+    },
+    {
+      "key": "coupons",
+      "label": "Coupon Management",
+      "fields": [
+        "code",
+        "description",
+        "type",
+        "value",
+        "minimumOrder",
+        "startsAt",
+        "endsAt",
+        "usageLimit",
+        "status"
+      ],
+      "existingRoute": "/coupons",
+      "status": "REUSE"
+    },
+    {
+      "key": "wishlist",
+      "label": "Wishlist Management",
+      "fields": [
+        "customerId",
+        "productId",
+        "status"
+      ],
+      "existingRoute": "/wishlist",
+      "status": "REUSE"
+    },
+    {
+      "key": "reviews",
+      "label": "Review Moderation",
+      "fields": [
+        "productId",
+        "customerId",
+        "rating",
+        "title",
+        "content",
+        "moderationStatus",
+        "featured"
+      ],
+      "existingRoute": "/reviews",
+      "status": "REUSE"
+    },
+    {
+      "key": "membership",
+      "label": "Membership Management",
+      "fields": [
+        "name",
+        "tier",
+        "price",
+        "benefits",
+        "duration",
+        "status"
+      ],
+      "existingRoute": "/membership",
+      "status": "REUSE"
+    },
+    {
+      "key": "rewards",
+      "label": "Rewards Management",
+      "fields": [
+        "name",
+        "points",
+        "ruleType",
+        "ruleValue",
+        "startsAt",
+        "endsAt",
+        "status"
+      ],
+      "existingRoute": "/rewards",
+      "status": "REUSE"
+    },
+    {
+      "key": "lookbooks",
+      "label": "Lookbook Management",
+      "fields": [
+        "title",
+        "slug",
+        "description",
+        "coverImage",
+        "products",
+        "sortOrder",
+        "publishedAt",
+        "status"
+      ],
+      "existingRoute": "/lookbooks",
+      "status": "REUSE"
+    },
+    {
+      "key": "homepage",
+      "label": "Homepage Management",
+      "fields": [
+        "title",
+        "sectionType",
+        "order",
+        "configuration",
+        "visibility",
+        "status"
+      ],
+      "existingRoute": "/homepage-builder",
+      "status": "REUSE"
+    },
+    {
+      "key": "ai-feature",
+      "label": "AI Feature Management",
+      "fields": [
+        "name",
+        "provider",
+        "model",
+        "promptKey",
+        "featureFlag",
+        "tenantScope",
+        "storeScope",
+        "enabled"
+      ],
+      "status": "GENERATE"
+    }
+  ],
+  "featureCoverage": [
+    {
+      "key": "products",
+      "label": "Product Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "categories",
+      "label": "Category Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "brands",
+      "label": "Brand Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "orders",
+      "label": "Order Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "inventory",
+      "label": "Inventory Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "campaigns",
+      "label": "Campaign Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "coupons",
+      "label": "Coupon Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "wishlist",
+      "label": "Wishlist Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "reviews",
+      "label": "Review Moderation",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "membership",
+      "label": "Membership Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "rewards",
+      "label": "Rewards Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "lookbooks",
+      "label": "Lookbook Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "homepage",
+      "label": "Homepage Management",
+      "client": "READY",
+      "admin": "REUSE",
+      "api": "REUSE",
+      "permission": "READY",
+      "database": "READY",
+      "ai": "READY",
+      "overall": 100,
+      "notes": []
+    },
+    {
+      "key": "ai-feature",
+      "label": "AI Feature Management",
+      "client": "READY",
+      "admin": "GENERATE",
+      "api": "GENERATE",
+      "permission": "GENERATE",
+      "database": "MANUAL",
+      "ai": "GENERATE",
+      "overall": 69,
+      "notes": [
+        "Admin UI, server contract and permission scaffolds will be generated in the DRAFT plugin.",
+        "Database compatibility must be confirmed through the separate PowerShell package before publish.",
+        "Imported AI capability will be connected to the existing AI gateway where possible; provider configuration remains mandatory."
+      ]
+    }
+  ],
+  "pageDiscovery": [
+    {
+      "key": "home",
+      "label": "Home",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "home",
+        "home",
+        "home",
+        "home"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "product-list",
+      "label": "Product Listing",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "product",
+        "product",
+        "products",
+        "products"
+      ],
+      "gaps": [
+        "pagination missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "product-detail",
+      "label": "Product Details",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "product-view",
+        "product-view"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "category",
+      "label": "Category",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "category",
+        "categories",
+        "categories",
+        "categories"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "search",
+      "label": "Search",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "search",
+        "search",
+        "search",
+        "search"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "cart",
+      "label": "Cart",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "cart",
+        "cart",
+        "cart",
+        "cart"
+      ],
+      "gaps": [
+        "cart-summary missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "checkout",
+      "label": "Checkout",
+      "status": "BROKEN",
+      "score": 39,
+      "evidence": [
+        "checkout",
+        "checkout",
+        "checkout"
+      ],
+      "gaps": [
+        "checkout-form missing",
+        "order-summary missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "login",
+      "label": "Login",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "login",
+        "login",
+        "login",
+        "login"
+      ],
+      "gaps": [
+        "login-form missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "register",
+      "label": "Register",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "register",
+        "register",
+        "register",
+        "register"
+      ],
+      "gaps": [
+        "register-form missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "account",
+      "label": "Account",
+      "status": "BROKEN",
+      "score": 39,
+      "evidence": [
+        "profile",
+        "profile",
+        "dashboard",
+        "account"
+      ],
+      "gaps": [
+        "account-nav missing",
+        "profile-form missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "orders",
+      "label": "Orders",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "order",
+        "order",
+        "order",
+        "order"
+      ],
+      "gaps": [
+        "order-list missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "wishlist",
+      "label": "Wishlist",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "wishlist",
+        "wishlist",
+        "wishlist",
+        "wishlist"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "lookbook",
+      "label": "Lookbook",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "collection",
+        "collection",
+        "collection",
+        "collection"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "about",
+      "label": "About",
+      "status": "PARTIAL",
+      "score": 67,
+      "evidence": [
+        "about"
+      ],
+      "gaps": [
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "contact",
+      "label": "Contact",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "contact",
+        "contact",
+        "contact",
+        "contact"
+      ],
+      "gaps": [
+        "contact-form missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "blog",
+      "label": "Blog",
+      "status": "BROKEN",
+      "score": 53,
+      "evidence": [
+        "article",
+        "article",
+        "article",
+        "article"
+      ],
+      "gaps": [
+        "article-card missing",
+        "Placeholder/demo content detected",
+        "Dead or empty interaction detected"
+      ]
+    },
+    {
+      "key": "404",
+      "label": "404 / Not Found",
+      "status": "MISSING",
+      "score": 0,
+      "evidence": [],
+      "gaps": [
+        "Page or route was not detected"
+      ]
+    }
+  ],
+  "componentDiscovery": [
+    {
+      "key": "header",
+      "label": "Header",
+      "status": "PRESENT",
+      "evidence": [
+        "header",
+        "header",
+        "header"
+      ]
+    },
+    {
+      "key": "footer",
+      "label": "Footer",
+      "status": "PRESENT",
+      "evidence": [
+        "footer",
+        "footer",
+        "footer"
+      ]
+    },
+    {
+      "key": "hero",
+      "label": "Hero",
+      "status": "PRESENT",
+      "evidence": [
+        "hero",
+        "hero",
+        "hero"
+      ]
+    },
+    {
+      "key": "product-card",
+      "label": "Product Card",
+      "status": "PRESENT",
+      "evidence": [
+        "productcard",
+        "productcard",
+        "productcard"
+      ]
+    },
+    {
+      "key": "filter",
+      "label": "Filters",
+      "status": "PRESENT",
+      "evidence": [
+        "filter",
+        "filter",
+        "filter"
+      ]
+    },
+    {
+      "key": "pagination",
+      "label": "Pagination",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "search",
+      "label": "Search",
+      "status": "PRESENT",
+      "evidence": [
+        "searchbar",
+        "search",
+        "search"
+      ]
+    },
+    {
+      "key": "image-gallery",
+      "label": "Image Gallery",
+      "status": "PRESENT",
+      "evidence": [
+        "gallery",
+        "productimage",
+        "productimage"
+      ]
+    },
+    {
+      "key": "add-to-cart",
+      "label": "Add to Cart",
+      "status": "PRESENT",
+      "evidence": [
+        "addtocart",
+        "addtocart",
+        "addtocart"
+      ]
+    },
+    {
+      "key": "variant-selector",
+      "label": "Variant Selector",
+      "status": "PRESENT",
+      "evidence": [
+        "variant",
+        "variant",
+        "variant"
+      ]
+    },
+    {
+      "key": "cart-item",
+      "label": "Cart Item",
+      "status": "PRESENT",
+      "evidence": [
+        "cartitem",
+        "cartitem",
+        "cartitem"
+      ]
+    },
+    {
+      "key": "cart-summary",
+      "label": "Cart Summary",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "checkout-form",
+      "label": "Checkout Form",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "order-summary",
+      "label": "Order Summary",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "login-form",
+      "label": "Login Form",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "register-form",
+      "label": "Register Form",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "account-nav",
+      "label": "Account Navigation",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "profile-form",
+      "label": "Profile Form",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "order-list",
+      "label": "Order List",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "lookbook-card",
+      "label": "Lookbook Card",
+      "status": "PRESENT",
+      "evidence": [
+        "collectioncard",
+        "collectioncard"
+      ]
+    },
+    {
+      "key": "contact-form",
+      "label": "Contact Form",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "article-card",
+      "label": "Article Card",
+      "status": "MISSING",
+      "evidence": []
+    },
+    {
+      "key": "empty-state",
+      "label": "Empty State",
+      "status": "PRESENT",
+      "evidence": [
+        "emptystate",
+        "empty-state",
+        "emptystate"
+      ]
+    },
+    {
+      "key": "loading-state",
+      "label": "Loading State",
+      "status": "PRESENT",
+      "evidence": [
+        "loading",
+        "loading",
+        "loading"
+      ]
+    },
+    {
+      "key": "error-state",
+      "label": "Error State",
+      "status": "PRESENT",
+      "evidence": [
+        "errorstate",
+        "error-state",
+        "errorstate"
+      ]
+    }
+  ],
+  "featureDiscovery": [
+    {
+      "key": "products",
+      "label": "Products",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "categories",
+      "label": "Categories",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "brands",
+      "label": "Brands",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "cart",
+      "label": "Cart",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "checkout",
+      "label": "Checkout",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "wishlist",
+      "label": "Wishlist",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "orders",
+      "label": "Orders",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "reviews",
+      "label": "Reviews",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "lookbook",
+      "label": "Lookbook",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "campaigns",
+      "label": "Campaigns",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "membership",
+      "label": "Membership",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    },
+    {
+      "key": "rewards",
+      "label": "Rewards",
+      "status": "UNCONNECTED",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "No API/data binding signal"
+      ]
+    },
+    {
+      "key": "ai",
+      "label": "AI Features",
+      "status": "PRESENT",
+      "evidence": [
+        "Feature UI/source signal detected",
+        "API/data signal detected"
+      ]
+    }
+  ],
+  "quality": {
+    "projectType": "ECOMMERCE",
+    "completeness": 54,
+    "designCompleteness": 0,
+    "dataBinding": 100,
+    "interaction": 0,
+    "responsive": 100,
+    "classification": "INCOMPLETE",
+    "difficulty": "EASY"
+  },
+  "smartMapping": {
+    "decisions": [
+      {
+        "id": "page:home",
+        "area": "PAGE",
+        "label": "Home",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:product-list",
+        "area": "PAGE",
+        "label": "Product Listing",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:product-detail",
+        "area": "PAGE",
+        "label": "Product Details",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:category",
+        "area": "PAGE",
+        "label": "Category",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:search",
+        "area": "PAGE",
+        "label": "Search",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:cart",
+        "area": "PAGE",
+        "label": "Cart",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:checkout",
+        "area": "PAGE",
+        "label": "Checkout",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:login",
+        "area": "PAGE",
+        "label": "Login",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:register",
+        "area": "PAGE",
+        "label": "Register",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:account",
+        "area": "PAGE",
+        "label": "Account",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:orders",
+        "area": "PAGE",
+        "label": "Orders",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:wishlist",
+        "area": "PAGE",
+        "label": "Wishlist",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:lookbook",
+        "area": "PAGE",
+        "label": "Lookbook",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:about",
+        "area": "PAGE",
+        "label": "About",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "partial page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:contact",
+        "area": "PAGE",
+        "label": "Contact",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:blog",
+        "area": "PAGE",
+        "label": "Blog",
+        "action": "MERGE",
+        "confidence": 76,
+        "reason": "broken page requires missing sections or interaction repair.",
+        "output": "Merge source design with current platform components and repair only detected gaps."
+      },
+      {
+        "id": "page:404",
+        "area": "PAGE",
+        "label": "404 / Not Found",
+        "action": "GENERATE",
+        "confidence": 96,
+        "reason": "Required page was not found in the imported project.",
+        "output": "Generate or reuse the current platform page using the imported theme."
+      },
+      {
+        "id": "component:header",
+        "area": "COMPONENT",
+        "label": "Header",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:footer",
+        "area": "COMPONENT",
+        "label": "Footer",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:hero",
+        "area": "COMPONENT",
+        "label": "Hero",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:product-card",
+        "area": "COMPONENT",
+        "label": "Product Card",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:filter",
+        "area": "COMPONENT",
+        "label": "Filters",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:pagination",
+        "area": "COMPONENT",
+        "label": "Pagination",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:search",
+        "area": "COMPONENT",
+        "label": "Search",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:image-gallery",
+        "area": "COMPONENT",
+        "label": "Image Gallery",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:add-to-cart",
+        "area": "COMPONENT",
+        "label": "Add to Cart",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:variant-selector",
+        "area": "COMPONENT",
+        "label": "Variant Selector",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:cart-item",
+        "area": "COMPONENT",
+        "label": "Cart Item",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:cart-summary",
+        "area": "COMPONENT",
+        "label": "Cart Summary",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:checkout-form",
+        "area": "COMPONENT",
+        "label": "Checkout Form",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:order-summary",
+        "area": "COMPONENT",
+        "label": "Order Summary",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:login-form",
+        "area": "COMPONENT",
+        "label": "Login Form",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:register-form",
+        "area": "COMPONENT",
+        "label": "Register Form",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:account-nav",
+        "area": "COMPONENT",
+        "label": "Account Navigation",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:profile-form",
+        "area": "COMPONENT",
+        "label": "Profile Form",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:order-list",
+        "area": "COMPONENT",
+        "label": "Order List",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:lookbook-card",
+        "area": "COMPONENT",
+        "label": "Lookbook Card",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:contact-form",
+        "area": "COMPONENT",
+        "label": "Contact Form",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:article-card",
+        "area": "COMPONENT",
+        "label": "Article Card",
+        "action": "GENERATE",
+        "confidence": 92,
+        "reason": "Required component was not found.",
+        "output": "Generate a theme-compatible component or reuse the platform equivalent."
+      },
+      {
+        "id": "component:empty-state",
+        "area": "COMPONENT",
+        "label": "Empty State",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:loading-state",
+        "area": "COMPONENT",
+        "label": "Loading State",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "component:error-state",
+        "area": "COMPONENT",
+        "label": "Error State",
+        "action": "REUSE",
+        "confidence": 95,
+        "reason": "Reusable component evidence exists in the source.",
+        "output": "Retain source component unless a platform-owned equivalent provides required business logic."
+      },
+      {
+        "id": "feature:products",
+        "area": "FEATURE",
+        "label": "Products",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:categories",
+        "area": "FEATURE",
+        "label": "Categories",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:brands",
+        "area": "FEATURE",
+        "label": "Brands",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:cart",
+        "area": "FEATURE",
+        "label": "Cart",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:checkout",
+        "area": "FEATURE",
+        "label": "Checkout",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:wishlist",
+        "area": "FEATURE",
+        "label": "Wishlist",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:orders",
+        "area": "FEATURE",
+        "label": "Orders",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:reviews",
+        "area": "FEATURE",
+        "label": "Reviews",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:lookbook",
+        "area": "FEATURE",
+        "label": "Lookbook",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:campaigns",
+        "area": "AI",
+        "label": "Campaigns",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:membership",
+        "area": "FEATURE",
+        "label": "Membership",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "feature:rewards",
+        "area": "FEATURE",
+        "label": "Rewards",
+        "action": "CONNECT",
+        "confidence": 94,
+        "reason": "Feature UI exists without verified real-data binding.",
+        "output": "Generate an API adapter and runtime validation gate."
+      },
+      {
+        "id": "feature:ai",
+        "area": "AI",
+        "label": "AI Features",
+        "action": "CONNECT",
+        "confidence": 90,
+        "reason": "Feature detected; connect it to current platform capability.",
+        "output": "Reuse current API, permission and tenant/store scope."
+      },
+      {
+        "id": "admin:products",
+        "area": "ADMIN",
+        "label": "Product Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /products.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:categories",
+        "area": "ADMIN",
+        "label": "Category Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /categories.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:brands",
+        "area": "ADMIN",
+        "label": "Brand Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /brands.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:orders",
+        "area": "ADMIN",
+        "label": "Order Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /orders.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:inventory",
+        "area": "ADMIN",
+        "label": "Inventory Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /inventory.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:campaigns",
+        "area": "ADMIN",
+        "label": "Campaign Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /campaigns.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:coupons",
+        "area": "ADMIN",
+        "label": "Coupon Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /coupons.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:wishlist",
+        "area": "ADMIN",
+        "label": "Wishlist Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /wishlist.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:reviews",
+        "area": "ADMIN",
+        "label": "Review Moderation",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /reviews.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:membership",
+        "area": "ADMIN",
+        "label": "Membership Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /membership.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:rewards",
+        "area": "ADMIN",
+        "label": "Rewards Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /rewards.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:lookbooks",
+        "area": "ADMIN",
+        "label": "Lookbook Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /lookbooks.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:homepage",
+        "area": "ADMIN",
+        "label": "Homepage Management",
+        "action": "CONNECT",
+        "confidence": 98,
+        "reason": "Existing management route is available: /homepage-builder.",
+        "output": "Connect the migrated feature to the existing management module."
+      },
+      {
+        "id": "admin:ai-feature",
+        "area": "ADMIN",
+        "label": "AI Feature Management",
+        "action": "GENERATE",
+        "confidence": 91,
+        "reason": "Required Admin management was not detected.",
+        "output": "Generate list/create/edit management with fields: name, provider, model, promptKey, featureFlag, tenantScope, storeScope, enabled."
+      },
+      {
+        "id": "responsive:project",
+        "area": "RESPONSIVE",
+        "label": "Responsive behavior",
+        "action": "REUSE",
+        "confidence": 96,
+        "reason": "Responsive foundation was detected.",
+        "output": "Keep current responsive behavior unchanged."
+      }
+    ],
+    "blockers": [],
+    "warnings": [],
+    "simulation": {
+      "reuse": 15,
+      "connect": 26,
+      "merge": 16,
+      "convert": 0,
+      "generate": 13,
+      "block": 0,
+      "adminModules": 1,
+      "apiAdapters": 13,
+      "aiFeatures": 2,
+      "responsiveRepairs": 0,
+      "powerShellRequired": true,
+      "risk": "HIGH"
+    },
+    "steps": [
+      "Reuse platform-owned routes, components, APIs and Admin modules.",
+      "Convert imported JS/JSX and framework-specific routes to current TypeScript/Next.js conventions.",
+      "Merge partial pages and components without redesigning complete source sections.",
+      "Generate missing pages, components and Admin management forms.",
+      "Connect current real APIs through adapters and preserve tenant/store isolation.",
+      "Implement imported AI features that are missing from the current platform.",
+      "Apply responsive preserve/repair/generate decision across the viewport matrix.",
+      "Generate a separate PowerShell package for approved database/schema work.",
+      "Generate a DRAFT code-only Plugin ZIP and require sandbox validation before install."
+    ]
+  },
+  "generatedAt": "2026-07-14T07:38:04.481Z"
+}

@@ -23,6 +23,7 @@ export default async function HomepageRuntimeOrchestrator() {
     mode: "published",
     tenantId: null,
     storeId: null,
+    domainId: null,
     publicationId: null,
     revisionId: null,
   };

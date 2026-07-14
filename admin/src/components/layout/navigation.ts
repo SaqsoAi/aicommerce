@@ -33,7 +33,8 @@ const SA: AdminRole[] = ["SUPER_ADMIN"];
 const ADMIN: AdminRole[] = ["ADMIN", "TENANT_OWNER"];
 const MANAGER: AdminRole[] = ["MANAGER"];
 const BUSINESS: AdminRole[] = [...ADMIN, ...MANAGER];
-const ALL_DASHBOARD: AdminRole[] = [...SA, ...BUSINESS];
+const ALL_DASHBOARD: AdminRole[] = [...SA, ...ADMIN, ...MANAGER];
+const ADMIN_AND_PLATFORM: AdminRole[] = [...ADMIN];
 
 function item(section: string, order: number, name: string, href: string, icon: string, roles: AdminRole[], keywords: string[] = [], permissionAnyOf?: string[]): AdminNavItem {
   return { id: href.replace(/^\//, "").replace(/\//g, ".") || "dashboard", name, label: name, href, icon, section, group: section, keywords, roles, order, permissionAnyOf };
@@ -105,52 +106,55 @@ export const adminNavigation: AdminNavGroup[] = [
     item("Customers", 70, "Rewards", "/rewards", "Crown", ADMIN),
   ]),
 
-  group(70, "Marketing", "Megaphone", ADMIN, [
-    item("Marketing", 10, "Campaigns", "/campaigns", "Megaphone", ADMIN),
-    item("Marketing", 20, "Coupons", "/coupons", "TicketPercent", ADMIN),
-    item("Marketing", 30, "Discount Policy", "/discount-policy", "BadgeDollarSign", ADMIN),
-    item("Marketing", 40, "Notifications", "/notifications", "Bell", ADMIN),
-    item("Marketing", 50, "Omnichannel", "/omnichannel", "Share2", ADMIN),
-    item("Marketing", 60, "Messaging Queue", "/messaging-queue", "ListChecks", ADMIN),
-    item("Marketing", 70, "Messaging Analytics", "/messaging-delivery-analytics", "ChartNoAxesCombined", ADMIN),
-    item("Marketing", 80, "Messaging Event Mapping", "/messaging-event-mapping", "Workflow", ADMIN),
-    item("Marketing", 90, "Notification Providers", "/notification-providers", "RadioTower", ADMIN),
-    item("Marketing", 100, "Membership Banner", "/membership-banner", "PanelTop", ADMIN),
+  group(70, "Marketing", "Megaphone", ADMIN_AND_PLATFORM, [
+    item("Marketing", 10, "Campaigns", "/campaigns", "Megaphone", ADMIN_AND_PLATFORM),
+    item("Marketing", 20, "Coupons", "/coupons", "TicketPercent", ADMIN_AND_PLATFORM),
+    item("Marketing", 30, "Discount Policy", "/discount-policy", "BadgeDollarSign", ADMIN_AND_PLATFORM),
+    item("Marketing", 40, "Notifications", "/notifications", "Bell", ADMIN_AND_PLATFORM),
+    item("Marketing", 50, "Omnichannel", "/omnichannel", "Share2", ADMIN_AND_PLATFORM),
+    item("Marketing", 60, "Messaging Queue", "/messaging-queue", "ListChecks", ADMIN_AND_PLATFORM),
+    item("Marketing", 70, "Messaging Analytics", "/messaging-delivery-analytics", "ChartNoAxesCombined", ADMIN_AND_PLATFORM),
+    item("Marketing", 80, "Messaging Event Mapping", "/messaging-event-mapping", "Workflow", ADMIN_AND_PLATFORM),
+    item("Marketing", 90, "Notification Providers", "/notification-providers", "RadioTower", ADMIN_AND_PLATFORM),
+    item("Marketing", 100, "Membership Banner", "/membership-banner", "PanelTop", ADMIN_AND_PLATFORM),
   ]),
 
-  group(80, "Website CMS", "PanelsTopLeft", ADMIN, [
-    item("Website CMS", 10, "Homepage Builder", "/homepage-builder", "PanelsTopLeft", ADMIN),
-    item("Website CMS", 20, "Homepage Hero", "/homepage-hero", "Image", ADMIN),
-    item("Website CMS", 30, "Landing Builder", "/landing-builder", "FileStack", ADMIN),
-    item("Website CMS", 40, "Lookbooks", "/lookbooks", "Images", ADMIN),
-    item("Website CMS", 50, "Media Library", "/media", "FolderOpen", ADMIN),
-    item("Website CMS", 60, "Enterprise Hero Studio", "/enterprise-hero-studio", "Images", ADMIN),
-    item("Website CMS", 70, "Hero Library", "/heroes", "GalleryHorizontalEnd", ADMIN),
+  group(80, "Website CMS", "PanelsTopLeft", ADMIN_AND_PLATFORM, [
+    item("Website CMS", 10, "Homepage Builder", "/homepage-builder", "PanelsTopLeft", ADMIN_AND_PLATFORM),
+    item("Website CMS", 20, "Homepage Hero", "/homepage-hero", "Image", ADMIN_AND_PLATFORM),
+    item("Website CMS", 30, "Landing Builder", "/landing-builder", "FileStack", ADMIN_AND_PLATFORM),
+    item("Website CMS", 40, "Lookbooks", "/lookbooks", "Images", ADMIN_AND_PLATFORM),
+    item("Website CMS", 50, "Media Library", "/media", "FolderOpen", ADMIN_AND_PLATFORM),
+    item("Website CMS", 60, "Enterprise Hero Studio", "/enterprise-hero-studio", "Images", ADMIN_AND_PLATFORM),
+    item("Website CMS", 70, "Hero Library", "/heroes", "GalleryHorizontalEnd", ADMIN_AND_PLATFORM),
+    item("Website CMS", 80, "Templates", "/templates", "FileStack", ADMIN_AND_PLATFORM),
   ]),
 
-  group(90, "AI Tools", "Sparkles", ADMIN, [
-    item("AI Tools", 10, "AI Chat", "/ai-chat", "Bot", ADMIN),
-    item("AI Tools", 20, "AI Search", "/ai-search", "Search", ADMIN),
-    item("AI Tools", 30, "AI Recommendation", "/ai-recommendation", "Wand2", ADMIN),
-    item("AI Tools", 40, "Virtual Try-On", "/ai-virtual-tryon", "Shirt", ADMIN),
-    item("AI Tools", 50, "AI Marketing", "/ai-marketing", "Megaphone", ADMIN),
-    item("AI Tools", 60, "AI Creative Studio", "/ai-creative-studio", "Sparkles", ADMIN),
-    item("AI Tools", 70, "AI Social Manager", "/ai-social-manager", "Share2", ADMIN),
+  group(90, "AI Tools", "Sparkles", ADMIN_AND_PLATFORM, [
+    item("AI Tools", 10, "AI Chat", "/ai-chat", "Bot", ADMIN_AND_PLATFORM),
+    item("AI Tools", 20, "AI Search", "/ai-search", "Search", ADMIN_AND_PLATFORM),
+    item("AI Tools", 30, "AI Recommendation", "/ai-recommendation", "Wand2", ADMIN_AND_PLATFORM),
+    item("AI Tools", 40, "Virtual Try-On", "/ai-virtual-tryon", "Shirt", ADMIN_AND_PLATFORM),
+    item("AI Tools", 50, "AI Marketing", "/ai-marketing", "Megaphone", ADMIN_AND_PLATFORM),
+    item("AI Tools", 60, "AI Creative Studio", "/ai-creative-studio", "Sparkles", ADMIN_AND_PLATFORM),
+    item("AI Tools", 70, "AI Social Manager", "/ai-social-manager", "Share2", ADMIN_AND_PLATFORM),
   ]),
 
-  group(100, "Store Settings", "Settings", ADMIN, [
-    item("Store Settings", 10, "Store Settings", "/store-settings", "Store", ADMIN),
-    item("Store Settings", 20, "Enterprise Store Settings", "/enterprise-store-settings", "Settings2", ADMIN),
-    item("Store Settings", 30, "Theme Settings", "/settings/theme", "SlidersHorizontal", ADMIN),
-    item("Store Settings", 40, "General Settings", "/settings", "Settings", ADMIN),
-    item("Store Settings", 50, "Subscriptions", "/subscriptions", "CreditCard", ADMIN),
-    item("Store Settings", 60, "Membership Settings", "/membership-settings", "BadgeCheck", ADMIN),
-    item("Store Settings", 70, "Membership Benefits", "/membership-benefits", "Gift", ADMIN),
-    item("Store Settings", 80, "Plugin Settings", "/plugin-settings", "PackageCog", ADMIN),
+  group(100, "Store Settings", "Settings", ADMIN_AND_PLATFORM, [
+    item("Store Settings", 10, "Store Settings", "/store-settings", "Store", ADMIN_AND_PLATFORM),
+    item("Store Settings", 20, "Enterprise Store Settings", "/enterprise-store-settings", "Settings2", ADMIN_AND_PLATFORM),
+    item("Store Settings", 30, "Theme Settings", "/settings/theme", "SlidersHorizontal", ADMIN_AND_PLATFORM),
+    item("Store Settings", 40, "General Settings", "/settings", "Settings", ADMIN_AND_PLATFORM),
+    item("Store Settings", 50, "Subscriptions", "/subscriptions", "CreditCard", ADMIN_AND_PLATFORM),
+    item("Store Settings", 60, "Membership Settings", "/membership-settings", "BadgeCheck", ADMIN_AND_PLATFORM),
+    item("Store Settings", 70, "Membership Benefits", "/membership-benefits", "Gift", ADMIN_AND_PLATFORM),
+    item("Store Settings", 80, "Plugin Settings", "/plugin-settings", "PackageCog", ADMIN_AND_PLATFORM),
   ]),
 
   group(110, "Platform & Security", "ShieldCheck", SA, [
     item("Platform & Security", 10, "Plugin Manager", "/system/plugin-manager", "Package", SA),
+    item("Platform & Security", 15, "AI Migrator", "/system/migration-studio", "Wand2", SA, ["migration", "template", "react", "laravel"]),
+    item("Platform & Security", 16, "Tenant Management", "/system/tenant-management", "Building2", SA, ["tenant", "store", "domain", "template"]),
     item("Platform & Security", 20, "Roles", "/roles", "ShieldCheck", SA),
     item("Platform & Security", 30, "Permissions", "/permissions", "KeyRound", SA),
     item("Platform & Security", 40, "Audit Logs", "/audit-logs", "FileSearch", SA),

@@ -20,6 +20,9 @@ import toast from "react-hot-toast";
 
 import {
   acknowledgePluginMigrationReview,
+  continuePluginTransaction,
+  recoverPluginTransaction,
+  cancelPluginTransaction,
   getPluginTransaction,
   listPluginTransactions,
   type PluginTransactionSummary,
@@ -71,7 +74,10 @@ function progressFor(status: string): number {
     VALIDATING: 18,
     BACKING_UP: 35,
     APPLYING_FILES: 58,
-    MIGRATION_REVIEW_REQUIRED: 60,
+    WAITING_DATABASE: 55,
+    MIGRATION_REVIEW_REQUIRED: 55,
+    DATABASE_APPROVED: 65,
+    READY_TO_EXECUTE: 68,
     VERIFYING: 75,
     COMMITTING: 90,
     SUCCEEDED: 100,
@@ -121,7 +127,61 @@ export default function PluginTransactionMonitorClient({
   useEffect(() => {
     if (!transactionId || !transaction || !ACTIVE.has(transaction.status)) return;
     const timer = window.setInterval(() => void load(), 2000);
-    return () => window.clearInterval(timer);
+    async function executeReviewedInstallation() {
+    if (!transaction) return;
+    setWorking(true);
+    try {
+      const updated = await continuePluginTransaction(
+        transaction.id,
+        "Execute reviewed installation transaction",
+      );
+      setTransaction(updated);
+      toast.success("Installation execution started");
+      await load();
+    } catch (requestError) {
+      toast.error(requestError instanceof Error ? requestError.message : "Execution failed");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function recoverCurrentTransaction() {
+    if (!transaction) return;
+    setWorking(true);
+    try {
+      const updated = await recoverPluginTransaction(
+        transaction.id,
+        "Recover transaction and release installation lock",
+      );
+      setTransaction(updated);
+      toast.success("Transaction recovered. Recreate the installation plan.");
+      await load();
+    } catch (requestError) {
+      toast.error(requestError instanceof Error ? requestError.message : "Recovery failed");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function cancelCurrentTransaction() {
+    if (!transaction) return;
+    setWorking(true);
+    try {
+      const updated = await cancelPluginTransaction(
+        transaction.id,
+        "Cancel transaction and release installation lock",
+      );
+      setTransaction(updated);
+      toast.success("Transaction cancelled");
+      await load();
+    } catch (requestError) {
+      toast.error(requestError instanceof Error ? requestError.message : "Cancellation failed");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  return () => window.clearInterval(timer);
   }, [load, transaction, transactionId]);
 
   const verifiedFiles = useMemo(
@@ -136,8 +196,12 @@ export default function PluginTransactionMonitorClient({
     if (!transaction || reason.trim().length < 5) return;
     setWorking(true);
     try {
-      await acknowledgePluginMigrationReview(transaction.id, reason.trim());
-      toast.success("Migration review acknowledgement recorded");
+      const updated = await acknowledgePluginMigrationReview(
+        transaction.id,
+        reason.trim(),
+      );
+      setTransaction(updated);
+      toast.success("Database review recorded. Execute Installation is now available.");
       setReviewOpen(false);
       setReason("");
       await load();
@@ -180,8 +244,9 @@ export default function PluginTransactionMonitorClient({
           <div className="flex gap-3 text-red-100">
             <AlertTriangle />
             <div>
-              <h2 className="font-black">Transaction API unavailable</h2>
+              <h2 className="font-black">Transaction API connection failed</h2>
               <p className="mt-1 text-sm text-red-100/70">{error}</p>
+              <p className="mt-2 text-xs text-red-100/50">Confirm the Server is running on the configured NEXT_PUBLIC_API_URL, then refresh.</p>
             </div>
           </div>
         </AdminCard>
@@ -241,7 +306,7 @@ export default function PluginTransactionMonitorClient({
             </p>
           </AdminCard>
 
-          {transaction.status === "MIGRATION_REVIEW_REQUIRED" ? (
+          {["WAITING_DATABASE", "MIGRATION_REVIEW_REQUIRED"].includes(transaction.status) ? (
             <AdminCard className="border-violet-400/20 p-6">
               <div className="flex items-start gap-3">
                 <Database className="mt-1 text-violet-300" />
@@ -261,6 +326,32 @@ export default function PluginTransactionMonitorClient({
                     Record migration review
                   </Button>
                 </div>
+              </div>
+            </AdminCard>
+          ) : null}
+
+          {["DATABASE_APPROVED", "READY_TO_EXECUTE"].includes(transaction.status) ? (
+            <AdminCard className="border-cyan-400/20 p-6">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-1 text-cyan-300" />
+                <div className="flex-1">
+                  <h2 className="font-black text-white">Database approved · Ready to execute</h2>
+                  <p className="mt-2 text-sm text-white/55">
+                    Database work was acknowledged separately. Source file mutation will begin only after this explicit action.
+                  </p>
+                  <Button className="mt-5" onClick={() => void executeReviewedInstallation()} disabled={working}>
+                    Execute Installation
+                  </Button>
+                </div>
+              </div>
+            </AdminCard>
+          ) : null}
+
+          {ACTIVE.has(transaction.status) && !["WAITING_DATABASE", "MIGRATION_REVIEW_REQUIRED", "DATABASE_APPROVED", "READY_TO_EXECUTE"].includes(transaction.status) ? (
+            <AdminCard className="p-4">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={() => void recoverCurrentTransaction()} disabled={working}>Recover Transaction</Button>
+                <Button variant="outline" onClick={() => void cancelCurrentTransaction()} disabled={working}>Cancel Transaction</Button>
               </div>
             </AdminCard>
           ) : null}

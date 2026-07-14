@@ -511,19 +511,25 @@ model Tenant {
   domains           StorefrontDomain[]
   homepageSections  HomepageSection[]
 
-  users             User[]
+  users User[]
+
   @@index([status, storefrontEnabled])
 }
 
 model StorefrontDomain {
-  id        String   @id @default(cuid())
-  hostname  String   @unique
-  status    String   @default("ACTIVE")
-  isPrimary Boolean  @default(false)
-  tenantId  String
-  storeId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String    @id @default(cuid())
+  hostname          String    @unique
+  status            String    @default("ACTIVE")
+  isPrimary         Boolean   @default(false)
+  provider          String?   @default("MANUAL")
+  verificationToken String?   @unique
+  dnsStatus         String    @default("PENDING")
+  sslStatus         String    @default("PENDING")
+  lastVerifiedAt    DateTime?
+  tenantId          String
+  storeId           String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   store  Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -531,6 +537,7 @@ model StorefrontDomain {
   @@index([tenantId, storeId])
   @@index([status])
 }
+
 model Store {
   id                String             @id @default(cuid())
   name              String
@@ -545,7 +552,8 @@ model Store {
   domains           StorefrontDomain[]
   homepageSections  HomepageSection[]
 
-  users             User[]
+  users User[]
+
   @@index([tenantId])
   @@index([status, storefrontEnabled])
 }
@@ -2115,14 +2123,14 @@ model Workflow {
 }
 
 model WorkflowVersion {
-  id          String   @id @default(cuid())
-  workflowId  String
-  version     Int
-  status      String   @default("DRAFT")
+  id           String   @id @default(cuid())
+  workflowId   String
+  version      Int
+  status       String   @default("DRAFT")
   snapshotJson Json?
-  notes       String?
-  createdById String?
-  createdAt   DateTime @default(now())
+  notes        String?
+  createdById  String?
+  createdAt    DateTime @default(now())
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2132,16 +2140,16 @@ model WorkflowVersion {
 }
 
 model WorkflowNode {
-  id          String   @id @default(cuid())
-  workflowId  String
-  nodeKey     String
-  type        String
-  label       String
-  configJson  Json?
-  positionX   Int      @default(0)
-  positionY   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  workflowId String
+  nodeKey    String
+  type       String
+  label      String
+  configJson Json?
+  positionX  Int      @default(0)
+  positionY  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2151,12 +2159,12 @@ model WorkflowNode {
 }
 
 model WorkflowConnection {
-  id          String   @id @default(cuid())
-  workflowId  String
-  sourceKey   String
-  targetKey   String
+  id            String   @id @default(cuid())
+  workflowId    String
+  sourceKey     String
+  targetKey     String
   conditionJson Json?
-  createdAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2166,13 +2174,13 @@ model WorkflowConnection {
 }
 
 model WorkflowVariable {
-  id          String   @id @default(cuid())
-  workflowId  String
-  key         String
-  valueJson   Json?
-  isSecret    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  workflowId String
+  key        String
+  valueJson  Json?
+  isSecret   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2181,18 +2189,18 @@ model WorkflowVariable {
 }
 
 model WorkflowExecution {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   workflowId  String
-  status      String   @default("PENDING")
+  status      String    @default("PENDING")
   triggerType String
-  inputJson    Json?
-  outputJson   Json?
-  error        String?
-  startedAt    DateTime?
-  completedAt  DateTime?
-  createdAt    DateTime @default(now())
+  inputJson   Json?
+  outputJson  Json?
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
 
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow  Workflow               @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   logs      WorkflowExecutionLog[]
   retries   WorkflowRetry[]
   rollbacks WorkflowRollback[]
@@ -2218,28 +2226,28 @@ model WorkflowExecutionLog {
 }
 
 model WorkflowTemplate {
-  id          String   @id @default(cuid())
-  name        String
-  category    String?
-  description String?
+  id           String   @id @default(cuid())
+  name         String
+  category     String?
+  description  String?
   templateJson Json
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([category])
   @@index([isActive])
 }
 
 model WorkflowSchedule {
-  id          String   @id @default(cuid())
-  workflowId  String
-  cron        String?
-  timezone    String   @default("Asia/Dhaka")
-  isActive    Boolean  @default(true)
-  nextRunAt   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  workflowId String
+  cron       String?
+  timezone   String    @default("Asia/Dhaka")
+  isActive   Boolean   @default(true)
+  nextRunAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2248,13 +2256,13 @@ model WorkflowSchedule {
 }
 
 model WorkflowTrigger {
-  id          String   @id @default(cuid())
-  workflowId  String
-  eventName   String
-  source      String?
-  configJson  Json?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  workflowId String
+  eventName  String
+  source     String?
+  configJson Json?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
 
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -2309,19 +2317,19 @@ model WorkflowHistory {
 // PHASE_4_0I_P_ENTERPRISE_AUTH_IDENTITY_PLATFORM
 
 model AuthSession {
-  id           String   @id @default(cuid())
-  userId       String
-  sessionToken String   @unique
+  id               String    @id @default(cuid())
+  userId           String
+  sessionToken     String    @unique
   refreshTokenHash String?
-  deviceId     String?
-  ipAddress    String?
-  userAgent    String?
-  status       String   @default("ACTIVE")
-  expiresAt    DateTime
-  revokedAt    DateTime?
-  revokedReason String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  deviceId         String?
+  ipAddress        String?
+  userAgent        String?
+  status           String    @default("ACTIVE")
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  revokedReason    String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@index([userId])
   @@index([sessionToken])
@@ -2330,16 +2338,16 @@ model AuthSession {
 }
 
 model RefreshToken {
-  id          String   @id @default(cuid())
-  userId      String
-  sessionId   String?
-  tokenHash   String   @unique
-  familyId    String?
-  status      String   @default("ACTIVE")
-  expiresAt   DateTime
-  usedAt      DateTime?
-  revokedAt   DateTime?
-  createdAt   DateTime @default(now())
+  id        String    @id @default(cuid())
+  userId    String
+  sessionId String?
+  tokenHash String    @unique
+  familyId  String?
+  status    String    @default("ACTIVE")
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId])
   @@index([sessionId])
@@ -2348,18 +2356,18 @@ model RefreshToken {
 }
 
 model TrustedDevice {
-  id          String   @id @default(cuid())
-  userId      String
-  deviceKey   String   @unique
-  deviceName  String?
-  browser     String?
-  os          String?
-  ipAddress   String?
-  isTrusted   Boolean  @default(false)
-  trustedAt   DateTime?
-  lastSeenAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  userId     String
+  deviceKey  String    @unique
+  deviceName String?
+  browser    String?
+  os         String?
+  ipAddress  String?
+  isTrusted  Boolean   @default(false)
+  trustedAt  DateTime?
+  lastSeenAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@index([userId])
   @@index([deviceKey])
@@ -2367,16 +2375,16 @@ model TrustedDevice {
 }
 
 model LoginHistory {
-  id          String   @id @default(cuid())
-  userId      String?
-  email       String?
-  ipAddress   String?
-  userAgent   String?
-  deviceKey   String?
-  status      String
-  reason      String?
-  riskScore   Int      @default(0)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String?
+  ipAddress String?
+  userAgent String?
+  deviceKey String?
+  status    String
+  reason    String?
+  riskScore Int      @default(0)
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([email])
@@ -2385,16 +2393,16 @@ model LoginHistory {
 }
 
 model TwoFactorCredential {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String   @default("TOTP")
-  secretHash  String?
-  phone       String?
-  email       String?
-  enabled     Boolean  @default(false)
-  verifiedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  userId     String
+  type       String    @default("TOTP")
+  secretHash String?
+  phone      String?
+  email      String?
+  enabled    Boolean   @default(false)
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@index([userId])
   @@index([type])
@@ -2402,14 +2410,14 @@ model TwoFactorCredential {
 }
 
 model MagicLinkToken {
-  id          String   @id @default(cuid())
-  email       String
-  tokenHash   String   @unique
-  purpose     String   @default("LOGIN")
-  status      String   @default("ACTIVE")
-  expiresAt   DateTime
-  usedAt      DateTime?
-  createdAt   DateTime @default(now())
+  id        String    @id @default(cuid())
+  email     String
+  tokenHash String    @unique
+  purpose   String    @default("LOGIN")
+  status    String    @default("ACTIVE")
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([email])
   @@index([purpose])
@@ -2417,14 +2425,14 @@ model MagicLinkToken {
 }
 
 model PasswordResetToken {
-  id          String   @id @default(cuid())
-  userId      String?
-  email       String
-  tokenHash   String   @unique
-  status      String   @default("ACTIVE")
-  expiresAt   DateTime
-  usedAt      DateTime?
-  createdAt   DateTime @default(now())
+  id        String    @id @default(cuid())
+  userId    String?
+  email     String
+  tokenHash String    @unique
+  status    String    @default("ACTIVE")
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId])
   @@index([email])
@@ -2432,27 +2440,27 @@ model PasswordResetToken {
 }
 
 model SecurityPolicy {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  title       String
-  valueJson   Json?
-  isEnabled   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  valueJson Json?
+  isEnabled Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([key])
   @@index([isEnabled])
 }
 
 model SecurityEvent {
-  id          String   @id @default(cuid())
-  userId      String?
-  eventType   String
-  severity    String   @default("INFO")
-  ipAddress   String?
-  userAgent   String?
-  dataJson    Json?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String?
+  eventType String
+  severity  String   @default("INFO")
+  ipAddress String?
+  userAgent String?
+  dataJson  Json?
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([eventType])
@@ -2461,16 +2469,16 @@ model SecurityEvent {
 }
 
 model HeroVersion {
-  id          String   @id @default(cuid())
-  heroId      String
-  title       String
-  status      String   @default("DRAFT")
-  note        String?
+  id           String    @id @default(cuid())
+  heroId       String
+  title        String
+  status       String    @default("DRAFT")
+  note         String?
   snapshotJson Json?
-  createdBy   String?
-  restoredAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdBy    String?
+  restoredAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([heroId])
   @@index([status])
@@ -2478,17 +2486,17 @@ model HeroVersion {
 }
 
 model HeroVariant {
-  id          String   @id @default(cuid())
-  heroId      String
-  name        String
-  status      String   @default("TESTING")
-  weight      Int      @default(1)
-  views       Int      @default(0)
-  clicks      Int      @default(0)
-  ctr         Float    @default(0)
-  configJson  Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  heroId     String
+  name       String
+  status     String   @default("TESTING")
+  weight     Int      @default(1)
+  views      Int      @default(0)
+  clicks     Int      @default(0)
+  ctr        Float    @default(0)
+  configJson Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([heroId])
   @@index([status])
@@ -2496,14 +2504,14 @@ model HeroVariant {
 }
 
 model HeroAnalytics {
-  id          String   @id @default(cuid())
-  heroId      String
-  variantId   String?
-  device      String
-  event       String
-  cropJson    Json?
-  metaJson    Json?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  heroId    String
+  variantId String?
+  device    String
+  event     String
+  cropJson  Json?
+  metaJson  Json?
+  createdAt DateTime @default(now())
 
   @@index([heroId])
   @@index([variantId])
@@ -2514,37 +2522,38 @@ model HeroAnalytics {
 }
 
 model HeroDraft {
-  id          String   @id @default(cuid())
-  heroId      String
-  status      String   @default("DRAFT")
+  id            String    @id @default(cuid())
+  heroId        String
+  status        String    @default("DRAFT")
   lockedVersion String?
-  scheduledAt DateTime?
-  publishedAt DateTime?
-  cropJson    Json?
-  aiVisionJson Json?
-  approvalNote String?
-  draftJson   Json?
-  createdBy   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+  cropJson      Json?
+  aiVisionJson  Json?
+  approvalNote  String?
+  draftJson     Json?
+  createdBy     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([heroId])
   @@index([status])
   @@index([scheduledAt])
   @@map("hero_drafts")
 }
+
 // ================= PHASE 8.10 ACCOUNT DATABASE =================
 model AccountProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
+  id          String    @id @default(cuid())
+  userId      String    @unique
   displayName String?
   avatarUrl   String?
   phone       String?
   dateOfBirth DateTime?
   gender      String?
-  joinedAt    DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  joinedAt    DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   addresses   AccountAddress[]
   membership  AccountMembership?
@@ -2555,41 +2564,41 @@ model AccountProfile {
 }
 
 model AccountAddress {
-  id          String   @id @default(cuid())
-  userId      String
-  profileId   String?
-  label       String   @default("Home")
-  fullName    String?
-  phone       String?
-  line1       String
-  line2       String?
-  city        String?
-  state       String?
-  postalCode  String?
-  country     String   @default("Bangladesh")
-  isDefault   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  profileId  String?
+  label      String   @default("Home")
+  fullName   String?
+  phone      String?
+  line1      String
+  line2      String?
+  city       String?
+  state      String?
+  postalCode String?
+  country    String   @default("Bangladesh")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([profileId])
 }
 
 model AccountMembership {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  profileId   String?  @unique
-  tier        String   @default("Bronze")
-  stylePoints Int      @default(0)
-  status      String   @default("ACTIVE")
-  startedAt   DateTime @default(now())
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  profileId   String?   @unique
+  tier        String    @default("Bronze")
+  stylePoints Int       @default(0)
+  status      String    @default("ACTIVE")
+  startedAt   DateTime  @default(now())
   expiresAt   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tier])
@@ -2605,7 +2614,7 @@ model AccountRewardLedger {
   referenceId String?
   createdAt   DateTime @default(now())
 
-  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([profileId])
@@ -2613,22 +2622,21 @@ model AccountRewardLedger {
 }
 
 model AccountStylePreference {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  profileId   String?  @unique
-  preferredFit String?
-  sizesJson   String?
-  colorsJson  String?
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  profileId      String?  @unique
+  preferredFit   String?
+  sizesJson      String?
+  colorsJson     String?
   categoriesJson String?
-  notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
-
 
 enum PluginStatus {
   DISCOVERED
@@ -2651,209 +2659,219 @@ enum PluginInstallationStatus {
 }
 
 model Plugin {
-  id              String   @id @default(cuid())
-  pluginKey       String   @unique
-  name            String
-  description     String?
-  vendorKey       String
-  currentVersion  String?
-  status          PluginStatus @default(DISCOVERED)
-  tenantScope     String
-  manifest        Json
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  versions        PluginVersion[]
-  installations   PluginInstallation[]
-  dependencies    PluginDependency[] @relation("PluginDependencies")
-  dependants      PluginDependency[] @relation("PluginDependants")
-  permissions     PluginPermission[]
-  settings        PluginSetting[]
-  tenantAccess    PluginTenantAccess[]
-  files           PluginFile[]
-  migrations      PluginMigration[]
-  healthChecks    PluginHealthCheck[]
-  settingValues   PluginSettingValue[]
-  auditEvents     PluginAuditEvent[]
-  transactions    PluginInstallTransaction[]
+  id                 String                     @id @default(cuid())
+  pluginKey          String                     @unique
+  name               String
+  description        String?
+  vendorKey          String
+  currentVersion     String?
+  status             PluginStatus               @default(DISCOVERED)
+  tenantScope        String
+  manifest           Json
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  versions           PluginVersion[]
+  installations      PluginInstallation[]
+  dependencies       PluginDependency[]         @relation("PluginDependencies")
+  dependants         PluginDependency[]         @relation("PluginDependants")
+  permissions        PluginPermission[]
+  settings           PluginSetting[]
+  tenantAccess       PluginTenantAccess[]
+  files              PluginFile[]
+  migrations         PluginMigration[]
+  healthChecks       PluginHealthCheck[]
+  settingValues      PluginSettingValue[]
+  auditEvents        PluginAuditEvent[]
+  transactions       PluginInstallTransaction[]
   marketplaceEntries PluginMarketplaceEntry[]
 }
 
-
 model PluginVersion {
-  id             String   @id @default(cuid())
-  pluginId       String
-  version        String
-  manifest       Json
-  packageSha256  String
-  signatureKeyId String?
-  createdAt      DateTime @default(now())
-  plugin         Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
-  installations  PluginInstallation[]
+  id                 String                   @id @default(cuid())
+  pluginId           String
+  version            String
+  manifest           Json
+  packageSha256      String
+  signatureKeyId     String?
+  createdAt          DateTime                 @default(now())
+  plugin             Plugin                   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  installations      PluginInstallation[]
+  marketplaceEntries PluginMarketplaceEntry[]
+
   @@unique([pluginId, version])
   @@index([pluginId])
-  marketplaceEntries PluginMarketplaceEntry[]
 }
 
 model PluginInstallation {
-  id             String @id @default(cuid())
-  pluginId       String
+  id              String                     @id @default(cuid())
+  pluginId        String
   pluginVersionId String
-  status         PluginInstallationStatus @default(PLANNED)
-  planFingerprint String @unique
-  plan           Json
-  requestedBy    String
-  approvedBy     String?
-  startedAt      DateTime?
-  completedAt    DateTime?
-  errorCode      String?
-  errorMessage   String?
-  createdAt      DateTime @default(now())
-  plugin         Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
-  pluginVersion  PluginVersion @relation(fields: [pluginVersionId], references: [id], onDelete: Restrict)
-  backups        PluginBackup[]
-  rollbacks      PluginRollback[]
+  status          PluginInstallationStatus   @default(PLANNED)
+  planFingerprint String                     @unique
+  plan            Json
+  requestedBy     String
+  approvedBy      String?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  errorCode       String?
+  errorMessage    String?
+  createdAt       DateTime                   @default(now())
+  plugin          Plugin                     @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  pluginVersion   PluginVersion              @relation(fields: [pluginVersionId], references: [id], onDelete: Restrict)
+  backups         PluginBackup[]
+  rollbacks       PluginRollback[]
   transactions    PluginInstallTransaction[]
+
   @@index([pluginId, createdAt])
 }
 
 model PluginDependency {
-  id                 String @id @default(cuid())
+  id                 String  @id @default(cuid())
   pluginId           String
   dependencyPluginId String
   versionRange       String
   optional           Boolean @default(false)
   mustBeActive       Boolean @default(true)
-  plugin             Plugin @relation("PluginDependencies", fields: [pluginId], references: [id], onDelete: Cascade)
-  dependency         Plugin @relation("PluginDependants", fields: [dependencyPluginId], references: [id], onDelete: Restrict)
+  plugin             Plugin  @relation("PluginDependencies", fields: [pluginId], references: [id], onDelete: Cascade)
+  dependency         Plugin  @relation("PluginDependants", fields: [dependencyPluginId], references: [id], onDelete: Restrict)
+
   @@unique([pluginId, dependencyPluginId])
 }
 
 model PluginPermission {
-  id          String @id @default(cuid())
-  pluginId    String
+  id             String  @id @default(cuid())
+  pluginId       String
   permissionCode String
-  name        String
-  description String?
-  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  plugin         Plugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, permissionCode])
   @@unique([permissionCode])
 }
 
 model PluginSetting {
-  id          String @id @default(cuid())
-  pluginId    String
-  settingKey  String
-  scope       String
-  schema      Json
+  id           String @id @default(cuid())
+  pluginId     String
+  settingKey   String
+  scope        String
+  schema       Json
   defaultValue Json?
-  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  plugin       Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, settingKey])
   @@unique([settingKey])
 }
 
 model PluginTenantAccess {
-  id          String @id @default(cuid())
-  pluginId    String
-  tenantId    String
-  enabled     Boolean @default(false)
+  id            String   @id @default(cuid())
+  pluginId      String
+  tenantId      String
+  enabled       Boolean  @default(false)
   configuration Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  plugin        Plugin   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, tenantId])
   @@index([tenantId, enabled])
 }
 
 model PluginFile {
-  id              String @id @default(cuid())
-  pluginId        String
-  owner           String
-  destinationPath String
-  sourcePath      String
-  sha256          String
-  sizeBytes       Int
+  id               String   @id @default(cuid())
+  pluginId         String
+  owner            String
+  destinationPath  String
+  sourcePath       String
+  sha256           String
+  sizeBytes        Int
   installedVersion String
-  createdAt       DateTime @default(now())
-  plugin          Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+  plugin           Plugin   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([owner, destinationPath])
   @@index([pluginId])
 }
 
 model PluginMigration {
-  id          String @id @default(cuid())
-  pluginId    String
-  version     String
-  operationId String
+  id            String    @id @default(cuid())
+  pluginId      String
+  version       String
+  operationId   String
   operationType String
-  status      String
-  plan        Json
-  appliedAt   DateTime?
-  rolledBackAt DateTime?
-  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  status        String
+  plan          Json
+  appliedAt     DateTime?
+  rolledBackAt  DateTime?
+  plugin        Plugin    @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, version, operationId])
 }
 
 model PluginBackup {
-  id             String @id @default(cuid())
+  id             String             @id @default(cuid())
   installationId String
   backupPath     String
   sha256         String
-  createdAt      DateTime @default(now())
+  createdAt      DateTime           @default(now())
   installation   PluginInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
 }
 
 model PluginRollback {
-  id             String @id @default(cuid())
+  id             String             @id @default(cuid())
   installationId String
   reason         String
   requestedBy    String
   status         String
   details        Json?
-  createdAt      DateTime @default(now())
+  createdAt      DateTime           @default(now())
   completedAt    DateTime?
   installation   PluginInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
 }
 
 model PluginAuditEvent {
-  id          String @id @default(cuid())
-  pluginId    String?
-  actorId     String?
-  action      String
-  outcome     String
-  reason      String?
-  metadata    Json?
-  ipAddress   String?
-  createdAt   DateTime @default(now())
-  plugin      Plugin? @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+  id        String   @id @default(cuid())
+  pluginId  String?
+  actorId   String?
+  action    String
+  outcome   String
+  reason    String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+  plugin    Plugin?  @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+
   @@index([pluginId, createdAt])
   @@index([actorId, createdAt])
 }
 
 model PluginHealthCheck {
-  id          String @id @default(cuid())
+  id          String    @id @default(cuid())
   pluginId    String
   checkKey    String
   type        String
   target      String?
-  required    Boolean @default(true)
+  required    Boolean   @default(true)
   lastStatus  String?
   lastMessage String?
   checkedAt   DateTime?
-  plugin      Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  plugin      Plugin    @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, checkKey])
 }
 
 model PluginSettingValue {
-  id          String   @id @default(cuid())
-  pluginId    String
-  settingKey  String
-  scope       String
-  tenantId    String?
-  value       Json
-  updatedBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  plugin      Plugin   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  pluginId   String
+  settingKey String
+  scope      String
+  tenantId   String?
+  value      Json
+  updatedBy  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  plugin     Plugin   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
   @@unique([pluginId, settingKey, scope, tenantId])
   @@index([pluginId, tenantId])
 }
@@ -2873,34 +2891,35 @@ enum PluginTransactionStatus {
 }
 
 model PluginInstallTransaction {
-  id               String                  @id @default(cuid())
-  pluginId         String
-  installationId   String
-  status           PluginTransactionStatus @default(PREPARING)
-  planFingerprint  String
-  packageSha256    String
-  stagingPath      String
-  backupPath       String?
-  journal          Json?
-  migrationGate    Json?
-  errorCode        String?
-  errorMessage     String?
-  requestedBy      String
-  startedAt        DateTime                @default(now())
-  completedAt      DateTime?
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
-  plugin           Plugin                 @relation(fields: [pluginId], references: [id], onDelete: Cascade)
-  installation     PluginInstallation      @relation(fields: [installationId], references: [id], onDelete: Cascade)
-  fileOperations   PluginFileOperation[]
-  logs             PluginTransactionLog[]
+  id              String                  @id @default(cuid())
+  pluginId        String
+  installationId  String
+  status          PluginTransactionStatus @default(PREPARING)
+  planFingerprint String
+  packageSha256   String
+  stagingPath     String
+  backupPath      String?
+  journal         Json?
+  migrationGate   Json?
+  errorCode       String?
+  errorMessage    String?
+  requestedBy     String
+  startedAt       DateTime                @default(now())
+  completedAt     DateTime?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  plugin          Plugin                  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  installation    PluginInstallation      @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  fileOperations  PluginFileOperation[]
+  logs            PluginTransactionLog[]
+
   @@index([pluginId, createdAt])
   @@index([installationId])
   @@index([status, createdAt])
 }
 
 model PluginFileOperation {
-  id              String   @id @default(cuid())
+  id              String                   @id @default(cuid())
   transactionId   String
   sequence        Int
   owner           String
@@ -2911,22 +2930,24 @@ model PluginFileOperation {
   appliedSha256   String?
   status          String
   errorMessage    String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
   transaction     PluginInstallTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
   @@unique([transactionId, sequence])
   @@index([transactionId, status])
 }
 
 model PluginTransactionLog {
-  id            String   @id @default(cuid())
+  id            String                   @id @default(cuid())
   transactionId String
   level         String
   event         String
   message       String
   metadata      Json?
-  createdAt     DateTime @default(now())
+  createdAt     DateTime                 @default(now())
   transaction   PluginInstallTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
   @@index([transactionId, createdAt])
 }
 
@@ -2968,114 +2989,136 @@ enum PluginPackageTrustDecision {
 }
 
 model PluginVendor {
-  id            String             @id @default(cuid())
-  vendorKey     String             @unique
+  id            String                   @id @default(cuid())
+  vendorKey     String                   @unique
   name          String
   websiteUrl    String?
   contactEmail  String?
-  status        PluginVendorStatus @default(PENDING)
-  trustLevel    PluginTrustLevel   @default(UNTRUSTED)
+  status        PluginVendorStatus       @default(PENDING)
+  trustLevel    PluginTrustLevel         @default(UNTRUSTED)
   metadata      Json?
   approvedBy    String?
   approvedAt    DateTime?
   revokedReason String?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
   signingKeys   PluginSigningKey[]
   entries       PluginMarketplaceEntry[]
+
   @@index([status, trustLevel])
 }
 
 model PluginSigningKey {
-  id           String       @id @default(cuid())
-  vendorId     String
-  keyId        String
-  algorithm    String
-  publicKeyPem String
-  fingerprint  String
-  active       Boolean      @default(true)
-  expiresAt    DateTime?
-  revokedAt    DateTime?
+  id            String                   @id @default(cuid())
+  vendorId      String
+  keyId         String
+  algorithm     String
+  publicKeyPem  String
+  fingerprint   String
+  active        Boolean                  @default(true)
+  expiresAt     DateTime?
+  revokedAt     DateTime?
   revokedReason String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  vendor       PluginVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  entries      PluginMarketplaceEntry[]
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  vendor        PluginVendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  entries       PluginMarketplaceEntry[]
+
   @@unique([vendorId, keyId])
   @@unique([fingerprint])
   @@index([vendorId, active])
 }
 
 model PluginRepository {
-  id            String                 @id @default(cuid())
-  repositoryKey String                 @unique
-  name          String
-  baseUrl       String?
-  kind          String
-  status        PluginRepositoryStatus @default(ACTIVE)
-  trusted       Boolean                @default(false)
+  id              String                   @id @default(cuid())
+  repositoryKey   String                   @unique
+  name            String
+  baseUrl         String?
+  kind            String
+  status          PluginRepositoryStatus   @default(ACTIVE)
+  trusted         Boolean                  @default(false)
   allowedChannels PluginReleaseChannel[]
-  metadata      Json?
-  createdBy     String
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
-  entries       PluginMarketplaceEntry[]
-  downloads     PluginDownloadHistory[]
+  metadata        Json?
+  createdBy       String
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  entries         PluginMarketplaceEntry[]
+  downloads       PluginDownloadHistory[]
 }
 
 model PluginMarketplaceEntry {
-  id                    String                     @id @default(cuid())
-  pluginId              String?
-  pluginVersionId       String?
-  vendorId              String
-  signingKeyId          String?
-  repositoryId          String
-  pluginKey             String
-  name                  String
-  version               String
-  channel               PluginReleaseChannel
-  description           String?
+  id                     String                     @id @default(cuid())
+  pluginId               String?
+  pluginVersionId        String?
+  vendorId               String
+  signingKeyId           String?
+  repositoryId           String
+  pluginKey              String
+  name                   String
+  version                String
+  channel                PluginReleaseChannel
+  description            String?
   minimumPlatformVersion String
   maximumPlatformVersion String
-  packageSha256         String
-  packageSizeBytes      Int
-  signatureAlgorithm    String?
-  signatureBase64       String?
-  signedDigest          String?
-  trustDecision         PluginPackageTrustDecision @default(UNTRUSTED)
-  trustReasons          Json?
-  manifest              Json
-  changelog             String?
-  packageLocation       String?
-  publishedAt           DateTime?
-  revokedAt             DateTime?
-  revokedReason         String?
-  createdAt             DateTime                    @default(now())
-  updatedAt             DateTime                    @updatedAt
-  plugin                Plugin?                     @relation(fields: [pluginId], references: [id], onDelete: SetNull)
-  pluginVersion         PluginVersion?              @relation(fields: [pluginVersionId], references: [id], onDelete: SetNull)
-  vendor                PluginVendor                @relation(fields: [vendorId], references: [id], onDelete: Restrict)
-  signingKey            PluginSigningKey?           @relation(fields: [signingKeyId], references: [id], onDelete: SetNull)
-  repository            PluginRepository            @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
-  downloads             PluginDownloadHistory[]
+  packageSha256          String
+  packageSizeBytes       Int
+  signatureAlgorithm     String?
+  signatureBase64        String?
+  signedDigest           String?
+  trustDecision          PluginPackageTrustDecision @default(UNTRUSTED)
+  trustReasons           Json?
+  manifest               Json
+  changelog              String?
+  packageLocation        String?
+  publishedAt            DateTime?
+  revokedAt              DateTime?
+  revokedReason          String?
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  plugin                 Plugin?                    @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+  pluginVersion          PluginVersion?             @relation(fields: [pluginVersionId], references: [id], onDelete: SetNull)
+  vendor                 PluginVendor               @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  signingKey             PluginSigningKey?          @relation(fields: [signingKeyId], references: [id], onDelete: SetNull)
+  repository             PluginRepository           @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+  downloads              PluginDownloadHistory[]
+
   @@unique([repositoryId, pluginKey, version, channel])
   @@index([pluginKey, channel, publishedAt])
   @@index([trustDecision, publishedAt])
 }
 
 model PluginDownloadHistory {
-  id             String                 @id @default(cuid())
+  id                 String                     @id @default(cuid())
   marketplaceEntryId String
-  repositoryId   String
-  actorId        String
-  purpose        String
-  outcome        String
-  packageSha256  String
-  trustDecision  PluginPackageTrustDecision
-  metadata       Json?
-  createdAt      DateTime               @default(now())
-  marketplaceEntry PluginMarketplaceEntry @relation(fields: [marketplaceEntryId], references: [id], onDelete: Cascade)
-  repository     PluginRepository       @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+  repositoryId       String
+  actorId            String
+  purpose            String
+  outcome            String
+  packageSha256      String
+  trustDecision      PluginPackageTrustDecision
+  metadata           Json?
+  createdAt          DateTime                   @default(now())
+  marketplaceEntry   PluginMarketplaceEntry     @relation(fields: [marketplaceEntryId], references: [id], onDelete: Cascade)
+  repository         PluginRepository           @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+
   @@index([actorId, createdAt])
   @@index([marketplaceEntryId, createdAt])
+}
+
+/// Immutable measurements supplied by trusted CI, quality, security,
+/// performance, and repository collectors. Dashboard values are derived from
+/// the latest snapshot for each kind; no demo values are stored here.
+model ProjectTelemetrySnapshot {
+  id         String   @id @default(cuid())
+  projectKey String   @default("default")
+  kind       String
+  source     String
+  branch     String?
+  commitSha  String?
+  payload    Json
+  capturedAt DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([projectKey, kind, capturedAt])
+  @@index([capturedAt])
 }

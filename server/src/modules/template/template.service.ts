@@ -4,7 +4,14 @@ export const getTemplates = async () => {
   return prisma.storeTemplate.findMany({
     include: {
       template: true,
-      store: true,
+      store: {
+        include: {
+          tenant: true,
+        },
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 };
@@ -34,7 +41,11 @@ export const activateTemplate = async (
     },
     include: {
       template: true,
-      store: true,
+      store: {
+        include: {
+          tenant: true,
+        },
+      },
     },
   });
 };
@@ -49,6 +60,11 @@ export const getActiveTemplate = async (
     },
     include: {
       template: true,
+      store: {
+        include: {
+          tenant: true,
+        },
+      },
     },
   });
 };

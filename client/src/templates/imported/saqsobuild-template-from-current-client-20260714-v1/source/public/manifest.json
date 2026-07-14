@@ -1,0 +1,9 @@
+{
+  "name": "AI Commerce",
+  "short_name": "AI Commerce",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": []
+}

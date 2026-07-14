@@ -1,5 +1,7 @@
 import os from "node:os";
 import prisma from "../../config/prisma";
+import { getProjectTelemetry } from "../project-telemetry/project-telemetry.dashboard";
+import { ensureRepositoryTelemetrySnapshot } from "../project-telemetry/project-telemetry.service";
 
 type Role = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
 
@@ -37,18 +39,25 @@ function systemMetrics() {
 
 export async function getRoleDashboard(inputRole?: unknown) {
   const role = normalizeRole(inputRole);
+  if (role === "SUPER_ADMIN") {
+    try {
+      await ensureRepositoryTelemetrySnapshot();
+    } catch (error) {
+      console.error("repository telemetry refresh failed", { error });
+    }
+  }
   const since = new Date();
   since.setDate(since.getDate() - 6);
   since.setHours(0, 0, 0, 0);
 
-  const [totalProducts, totalCustomers, totalOrders, revenue, lowStock, outOfStock, recentOrders, trendOrders, statusRows, topProducts, topCustomers, auditRows, storeSetting, currencySetting, pendingReviews, unpaidOrders, roles, permissions] = await Promise.all([
+  const [totalProducts, totalCustomers, totalOrders, revenue, lowStock, outOfStock, recentOrders, trendOrders, statusRows, topProducts, topCustomers, auditRows, storeSetting, currencySetting, pendingReviews, unpaidOrders, roles, permissions, projectTelemetry, conversations] = await Promise.all([
     prisma.product.count(),
     prisma.user.count({ where: { role: "CUSTOMER" } }),
     prisma.order.count(),
     prisma.order.aggregate({ _sum: { finalAmount: true } }),
     prisma.productVariant.count({ where: { active: true, availableStock: { gt: 0, lte: 5 } } }),
     prisma.productVariant.count({ where: { active: true, availableStock: { lte: 0 } } }),
-    prisma.order.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, orderNumber: true, customerName: true, finalAmount: true, status: true, paymentStatus: true, createdAt: true } }),
+    prisma.order.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, orderNumber: true, customerName: true, finalAmount: true, status: true, paymentStatus: true, createdAt: true, items: { take: 1, select: { product: { select: { name: true, thumbnail: true } } } } } }),
     prisma.order.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true, finalAmount: true } }),
     prisma.order.groupBy({ by: ["status"], _count: { _all: true } }),
     prisma.orderItem.groupBy({ by: ["productId"], _sum: { quantity: true }, orderBy: { _sum: { quantity: "desc" } }, take: 5 }),
@@ -60,6 +69,8 @@ export async function getRoleDashboard(inputRole?: unknown) {
     prisma.order.count({ where: { paymentStatus: "PENDING" } }),
     prisma.role.findMany({ orderBy: { name: "asc" }, select: { name: true } }),
     prisma.permission.findMany({ orderBy: { code: "asc" }, select: { code: true } }),
+    role === "SUPER_ADMIN" ? getProjectTelemetry() : Promise.resolve(null),
+    role === "SUPER_ADMIN" ? prisma.aILog.findMany({ take: 8, orderBy: { createdAt: "desc" }, select: { id: true, feature: true, prompt: true, response: true, createdAt: true } }) : Promise.resolve([]),
   ]);
 
   const productIds = topProducts.map((item) => item.productId);
@@ -103,7 +114,7 @@ export async function getRoleDashboard(inputRole?: unknown) {
     salesTrend: [...salesMap].map(([key, value]) => ({ label: new Date(`${key}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" }), value })),
     orderStatus: statusRows.map((item) => ({ label: String(item.status), value: item._count._all })),
     orders: recentOrders.map((item) => ({ ...item, amount: item.finalAmount, status: String(item.status), paymentStatus: String(item.paymentStatus), createdAt: item.createdAt.toISOString() })),
-    recentOrders: recentOrders.map((item) => ({ ...item, status: String(item.status), paymentStatus: String(item.paymentStatus), createdAt: item.createdAt.toISOString() })),
+    recentOrders: recentOrders.map((item) => ({ ...item, productName: item.items[0]?.product.name || null, thumbnail: item.items[0]?.product.thumbnail || null, status: String(item.status), paymentStatus: String(item.paymentStatus), createdAt: item.createdAt.toISOString() })),
     products: topProducts.flatMap((item) => {
       const product = productMap.get(item.productId);
       return product ? [{ id: product.id, name: product.name, quantity: item._sum.quantity || 0, revenue: product.orderItems.reduce((sum, row) => sum + row.quantity * row.price, 0), thumbnail: product.thumbnail }] : [];
@@ -121,7 +132,9 @@ export async function getRoleDashboard(inputRole?: unknown) {
       { label: "Unpaid Orders", value: unpaidOrders },
     ],
     activities: auditRows.map((item) => ({ id: item.id, title: `${item.module}: ${item.action}`, detail: item.description || "", createdAt: item.createdAt.toISOString(), kind: "audit" })),
-    aiInsights: [],
+    aiInsights: projectTelemetry?.insights || [],
+    projectTelemetry,
+    conversations: conversations.map((item) => ({ ...item, createdAt: item.createdAt.toISOString() })),
     system: systemMetrics(),
     permissions: permissions.map((item) => item.code),
     platform: { roles: roles.map((item) => item.name), roleCount: roles.length, permissionCount: permissions.length },

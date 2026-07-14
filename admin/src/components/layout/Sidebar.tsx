@@ -28,6 +28,20 @@ function readRole(): DashboardRole {
   }
 }
 
+
+function readPermissions(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("user");
+    const user = raw ? (JSON.parse(raw) as { permissions?: unknown }) : null;
+    return Array.isArray(user?.permissions)
+      ? user.permissions.map((permission) => String(permission))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 function iconFor(name: string): LucideIcon {
   const candidate = (Icons as unknown as Record<string, LucideIcon>)[name];
   return candidate ?? Icons.Circle;
@@ -40,10 +54,14 @@ function toRegistryRole(role: DashboardRole): AdminRole {
 export default function Sidebar({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   const [role, setRole] = useState<DashboardRole>("MANAGER");
+  const [permissions, setPermissions] = useState<string[]>([]);
   const navRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const refreshRole = () => setRole(readRole());
+    const refreshRole = () => {
+      setRole(readRole());
+      setPermissions(readPermissions());
+    };
     refreshRole();
     window.addEventListener("storage", refreshRole);
     window.addEventListener("auth:changed", refreshRole);
@@ -61,7 +79,10 @@ export default function Sidebar({ collapsed = false, onNavigate }: { collapsed?:
     navRef.current?.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname, role]);
 
-  const groups = useMemo(() => filterAdminNavigationByRole(toRegistryRole(role)), [role]);
+  const groups = useMemo(
+    () => filterAdminNavigationByRole(toRegistryRole(role), undefined, permissions),
+    [permissions, role],
+  );
   const product = role === "SUPER_ADMIN" ? "AICopilot" : "AI-Commerce";
   const subtitle = role === "SUPER_ADMIN" ? "Super Admin - AI Development Copilot" : role === "ADMIN" ? "Admin Dashboard" : "Manager Dashboard";
   const status = role === "SUPER_ADMIN" ? "All Systems Operational" : role === "ADMIN" ? "Tenant Business Administration" : "Limited Operational Access";

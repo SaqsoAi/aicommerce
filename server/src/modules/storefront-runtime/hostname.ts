@@ -35,5 +35,10 @@ export function trustedStorefrontHostname(req: Request): string | null {
       ? req.headers["x-forwarded-host"]
       : undefined;
 
-  return normalizeHostname(internalHost || forwarded || req.headers.host);
+  const original =
+    process.env.TRUST_PROXY_HOST === "true"
+      ? req.headers["x-original-host"]
+      : undefined;
+
+  return normalizeHostname(internalHost || original || forwarded || req.headers.host);
 }

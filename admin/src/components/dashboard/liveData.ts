@@ -21,6 +21,27 @@ activities?: Array<Record<string, unknown>>;
   system?: Array<{ label?: string; value?: number | string | null; unit?: string }>;
   store?: { totalProducts?: number; totalCustomers?: number; lowStock?: number; outOfStock?: number };
   platform?: { roles?: string[]; roleCount?: number; permissionCount?: number };
+  projectTelemetry?: {
+    healthScore?: number | null;
+    criticalBugs?: number | null;
+    mediumBugs?: number | null;
+    lowPriority?: number | null;
+    performanceScore?: number | null;
+    securityScore?: number | null;
+    buildStatus?: string | null;
+    testCoverage?: number | null;
+    codeQuality?: string | null;
+    techDebt?: number | null;
+    duplicateCode?: number | null;
+    unusedFiles?: number | null;
+    dependencies?: number | null;
+    dependencyLabel?: string | null;
+    overview?: { totalModules?: number | null; totalApis?: number | null; databaseTables?: number | null; reactComponents?: number | null; linesOfCode?: number | null; teamMembers?: number | null; commitsThisWeek?: number | null; activeBranch?: string | null };
+    history?: Array<{ label?: string; commits?: number; issues?: number; pullRequests?: number; codeReviews?: number }>;
+    insights?: Array<{ title?: string; detail?: string; severity?: string; source?: string; capturedAt?: string }>;
+    sources?: Array<{ kind?: string; source?: string; capturedAt?: string }>;
+  } | null;
+  conversations?: Array<{ id?: string; feature?: string; prompt?: string; response?: string; createdAt?: string }>;
 };
 
 type StoreSettings = {
@@ -76,7 +97,7 @@ type AiControlDashboard = {
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/$/, "");
 
-function authHeaders(): HeadersInit {
+export function authHeaders(): HeadersInit {
   if (typeof window === "undefined") return { Accept: "application/json" };
   const token =
     localStorage.getItem("token") ||
@@ -91,7 +112,7 @@ function authHeaders(): HeadersInit {
   };
 }
 
-function apiUrl(path: string) {
+export function apiUrl(path: string) {
   const normalized = path.startsWith("/api/") ? path.slice(4) : path;
   return `${API_BASE}${normalized.startsWith("/") ? normalized : `/${normalized}`}`;
 }
@@ -116,12 +137,14 @@ async function fetchSource<T>(path: string): Promise<ApiResult<T>> {
 }
 
 function formatNumber(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return null;
   return new Intl.NumberFormat("en-US").format(numeric);
 }
 
 function formatMoney(value: unknown, currency = "BDT"): string | null {
+  if (value === null || value === undefined || value === "") return null;
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return null;
   const code = String(currency || "BDT").toUpperCase();
@@ -136,7 +159,7 @@ function formatMoney(value: unknown, currency = "BDT"): string | null {
   }
 }
 
-function setMetric(metrics: Metric[], label: string, value: string | null, source: string, sub = "Live API data") {
+function setMetric(metrics: Metric[], label: string, value: string | null, source: string, sub = "") {
   const metric = metrics.find((item) => item.label === label);
   if (!metric || value == null) return;
   metric.value = value;
@@ -159,12 +182,14 @@ function countFromCollection(data: unknown): string | null {
   return null;
 }
 
-function orderRows(summary: DashboardSummary | null, currency: string): Array<[string, string, string, string]> {
+function orderRows(summary: DashboardSummary | null, currency: string): Array<[string, string, string, string, string?, string?]> {
   return (summary?.recentOrders || []).slice(0, 5).map((order) => [
     String(order.orderNumber || order.id || unavailable),
     String(order.customerName || order.customerEmail || unavailable),
     formatMoney(order.finalAmount, currency) || unavailable,
     String(order.status || unavailable),
+    typeof order.thumbnail === "string" ? order.thumbnail : "",
+    typeof order.productName === "string" ? order.productName : "",
   ]);
 }
 
@@ -234,6 +259,11 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
     ["Low Stock Items", formatNumber(summary.store.lowStock) || "0"],
     ["Out of Stock", formatNumber(summary.store.outOfStock) || "0"],
   ] : [];
+  model.roleCoverage = summary?.platform ? [
+    ["Configured Roles", formatNumber(summary.platform.roleCount) || "0", "available", "/api/dashboard/summary"],
+    ["Permissions", formatNumber(summary.platform.permissionCount) || "0", "available", "/api/dashboard/summary"],
+    ["Role Names", summary.platform.roles?.join(", ") || unavailable, summary.platform.roles?.length ? "available" : "unavailable", "/api/dashboard/summary"],
+  ] : [];
 
   const totalOrders = Number(summary?.totalOrders || 0);
   const totalRevenue = Number(summary?.totalRevenue || 0);
@@ -279,16 +309,6 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
     setMetric(model.smallMetrics, "Usage Logs", usageCount, "/api/ai-control/dashboard");
     setMetric(model.smallMetrics, "Overrides", activeOverrides, "/api/ai-control/dashboard");
 
-    model.overview = [
-      ["Platform API", healthResult.state === "available" ? "Online" : unavailable, healthResult.state, "/api/health"],
-      ["Roles", countFromCollection(rolesResult.data) || unavailable, rolesResult.state, "/api/roles"],
-      ["Permissions", countFromCollection(permissionsResult.data) || unavailable, permissionsResult.state, "/api/permissions"],
-      ["AI Features", featureCount || unavailable, "available", "/api/ai-control/dashboard"],
-      ["AI Providers", providerCount || unavailable, "available", "/api/ai-control/dashboard"],
-      ["Usage Events", usageCount || unavailable, "available", "/api/ai-control/dashboard"],
-      ["Role Menu Coverage", "Configured", "available", "Local role registry"],
-      ["Active Overrides", activeOverrides || "0", "available", "/api/ai-control/dashboard"],
-    ];
 
     model.insights = [
       ...(ai?.features || []).slice(0, 4).map((item) => [
@@ -318,6 +338,58 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
     model.activities = [...usageActivities, ...overrideActivities].slice(0, 8);
   }
 
+  if (model.mode === "super" && summary?.projectTelemetry) {
+    const telemetry = summary.projectTelemetry;
+    const telemetrySource = "/api/project-telemetry/latest";
+    const percent = (value: unknown) => {
+      const formatted = formatNumber(value);
+      return formatted == null ? null : `${formatted}%`;
+    };
+
+    setMetric(model.metrics, "Project Health Score", percent(telemetry.healthScore), telemetrySource);
+    setMetric(model.metrics, "Critical Bugs", formatNumber(telemetry.criticalBugs), telemetrySource);
+    setMetric(model.metrics, "Medium Bugs", formatNumber(telemetry.mediumBugs), telemetrySource);
+    setMetric(model.metrics, "Low Priority", formatNumber(telemetry.lowPriority), telemetrySource);
+    setMetric(model.metrics, "Performance Score", percent(telemetry.performanceScore), telemetrySource);
+    setMetric(model.metrics, "Security Score", percent(telemetry.securityScore), telemetrySource);
+    setMetric(model.smallMetrics, "Build Status", telemetry.buildStatus || null, telemetrySource);
+    setMetric(model.smallMetrics, "Test Coverage", percent(telemetry.testCoverage), telemetrySource);
+    setMetric(model.smallMetrics, "Code Quality", telemetry.codeQuality || null, telemetrySource);
+    setMetric(model.smallMetrics, "Tech Debt", percent(telemetry.techDebt), telemetrySource);
+    setMetric(model.smallMetrics, "Duplicate Code", percent(telemetry.duplicateCode), telemetrySource);
+    setMetric(model.smallMetrics, "Unused Files", formatNumber(telemetry.unusedFiles), telemetrySource);
+    const dependencyCount = formatNumber(telemetry.dependencies);
+    setMetric(model.smallMetrics, "Dependencies", dependencyCount == null ? null : `${dependencyCount} ${telemetry.dependencyLabel || "Updates"}`, telemetrySource);
+
+    const overview = telemetry.overview || {};
+    const overviewValues: Record<string, string | null> = {
+      "Total Modules": formatNumber(overview.totalModules),
+      "Total APIs": formatNumber(overview.totalApis),
+      "Database Tables": formatNumber(overview.databaseTables),
+      "React Components": formatNumber(overview.reactComponents),
+      "Lines of Code": formatNumber(overview.linesOfCode),
+      "Team Members": formatNumber(overview.teamMembers),
+      "Commits (This Week)": formatNumber(overview.commitsThisWeek),
+      "Active Branch": overview.activeBranch || null,
+    };
+    model.overview = model.overview.map(([label, value, state, source]) => {
+      const liveValue = overviewValues[label];
+      return liveValue == null ? [label, value, state, source] : [label, liveValue, "available", telemetrySource];
+    });
+
+    model.projectActivity = (telemetry.history || []).flatMap((point) => {
+      const value = [point.commits, point.issues, point.pullRequests, point.codeReviews]
+        .reduce<number>((sum, item) => sum + (Number.isFinite(Number(item)) ? Number(item) : 0), 0);
+      return point.label && Number.isFinite(value) ? [{ label: point.label, value }] : [];
+    });
+    if (telemetry.insights?.length) {
+      model.insights = telemetry.insights.slice(0, 8).map((item) => [String(item.title || "Insight"), String(item.detail || ""), String(item.severity || "INFO")]);
+    }
+    model.conversations = (summary.conversations || []).slice(0, 8).map((item) => [String(item.feature || "AI Copilot"), String(item.prompt || ""), String(item.response || ""), String(item.createdAt || "")]);
+    if (summary.activities?.length) {
+      model.activities = summary.activities.slice(0, 8).map((activity) => [String(activity.title || "Activity"), String(activity.detail || ""), String(activity.createdAt || "")]);
+    }
+  }
   model.sources = model.sources.map((source) => ({ ...source, state: sourceState(results, source.path.replace("/api", "")) }));
 
   if (summaryResult.state === "available" && model.mode === "commerce") {
@@ -334,6 +406,7 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
       String(product.name || "Product"),
       `${formatNumber(product.quantity) || "0"} sold`,
       formatMoney(product.revenue, currency) || unavailable,
+      typeof product.thumbnail === "string" ? product.thumbnail : "",
     ]);
     model.status = (summary?.orderStatus || []).map((item) => [
       String(item.label || unavailable),
@@ -348,13 +421,7 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
       String(activity.detail || "Live audit event"),
       String(activity.createdAt || ""),
     ]);
-    if (!model.activities.length) {
-      model.activities = model.orders.map((order) => [
-        "Recent order",
-        `${order[0]} - ${order[1]}`,
-        order[3],
-      ]);
-    }
+
   }
 
   if (model.mode === "super") {
@@ -365,7 +432,6 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
   }
 
   if (model.mode === "commerce") {
-    if (!model.status.length) model.status = model.orders.length ? [["Recent Orders", formatNumber(model.orders.length) || unavailable]] : [];
     if (!model.tasks.length) model.tasks = [];
   }
 
@@ -375,6 +441,7 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
 
   return model;
 }
+
 
 
 

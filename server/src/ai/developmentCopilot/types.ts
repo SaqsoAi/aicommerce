@@ -37,6 +37,30 @@ export interface ProjectIndexSummary {
   templates: number;
   aiModules: number;
   prismaFiles: number;
+  totalModules: number;
+  totalApis: number;
+  databaseTables: number;
+  reactComponents: number;
+  linesOfCode: number;
+  teamMembers: number;
+  commitsThisWeek: number;
+  activeBranch: string | null;
+  history: Array<{ label: string; commits: number }>;
+  buildStatus: "INDEXED";
+  testCoverage: number;
+  codeQualityGrade: "A" | "B" | "C" | "D" | "F";
+  criticalIssues: number;
+  mediumIssues: number;
+  lowIssues: number;
+  performanceFindings: number;
+  securityFindings: number;
+  performanceScore: number;
+  securityScore: number;
+  technicalDebtPercent: number;
+  duplicateCodePercent: number;
+  unusedFiles: number;
+  dependencyUpdates: number;
+  dependencyCount: number;
 }
 
 export interface ImpactAnalysis {

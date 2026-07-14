@@ -73,7 +73,7 @@ export default function Topbar({ onToggleSidebar, sidebarExpanded = false }: { o
     <header className="ds-topbar">
       <div className="ds-topbar-left">
         <button type="button" className="ds-square ds-sidebar-toggle" onClick={onToggleSidebar} aria-label="Toggle sidebar" aria-controls="admin-primary-navigation" aria-expanded={sidebarExpanded}>
-          <Menu size={21} aria-hidden="true" />
+          <Menu size={18} strokeWidth={2} aria-hidden="true" />
         </button>
         <div className={`ds-topbar-brand ${isSuperAdmin ? "super" : role === "Admin" ? "admin" : "manager"}`}>
           <i>AI</i>
@@ -140,6 +140,5 @@ export default function Topbar({ onToggleSidebar, sidebarExpanded = false }: { o
     </header>
   );
 }
-
 
 

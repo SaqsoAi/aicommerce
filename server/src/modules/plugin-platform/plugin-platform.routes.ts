@@ -165,6 +165,9 @@ router.post("/transactions/execute",wrap((req:any,id:string)=>pluginTransactionS
 router.get("/transactions",wrap((req:any)=>pluginTransactionService.list(req.query?.pluginKey ? String(req.query.pluginKey) : undefined)));
 router.get("/transactions/:transactionId",wrap((req:any)=>pluginTransactionService.get(String(req.params.transactionId))));
 router.post("/transactions/:transactionId/migration-review",wrap((req:any,id:string)=>pluginTransactionService.resumeMigrationGate(String(req.params.transactionId),id,req.body?.reason)));
+router.post("/transactions/:transactionId/continue",wrap((req:any,id:string)=>pluginTransactionService.continueInstallation(String(req.params.transactionId),id,req.body?.reason)));
+router.post("/transactions/:transactionId/recover",wrap((req:any,id:string)=>pluginTransactionService.recoverTransaction(String(req.params.transactionId),id,req.body?.reason)));
+router.post("/transactions/:transactionId/cancel",wrap((req:any,id:string)=>pluginTransactionService.cancelTransaction(String(req.params.transactionId),id,req.body?.reason)));
 router.get("/access/evaluate",wrap((req:any)=>pluginAccessService.evaluate(
   String(req.query?.pluginKey||""),
   String(req.query?.tenantId||""),

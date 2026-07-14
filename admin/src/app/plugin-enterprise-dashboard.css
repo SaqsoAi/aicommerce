@@ -2496,3 +2496,2352 @@
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+/* =========================================================
+   SAQSO ROLE DASHBOARD APPROVED COMPOSITION 2026-07-13
+   Existing shell/responsive owner; live API data only.
+   ========================================================= */
+@media (min-width: 1366px) {
+  :root {
+    --plugin-shell-header-height: 68px;
+    --plugin-shell-sidebar-width: 214px;
+  }
+
+  .ds-shell:not(.collapsed) {
+    --sidebar-width: var(--plugin-shell-sidebar-width) !important;
+  }
+
+  .ds-topbar {
+    height: 68px !important;
+    min-height: 68px !important;
+    grid-template-columns: minmax(300px, 1fr) minmax(360px, 460px) minmax(350px, 1fr) !important;
+    gap: 18px !important;
+    padding: 0 18px !important;
+  }
+
+  .ds-topbar-brand i {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+  }
+
+  .ds-topbar-brand strong {
+    font-size: 20px !important;
+  }
+
+  .ds-search {
+    height: 38px !important;
+    max-width: 390px !important;
+  }
+
+  .ds-workspace {
+    min-height: calc(100dvh - 68px) !important;
+  }
+
+  .ds-sidebar {
+    width: var(--sidebar-width, 214px) !important;
+    min-width: var(--sidebar-width, 214px) !important;
+    height: calc(100dvh - 68px) !important;
+    padding: 8px 8px 10px !important;
+  }
+
+  .ds-sidebar nav section {
+    margin-bottom: 12px !important;
+  }
+
+  .ds-sidebar h3 {
+    margin: 8px 7px 6px !important;
+    font-size: 9px !important;
+  }
+
+  .ds-sidebar a {
+    min-height: 31px !important;
+    height: 31px !important;
+    margin-bottom: 1px !important;
+    font-size: 11px !important;
+  }
+
+  .ds-status {
+    min-height: 72px !important;
+  }
+
+  .ds-page {
+    padding: 6px 14px 14px !important;
+  }
+
+  .dashboard-system,
+  .dashboard-system.super {
+    grid-template-columns: minmax(0, 1fr) 386px !important;
+    gap: 14px !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) 276px !important;
+  }
+
+  .ds-main,
+  .ds-right {
+    gap: 12px !important;
+  }
+
+  .ds-hero {
+    min-height: 56px !important;
+    height: 56px !important;
+    padding: 4px 4px 5px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ds-hero-copy p {
+    display: none !important;
+  }
+
+  .ds-hero h1,
+  .dashboard-system.super .ds-hero h1,
+  .dashboard-system.admin .ds-hero h1,
+  .dashboard-system.manager .ds-hero h1 {
+    font-size: 22px !important;
+    line-height: 1.08 !important;
+    letter-spacing: -.025em !important;
+  }
+
+  .ds-hero span {
+    margin-top: 3px !important;
+    font-size: 11px !important;
+  }
+
+  .ds-hero-actions {
+    align-self: center !important;
+  }
+
+  .ds-kpi-grid.super {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .ds-kpi-grid.commerce {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .ds-kpi {
+    min-height: 138px !important;
+    height: 138px !important;
+    padding: 13px !important;
+  }
+
+  .ds-kpi strong {
+    font-size: 22px !important;
+  }
+
+  .ds-small-kpi-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  }
+
+  .ds-small-kpi {
+    min-height: 66px !important;
+    height: 66px !important;
+  }
+
+  .ds-panel {
+    padding: 11px !important;
+  }
+
+  .ds-panel > header {
+    min-height: 30px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .ds-panel > header h2 {
+    font-size: 14px !important;
+  }
+
+  .ds-super-content {
+    grid-template-columns: minmax(0, 1.58fr) minmax(300px, .9fr) !important;
+    gap: 10px !important;
+  }
+
+  .ds-super-content > .ds-panel {
+    min-height: 296px !important;
+  }
+
+  .ds-project-layout {
+    grid-template-columns: 205px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-system.super .ds-chat {
+    grid-template-columns: 205px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-system.super .ds-main > .ds-panel:last-of-type {
+    min-height: 304px !important;
+  }
+
+  .dashboard-system.super .ds-ai-orb {
+    width: 148px !important;
+    height: 148px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:first-child {
+    min-height: 334px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(2) {
+    min-height: 218px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) {
+    min-height: 310px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(1) {
+    grid-column: 1 / span 5 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(2) {
+    grid-column: 6 / span 3 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(3) {
+    grid-column: 9 / span 4 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4) {
+    grid-column: 1 / span 4 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(5) {
+    grid-column: 5 / span 4 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(6) {
+    grid-column: 9 / span 4 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(-n + 3) {
+    min-height: 288px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(n + 4) {
+    min-height: 210px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    grid-template-areas: none !important;
+    gap: 12px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(1) {
+    grid-area: auto !important;
+    grid-column: 1 / span 6 !important;
+    grid-row: 1 !important;
+    min-height: 247px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) {
+    grid-area: auto !important;
+    grid-column: 7 / span 6 !important;
+    grid-row: 1 !important;
+    min-height: 247px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(2) {
+    grid-area: auto !important;
+    grid-column: 1 / span 4 !important;
+    grid-row: 2 !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(3) {
+    grid-area: auto !important;
+    grid-column: 5 / span 8 !important;
+    grid-row: 2 !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(5) {
+    display: none !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) {
+    display: grid !important;
+    grid-template-columns: minmax(130px, .85fr) minmax(120px, 1fr) !important;
+    grid-template-rows: auto 1fr !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4) > header,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) > header {
+    grid-column: 1 / -1 !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4) .ds-donut,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) .ds-donut {
+    width: 138px !important;
+    height: 138px !important;
+    margin: 4px auto !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4) .ds-donut div,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) .ds-donut div {
+    width: 84px !important;
+    height: 84px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(4) .ds-rows,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) .ds-rows {
+    align-self: center !important;
+  }
+
+  .dashboard-system.admin .ds-activity-panel,
+  .dashboard-system.manager .ds-activity-panel,
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type {
+    min-height: 118px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:first-child,
+  .dashboard-system.manager .ds-right > .ds-panel:first-child {
+    min-height: 238px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(2) {
+    min-height: 230px !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    min-height: 170px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(3),
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(3) {
+    min-height: 220px !important;
+  }
+
+  .ds-sales-chart {
+    height: 205px !important;
+  }
+
+  .dashboard-system.manager .ds-sales-chart {
+    height: 174px !important;
+  }
+
+  .ds-products article,
+  .ds-orders > div {
+    min-height: 36px !important;
+  }
+
+  .ds-role-bar {
+    min-height: 42px !important;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1365px) {
+  .ds-kpi-grid.super,
+  .ds-kpi-grid.commerce {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .ds-small-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content,
+  .dashboard-system.manager .ds-commerce-content {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > *,
+  .dashboard-system.manager .ds-commerce-content > * {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    grid-area: auto !important;
+  }
+}
+/* Desktop collapse state must override expanded inline resize width. */
+@media (min-width: 981px) {
+  .ds-shell.collapsed {
+    --sidebar-width: 78px !important;
+  }
+
+  .ds-shell.collapsed .ds-workspace {
+    grid-template-columns: 78px minmax(0, 1fr) !important;
+  }
+
+  .ds-shell.collapsed .ds-sidebar {
+    width: 78px !important;
+    min-width: 78px !important;
+    max-width: 78px !important;
+  }
+
+  .ds-shell.collapsed .ds-sidebar-resizer {
+    left: 74px !important;
+  }
+}
+@media (min-width: 981px) {
+  .ds-workspace,
+  .ds-sidebar {
+    transition: none !important;
+  }
+}
+/* Keep the desktop resize hit-area above legacy sidebar stacking contexts. */
+@media (min-width: 981px) {
+  .ds-sidebar-resizer { z-index: 81 !important; }
+}
+/* =========================================================
+   SAQSO APPROVED PREVIEW WIDGET LOCK 2026-07-13
+   Surgical visual override: canonical menus + live API only.
+   ========================================================= */
+.dashboard-system {
+  --preview-card: linear-gradient(145deg, rgba(7, 25, 43, .98), rgba(3, 14, 28, .98));
+  --preview-border: rgba(72, 124, 170, .32);
+  --preview-muted: #92a5bd;
+}
+
+.dashboard-system .ds-kpi,
+.dashboard-system .ds-small-kpi,
+.dashboard-system .ds-panel,
+.dashboard-system .ds-role-bar {
+  border: 1px solid var(--preview-border) !important;
+  border-radius: 9px !important;
+  background: var(--preview-card) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018), 0 8px 24px rgba(0,0,0,.18) !important;
+}
+
+.dashboard-system .ds-panel {
+  overflow: hidden !important;
+}
+
+.dashboard-system .ds-panel > header {
+  min-height: 30px !important;
+  padding: 0 0 8px !important;
+  margin: 0 0 8px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .15) !important;
+  background: transparent !important;
+}
+
+.dashboard-system .ds-panel > header h2 {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #f4f8ff !important;
+}
+
+.dashboard-system .ds-kpi-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  border-width: 1px !important;
+}
+
+.dashboard-system .ds-kpi-icon.tone-green { box-shadow: 0 0 18px rgba(34,197,94,.34), inset 0 0 15px rgba(34,197,94,.12) !important; }
+.dashboard-system .ds-kpi-icon.tone-cyan { box-shadow: 0 0 18px rgba(6,182,212,.34), inset 0 0 15px rgba(6,182,212,.12) !important; }
+.dashboard-system .ds-kpi-icon.tone-purple { box-shadow: 0 0 18px rgba(168,85,247,.34), inset 0 0 15px rgba(168,85,247,.12) !important; }
+.dashboard-system .ds-kpi-icon.tone-orange { box-shadow: 0 0 18px rgba(249,115,22,.34), inset 0 0 15px rgba(249,115,22,.12) !important; }
+.dashboard-system .ds-kpi-icon.tone-yellow { box-shadow: 0 0 18px rgba(234,179,8,.34), inset 0 0 15px rgba(234,179,8,.12) !important; }
+.dashboard-system .ds-kpi-icon.tone-red { box-shadow: 0 0 18px rgba(239,68,68,.34), inset 0 0 15px rgba(239,68,68,.12) !important; }
+
+.dashboard-system .ds-kpi p {
+  margin-top: 8px !important;
+  font-size: 10px !important;
+  color: #c3d0e2 !important;
+}
+
+.dashboard-system .ds-kpi strong {
+  margin-top: 2px !important;
+  font-size: 20px !important;
+  color: #fff !important;
+}
+
+.dashboard-system .ds-kpi small {
+  margin-top: 5px !important;
+  font-size: 9px !important;
+  color: var(--preview-muted) !important;
+}
+
+.dashboard-system .ds-kpi.is-unavailable::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 13px;
+  border-bottom: 1px dashed rgba(120, 151, 184, .42);
+}
+
+.dashboard-system .ds-small-kpi {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0,1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-content: center !important;
+  column-gap: 9px !important;
+  padding: 8px 10px !important;
+}
+
+.dashboard-system .ds-small-kpi .ds-kpi-icon {
+  grid-row: 1 / span 2 !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.dashboard-system .ds-small-kpi p,
+.dashboard-system .ds-small-kpi strong,
+.dashboard-system .ds-small-kpi small {
+  position: static !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.dashboard-system .ds-small-kpi p { font-size: 10px !important; }
+.dashboard-system .ds-small-kpi strong { font-size: 15px !important; }
+.dashboard-system .ds-small-kpi small { display: none !important; }
+
+.dashboard-system .ds-empty-state {
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  border: 1px dashed rgba(89, 131, 169, .30) !important;
+  border-radius: 8px !important;
+  background: rgba(3, 13, 26, .28) !important;
+  text-align: center !important;
+}
+
+.dashboard-system .ds-empty-state > i {
+  width: 38px !important;
+  height: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(123, 153, 186, .36) !important;
+  border-radius: 50% !important;
+  color: #89a0bb !important;
+  background: rgba(10, 25, 43, .75) !important;
+}
+
+.dashboard-system .ds-empty-state b { font-size: 11px !important; color: #e7eef9 !important; }
+.dashboard-system .ds-empty-state span { font-size: 9px !important; color: var(--preview-muted) !important; }
+
+.dashboard-system .ds-rows > div {
+  display: grid !important;
+  grid-template-columns: 24px minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 32px !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .16) !important;
+}
+
+.dashboard-system .ds-row-icon {
+  width: 22px !important;
+  height: 22px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 6px !important;
+  color: var(--accent, #22d3ee) !important;
+  background: color-mix(in srgb, var(--accent, #22d3ee) 12%, transparent) !important;
+}
+
+.dashboard-system .ds-products article {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-height: 42px !important;
+  padding: 4px 0 !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .14) !important;
+}
+
+.dashboard-system .ds-products article > i,
+.dashboard-system .ds-orders > div.with-icon > i,
+.dashboard-system .ds-activity-row article > i {
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  color: var(--accent, #22d3ee) !important;
+  background: color-mix(in srgb, var(--accent, #22d3ee) 15%, #071426) !important;
+  border: 1px solid color-mix(in srgb, var(--accent, #22d3ee) 38%, transparent) !important;
+}
+
+.dashboard-system .ds-products article > i {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.dashboard-system .ds-orders > div.with-icon {
+  grid-template-columns: 28px minmax(0,1.15fr) minmax(0,.8fr) minmax(60px,.65fr) auto !important;
+}
+
+.dashboard-system .ds-orders > div.with-icon > i {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.dashboard-system .ds-insights article {
+  min-height: 45px !important;
+  display: grid !important;
+  grid-template-columns: 28px minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 5px 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .16) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.dashboard-system .ds-insights article > i {
+  width: 26px !important;
+  height: 26px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 7px !important;
+  color: #22d3ee !important;
+  background: rgba(6,182,212,.12) !important;
+}
+
+.dashboard-system .ds-insights article p,
+.dashboard-system .ds-insights article b {
+  margin: 0 !important;
+  line-height: 1.25 !important;
+}
+
+.dashboard-system .ds-insights article b { font-size: 10px !important; }
+.dashboard-system .ds-insights article p,
+.dashboard-system .ds-insights article small { font-size: 8px !important; color: var(--preview-muted) !important; }
+
+.dashboard-system .ds-ai-actions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 7px !important;
+}
+
+.dashboard-system .ds-ai-actions button {
+  min-width: 0 !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 0 6px !important;
+  font-size: 9px !important;
+}
+
+.dashboard-system .ds-quick button {
+  display: grid !important;
+  grid-template-columns: 26px minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 36px !important;
+  padding: 0 9px !important;
+}
+
+.dashboard-system .ds-quick button > i {
+  width: 24px !important;
+  height: 24px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 6px !important;
+  color: var(--accent, #22d3ee) !important;
+  background: color-mix(in srgb, var(--accent, #22d3ee) 14%, transparent) !important;
+}
+
+.dashboard-system .ds-store-status {
+  display: grid !important;
+  grid-template-columns: 112px minmax(0,1fr) !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.dashboard-system .ds-store-ring {
+  width: 94px !important;
+  height: 94px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 2px auto !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at center, #07172a 52%, transparent 54%), conic-gradient(var(--accent, #22c55e) 0 26%, #334155 26% 100%) !important;
+}
+
+.dashboard-system .ds-store-ring strong {
+  max-width: 70px !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  color: var(--accent, #22c55e) !important;
+}
+
+.dashboard-system .ds-activity-row article > i {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+@media (min-width: 1366px) {
+  .ds-page { padding: 5px 10px 10px !important; }
+
+  .dashboard-system {
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  .dashboard-system .ds-main,
+  .dashboard-system .ds-right {
+    gap: 8px !important;
+  }
+
+  .dashboard-system,
+  .dashboard-system.super {
+    grid-template-columns: minmax(0,1fr) 306px !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0,1fr) 276px !important;
+  }
+
+  .dashboard-system .ds-hero {
+    height: 51px !important;
+    min-height: 51px !important;
+  }
+
+  .dashboard-system .ds-kpi-grid,
+  .dashboard-system .ds-small-kpi-grid {
+    gap: 7px !important;
+  }
+
+  .dashboard-system.super .ds-kpi {
+    height: 110px !important;
+    min-height: 110px !important;
+  }
+
+  .dashboard-system.admin .ds-kpi,
+  .dashboard-system.manager .ds-kpi {
+    height: 122px !important;
+    min-height: 122px !important;
+  }
+
+  .dashboard-system.super .ds-small-kpi {
+    height: 64px !important;
+    min-height: 64px !important;
+  }
+
+  .dashboard-system.super .ds-super-content {
+    grid-template-columns: minmax(0,1.55fr) minmax(280px,.9fr) !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-system.super .ds-super-content > .ds-panel {
+    height: 284px !important;
+    min-height: 284px !important;
+  }
+
+  .dashboard-system.super .ds-project-layout {
+    grid-template-columns: 196px minmax(0,1fr) !important;
+    gap: 10px !important;
+  }
+
+  .dashboard-system.super .ds-main > .ds-panel:last-of-type {
+    height: 230px !important;
+    min-height: 230px !important;
+  }
+
+  .dashboard-system.super .ds-chat {
+    height: 174px !important;
+    grid-template-columns: 190px minmax(0,1fr) !important;
+  }
+
+  .dashboard-system.super .ds-chat aside,
+  .dashboard-system.super .ds-chat main {
+    min-height: 0 !important;
+    height: 174px !important;
+  }
+
+  .dashboard-system.super .ds-ai-orb {
+    width: 118px !important;
+    height: 118px !important;
+    margin: 4px auto 8px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:first-child {
+    height: 312px !important;
+    min-height: 312px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(2) {
+    height: 180px !important;
+    min-height: 180px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) {
+    height: 274px !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(-n + 3) {
+    height: 274px !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(n + 4) {
+    height: 210px !important;
+    min-height: 210px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(1),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) {
+    height: 226px !important;
+    min-height: 226px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(2),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(3) {
+    height: 238px !important;
+    min-height: 238px !important;
+  }
+
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type {
+    height: 100px !important;
+    min-height: 100px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:first-child,
+  .dashboard-system.manager .ds-right > .ds-panel:first-child {
+    height: 184px !important;
+    min-height: 184px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(2) {
+    height: 220px !important;
+    min-height: 220px !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    height: 164px !important;
+    min-height: 164px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(3),
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(3) {
+    height: 230px !important;
+    min-height: 230px !important;
+  }
+
+  .dashboard-system .ds-role-bar {
+    min-height: 38px !important;
+    height: 38px !important;
+  }
+}
+
+@media (min-width: 1800px) {
+  .ds-shell:not(.collapsed) { --sidebar-width: 250px !important; }
+  .ds-shell:not(.collapsed) .ds-workspace { grid-template-columns: 250px minmax(0,1fr) !important; }
+  .ds-shell:not(.collapsed) .ds-sidebar { width: 250px !important; min-width: 250px !important; max-width: 250px !important; }
+  .ds-shell:not(.collapsed) .ds-sidebar-resizer { left: 246px !important; }
+}
+/* =========================================================
+   SAQSO CONTENT-SAFE CARD HEIGHT FIX 2026-07-14
+   Real API rows must expand cards; no text or action clipping.
+   ========================================================= */
+.dashboard-system .ds-kpi,
+.dashboard-system .ds-small-kpi,
+.dashboard-system .ds-panel,
+.dashboard-system .ds-role-bar {
+  box-sizing: border-box !important;
+}
+
+.dashboard-system .ds-kpi.is-unavailable {
+  padding-bottom: 28px !important;
+}
+
+.dashboard-system .ds-panel,
+.dashboard-system .ds-panel > *,
+.dashboard-system .ds-rows,
+.dashboard-system .ds-products,
+.dashboard-system .ds-orders,
+.dashboard-system .ds-insights,
+.dashboard-system .ds-empty-state {
+  min-width: 0 !important;
+}
+
+.dashboard-system .ds-panel {
+  overflow: visible !important;
+}
+
+.dashboard-system .ds-panel > header {
+  overflow: visible !important;
+}
+
+.dashboard-system .ds-rows > div,
+.dashboard-system .ds-products article,
+.dashboard-system .ds-orders > div,
+.dashboard-system .ds-insights article,
+.dashboard-system .ds-quick button {
+  overflow: visible !important;
+}
+
+.dashboard-system .ds-rows span,
+.dashboard-system .ds-products b,
+.dashboard-system .ds-products span,
+.dashboard-system .ds-orders span,
+.dashboard-system .ds-orders b,
+.dashboard-system .ds-insights b,
+.dashboard-system .ds-insights p,
+.dashboard-system .ds-quick span,
+.dashboard-system .ds-empty-state span {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.3 !important;
+}
+
+@media (min-width: 1366px) {
+  .dashboard-system.super .ds-kpi {
+    height: auto !important;
+    min-height: 126px !important;
+  }
+
+  .dashboard-system.admin .ds-kpi,
+  .dashboard-system.manager .ds-kpi {
+    height: auto !important;
+    min-height: 132px !important;
+  }
+
+  .dashboard-system.super .ds-super-content > .ds-panel {
+    height: auto !important;
+    min-height: 310px !important;
+  }
+
+  .dashboard-system.super .ds-main > .ds-panel:last-of-type {
+    height: auto !important;
+    min-height: 270px !important;
+  }
+
+  .dashboard-system.super .ds-chat,
+  .dashboard-system.super .ds-chat aside,
+  .dashboard-system.super .ds-chat main {
+    height: auto !important;
+    min-height: 214px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:first-child {
+    height: auto !important;
+    min-height: 360px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(2) {
+    height: auto !important;
+    min-height: 210px !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) {
+    height: auto !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(-n + 3) {
+    height: auto !important;
+    min-height: 274px !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(n + 4) {
+    height: auto !important;
+    min-height: 220px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(1),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) {
+    height: auto !important;
+    min-height: 236px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(2) {
+    height: auto !important;
+    min-height: 238px !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(3) {
+    height: auto !important;
+    min-height: 260px !important;
+  }
+
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type {
+    height: auto !important;
+    min-height: 130px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:first-child,
+  .dashboard-system.manager .ds-right > .ds-panel:first-child {
+    height: auto !important;
+    min-height: 210px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(2) {
+    height: auto !important;
+    min-height: 270px !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    height: auto !important;
+    min-height: 190px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(3),
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(3) {
+    height: auto !important;
+    min-height: 230px !important;
+  }
+
+  .dashboard-system .ds-role-bar {
+    height: auto !important;
+    min-height: 42px !important;
+  }
+}
+
+
+/* =========================================================
+   SAQSO FINAL THREE-ROLE REFERENCE COMPOSITION 2026-07-14
+   Reference geometry with live API-safe internal scrolling.
+   ========================================================= */
+.dashboard-system .ds-monitor {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.dashboard-system .ds-monitor article {
+  min-width: 0 !important;
+  min-height: 72px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(89, 131, 169, .22) !important;
+  border-radius: 8px !important;
+  background: rgba(8, 23, 42, .72) !important;
+}
+
+.dashboard-system .ds-monitor article > span {
+  display: block !important;
+  margin-bottom: 7px !important;
+  color: #a7b4c8 !important;
+  font-size: 10px !important;
+}
+
+.dashboard-system .ds-monitor article > div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+.dashboard-system .ds-monitor article strong {
+  font-size: 20px !important;
+  line-height: 1 !important;
+  color: #dbeafe !important;
+}
+
+.dashboard-system .ds-monitor article i {
+  color: #22d3ee !important;
+}
+
+.dashboard-system .ds-monitor article:nth-child(2) strong,
+.dashboard-system .ds-monitor article:nth-child(2) i { color: #c084fc !important; }
+.dashboard-system .ds-monitor article:nth-child(3) strong,
+.dashboard-system .ds-monitor article:nth-child(3) i { color: #fbbf24 !important; }
+.dashboard-system .ds-monitor article:nth-child(4) strong,
+.dashboard-system .ds-monitor article:nth-child(4) i { color: #34d399 !important; }
+
+.dashboard-system .ds-rail-activity {
+  min-width: 0 !important;
+}
+
+.dashboard-system .ds-rail-activity article {
+  display: grid !important;
+  grid-template-columns: 29px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 6px 0 !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .18) !important;
+}
+
+.dashboard-system .ds-rail-activity article > i {
+  width: 27px !important;
+  height: 27px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 7px !important;
+  color: #22d3ee !important;
+  background: rgba(6, 182, 212, .12) !important;
+}
+
+.dashboard-system .ds-rail-activity article b,
+.dashboard-system .ds-rail-activity article span {
+  display: block !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.dashboard-system .ds-rail-activity article b {
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+
+.dashboard-system .ds-rail-activity article span,
+.dashboard-system .ds-rail-activity article small {
+  color: #8ea0b8 !important;
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+}
+
+.dashboard-system .ds-insights,
+.dashboard-system .ds-rail-activity,
+.dashboard-system .ds-products,
+.dashboard-system .ds-orders,
+.dashboard-system .ds-rows {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(96, 165, 250, .34) transparent !important;
+}
+
+@media (min-width: 1366px) {
+  .dashboard-system,
+  .dashboard-system.super {
+    grid-template-columns: minmax(0, 1fr) 386px !important;
+    gap: 12px !important;
+  }
+
+  .dashboard-system.admin,
+  .dashboard-system.manager {
+    grid-template-columns: minmax(0, 1fr) 276px !important;
+  }
+
+  .dashboard-system .ds-main,
+  .dashboard-system .ds-right {
+    gap: 10px !important;
+  }
+
+  .dashboard-system .ds-hero {
+    height: 56px !important;
+    min-height: 56px !important;
+  }
+
+  .dashboard-system.super .ds-kpi,
+  .dashboard-system.admin .ds-kpi,
+  .dashboard-system.manager .ds-kpi {
+    height: 138px !important;
+    min-height: 138px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-small-kpi {
+    height: 66px !important;
+    min-height: 66px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-super-content {
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, .9fr) !important;
+    gap: 10px !important;
+  }
+
+  .dashboard-system.super .ds-super-content > .ds-panel {
+    height: 296px !important;
+    min-height: 296px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-project-layout {
+    height: 232px !important;
+    grid-template-columns: 205px minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-project-layout > .ds-rows,
+  .dashboard-system.super .ds-insights {
+    max-height: 225px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .dashboard-system.super .ds-main > .ds-panel:last-of-type {
+    height: 304px !important;
+    min-height: 304px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-chat,
+  .dashboard-system.super .ds-chat aside,
+  .dashboard-system.super .ds-chat main {
+    height: 246px !important;
+    min-height: 246px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-role-bar {
+    display: none !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:first-child {
+    height: 334px !important;
+    min-height: 334px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(2) {
+    height: 218px !important;
+    min-height: 218px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) {
+    height: 310px !important;
+    min-height: 310px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) .ds-rail-activity {
+    max-height: 253px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(-n + 3) {
+    height: 288px !important;
+    min-height: 288px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(n + 4) {
+    height: 210px !important;
+    min-height: 210px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(1),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(4) {
+    height: 247px !important;
+    min-height: 247px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.manager .ds-commerce-content > :nth-child(2),
+  .dashboard-system.manager .ds-commerce-content > :nth-child(3) {
+    height: 274px !important;
+    min-height: 274px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-commerce-content > :nth-child(2) .ds-products,
+  .dashboard-system.admin .ds-commerce-content > :nth-child(3) .ds-orders,
+  .dashboard-system.admin .ds-commerce-content > :nth-child(5) .ds-rows,
+  .dashboard-system.admin .ds-commerce-content > :nth-child(6) .ds-products,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(2) .ds-products,
+  .dashboard-system.manager .ds-commerce-content > :nth-child(3) .ds-orders {
+    height: calc(100% - 42px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type {
+    height: 118px !important;
+    min-height: 118px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type .ds-activity-row,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type .ds-activity-row {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:first-child {
+    height: 266px !important;
+    min-height: 266px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(2) {
+    height: 230px !important;
+    min-height: 230px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(3) {
+    height: 210px !important;
+    min-height: 210px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:first-child {
+    height: 236px !important;
+    min-height: 236px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    height: 264px !important;
+    min-height: 264px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(3) {
+    height: 220px !important;
+    min-height: 220px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-system.admin .ds-right .ds-rows,
+  .dashboard-system.manager .ds-right .ds-rows,
+  .dashboard-system.admin .ds-right .ds-quick,
+  .dashboard-system.manager .ds-right .ds-quick {
+    max-height: calc(100% - 42px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .dashboard-system.admin .ds-role-bar,
+  .dashboard-system.manager .ds-role-bar {
+    height: 42px !important;
+    min-height: 42px !important;
+  }
+}
+/* =========================================================
+   SAQSO PIXEL DETAIL AND REAL MEDIA LOCK 2026-07-14
+   Uniform card type, reference AI mark, live product media.
+   ========================================================= */
+.dashboard-system .ds-kpi p,
+.dashboard-system .ds-small-kpi p,
+.dashboard-system .ds-panel > header h2 {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  font-weight: 750 !important;
+}
+
+.dashboard-system .ds-kpi strong {
+  font-size: 21px !important;
+  line-height: 1.12 !important;
+}
+
+.dashboard-system .ds-kpi small {
+  display: none !important;
+}
+
+.dashboard-system .ds-products article b,
+.dashboard-system .ds-orders > div,
+.dashboard-system .ds-rows > div,
+.dashboard-system .ds-quick button {
+  font-size: 11px !important;
+}
+
+.dashboard-system .ds-products article span,
+.dashboard-system .ds-orders > div span,
+.dashboard-system .ds-rows > div span {
+  font-size: 10px !important;
+}
+
+.dashboard-system .ds-product-media {
+  position: relative !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 34px !important;
+  overflow: hidden !important;
+  border: 1px solid color-mix(in srgb, var(--accent, #22d3ee) 46%, transparent) !important;
+  border-radius: 50% !important;
+  color: var(--accent, #22d3ee) !important;
+  background: color-mix(in srgb, var(--accent, #22d3ee) 14%, #071426) !important;
+}
+
+.dashboard-system .ds-product-media img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+}
+
+.dashboard-system .ds-products article > .ds-product-media {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.dashboard-system .ds-orders > div.with-media {
+  display: grid !important;
+  grid-template-columns: 34px minmax(120px, 1.1fr) minmax(90px, .8fr) minmax(72px, .65fr) minmax(76px, auto) !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 43px !important;
+}
+
+.dashboard-system .ds-store-report {
+  width: auto !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 7px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  color: var(--accent, #22c55e) !important;
+  background: transparent !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+.dashboard-system.super .ds-ai-orb {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+  border: 1px solid rgba(34, 211, 238, .58) !important;
+  background:
+    repeating-conic-gradient(from 0deg, rgba(34,211,238,.8) 0 2deg, transparent 2deg 8deg),
+    radial-gradient(circle, rgba(7,18,41,.96) 0 42%, rgba(37,99,235,.36) 43% 55%, rgba(124,58,237,.28) 56% 69%, rgba(2,8,23,.95) 70%) !important;
+  box-shadow: 0 0 32px rgba(34,211,238,.24), inset 0 0 24px rgba(124,58,237,.24) !important;
+}
+
+.dashboard-system.super .ds-ai-orb::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 12px !important;
+  z-index: -1 !important;
+  border: 1px dashed rgba(168,85,247,.72) !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 18px rgba(34,211,238,.34) !important;
+}
+
+.dashboard-system.super .ds-ai-orb::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 35px !important;
+  z-index: 0 !important;
+  border: 2px solid rgba(34,211,238,.72) !important;
+  border-radius: 13px !important;
+  background: rgba(9,22,49,.68) !important;
+  box-shadow: 0 0 20px rgba(34,211,238,.38), inset 0 0 15px rgba(124,58,237,.34) !important;
+  transform: rotate(2deg) !important;
+}
+
+.dashboard-system.super .ds-ai-orb span {
+  position: relative !important;
+  z-index: 2 !important;
+  color: #8be9ff !important;
+  font-size: 34px !important;
+  text-shadow: 0 0 16px rgba(34,211,238,.88), 0 0 28px rgba(124,58,237,.72) !important;
+}
+
+.dashboard-system .ds-insights,
+.dashboard-system .ds-rail-activity,
+.dashboard-system .ds-products,
+.dashboard-system .ds-orders,
+.dashboard-system .ds-rows,
+.dashboard-system .ds-quick {
+  scrollbar-width: none !important;
+}
+
+.dashboard-system .ds-insights::-webkit-scrollbar,
+.dashboard-system .ds-rail-activity::-webkit-scrollbar,
+.dashboard-system .ds-products::-webkit-scrollbar,
+.dashboard-system .ds-orders::-webkit-scrollbar,
+.dashboard-system .ds-rows::-webkit-scrollbar,
+.dashboard-system .ds-quick::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@media (min-width: 1366px) {
+  .dashboard-system .ds-kpi.is-unavailable {
+    padding-bottom: 13px !important;
+  }
+
+  .dashboard-system .ds-kpi.is-unavailable::after {
+    display: none !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:first-child,
+  .dashboard-system.manager .ds-right > .ds-panel:first-child {
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(2) {
+    height: 246px !important;
+    min-height: 246px !important;
+  }
+
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    height: 170px !important;
+    min-height: 170px !important;
+  }
+
+  .dashboard-system.admin .ds-right > .ds-panel:nth-child(3),
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(3) {
+    height: 220px !important;
+    min-height: 220px !important;
+  }
+
+  .dashboard-system.admin .ds-right .ds-rows,
+  .dashboard-system.manager .ds-right .ds-rows,
+  .dashboard-system.admin .ds-right .ds-quick,
+  .dashboard-system.manager .ds-right .ds-quick {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system .ds-store-status {
+    grid-template-columns: 104px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-system.admin .ds-main > .ds-panel:last-of-type .ds-empty-state,
+  .dashboard-system.manager .ds-main > .ds-panel:last-of-type .ds-empty-state {
+    height: 61px !important;
+    min-height: 61px !important;
+  }
+}
+/* =========================================================
+   SAQSO FINAL LOGO AND RAIL FIT CORRECTION 2026-07-14
+   Smooth reference AI circuit mark; no radial spike artifact.
+   ========================================================= */
+.dashboard-system.super .ds-ai-orb {
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34,211,238,.96) 0 8%, rgba(37,99,235,.92) 22%, rgba(109,40,217,.88) 44%, rgba(11,24,53,.96) 61%, rgba(2,8,23,.98) 72%) !important;
+  box-shadow: 0 0 34px rgba(34,211,238,.26), inset 0 0 26px rgba(124,58,237,.3) !important;
+}
+
+.dashboard-system.super .ds-ai-orb::before {
+  inset: 10px !important;
+  z-index: 0 !important;
+  border: 1px solid rgba(34,211,238,.62) !important;
+  background:
+    conic-gradient(from 22deg,
+      rgba(34,211,238,.62) 0 3%, transparent 3% 20%,
+      rgba(124,58,237,.62) 20% 23%, transparent 23% 45%,
+      rgba(34,211,238,.62) 45% 48%, transparent 48% 70%,
+      rgba(124,58,237,.62) 70% 73%, transparent 73% 100%) !important;
+  box-shadow: inset 0 0 0 7px rgba(4,15,36,.34), inset 0 0 18px rgba(34,211,238,.3) !important;
+}
+
+.dashboard-system.super .ds-ai-orb::after {
+  inset: 35px !important;
+  z-index: 1 !important;
+  border: 1px solid rgba(34,211,238,.82) !important;
+  border-radius: 11px !important;
+  background: linear-gradient(145deg, rgba(5,30,58,.96), rgba(45,20,94,.92)) !important;
+  box-shadow: 0 0 16px rgba(34,211,238,.38), inset 0 0 13px rgba(124,58,237,.4) !important;
+  transform: none !important;
+}
+
+.dashboard-system.super .ds-ai-orb span {
+  font-size: 31px !important;
+}
+
+@media (min-width: 1366px) {
+  .dashboard-system.manager .ds-right > .ds-panel:nth-child(2) {
+    height: 180px !important;
+    min-height: 180px !important;
+  }
+
+  .dashboard-system.super .ds-chat {
+    grid-template-columns: 190px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-system.super .ds-chat aside {
+    border-right: 1px solid rgba(89,131,169,.18) !important;
+  }
+
+  .dashboard-system.super .ds-chat main > article {
+    min-height: 82px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+}
+/* =========================================================
+   SAQSO SUPER REFERENCE HEALTH WIDGET 2026-07-14
+   Reference component geometry; telemetry remains API-only.
+   ========================================================= */
+.dashboard-system.super .ds-health-kpi {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 12px !important;
+}
+
+.dashboard-system.super .ds-health-kpi > p {
+  margin: 0 !important;
+  color: #e4edf9 !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+.dashboard-system.super .ds-health-ring {
+  width: 82px !important;
+  height: 82px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  margin: 6px auto 0 !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at center, #07172a 55%, transparent 57%),
+    conic-gradient(#334155 0 100%) !important;
+  box-shadow: inset 0 0 16px rgba(34,197,94,.08), 0 0 18px rgba(34,197,94,.08) !important;
+}
+
+.dashboard-system.super .ds-health-ring > strong {
+  margin: 0 !important;
+  color: #f8fafc !important;
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+
+.dashboard-system.super .ds-health-ring > span {
+  margin-top: 4px !important;
+  color: #94a3b8 !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+}
+
+.dashboard-system.super .ds-kpi:not(.ds-health-kpi) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.dashboard-system.super .ds-kpi:not(.ds-health-kpi) > strong {
+  margin-top: 5px !important;
+  font-size: 20px !important;
+}
+
+.dashboard-system.super .ds-small-kpi > strong {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+/* REAL TELEMETRY VISUALS 2026-07-14 */
+.dashboard-system.super .ds-health-kpi:not(.is-unavailable) .ds-health-ring {
+  background:
+    radial-gradient(circle at center, #07172a 55%, transparent 57%),
+    conic-gradient(#22c55e 0 calc(var(--health-score, 0) * 1%), #243448 calc(var(--health-score, 0) * 1%) 100%) !important;
+}
+
+.dashboard-system.super .ds-chat-list {
+  display: grid;
+  align-content: start;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.dashboard-system.super .ds-chat-list article {
+  display: grid;
+  gap: 3px;
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(89, 131, 169, .16);
+}
+
+.dashboard-system.super .ds-chat-list b,
+.dashboard-system.super .ds-chat-list span,
+.dashboard-system.super .ds-chat-list small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-system.super .ds-chat-list b { color: #e7eef9; font-size: 11px; }
+.dashboard-system.super .ds-chat-list span { color: #a7b6ca; font-size: 10px; }
+.dashboard-system.super .ds-chat-list small { color: #6f8199; font-size: 9px; }
+/* =========================================================
+   SUPER CONTENT CLIPPING GATE 2026-07-14
+   Final cascade owner: reference geometry must grow with real rows.
+   ========================================================= */
+@media (min-width: 1366px) {
+  .dashboard-system.super .ds-super-content > .ds-panel {
+    height: auto !important;
+    min-height: 310px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-project-layout {
+    height: auto !important;
+    min-height: 264px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-project-layout > div {
+    display: flex !important;
+    min-height: 0 !important;
+    flex-direction: column !important;
+  }
+
+  .dashboard-system.super .ds-project-layout > div > .ds-empty-state {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .dashboard-system.super .ds-project-layout > .ds-rows,
+  .dashboard-system.super .ds-insights {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-main > .ds-panel:last-of-type {
+    height: auto !important;
+    min-height: 304px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-chat,
+  .dashboard-system.super .ds-chat aside,
+  .dashboard-system.super .ds-chat main {
+    height: auto !important;
+    min-height: 246px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:first-child {
+    height: auto !important;
+    min-height: 334px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(2) {
+    height: auto !important;
+    min-height: 218px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) {
+    height: auto !important;
+    min-height: 310px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-right > .ds-panel:nth-child(3) .ds-rail-activity {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+/* Final panel-heading rhythm owner. */
+.dashboard-system .ds-panel > header {
+  box-sizing: border-box !important;
+  padding: 0 7px 8px !important;
+}
+
+.dashboard-system .ds-panel > header h2 {
+  margin: 0 !important;
+}
+
+/* =========================================================
+   SAQSO SUPER TABS + CHAT WINDOW FINAL OWNER 2026-07-14
+   Functional dashboard tabs and reference chat console layout.
+   ========================================================= */
+.dashboard-system .ds-sidebar-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+}
+
+.dashboard-system.super .ds-role-bar {
+  display: none !important;
+}
+
+.dashboard-system .ds-tabs {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 42px !important;
+  padding: 0 0 9px !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .18) !important;
+}
+
+.dashboard-system .ds-tabs button {
+  appearance: none !important;
+  border: 0 !important;
+  min-height: 32px !important;
+  padding: 0 13px !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #93a4ba !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.dashboard-system .ds-tabs button.active,
+.dashboard-system .ds-tabs button[aria-selected="true"] {
+  background: rgba(6, 182, 212, .24) !important;
+  color: #f8fbff !important;
+  box-shadow: inset 0 -2px 0 rgba(34, 211, 238, .55) !important;
+}
+
+.dashboard-system .ds-tab-content {
+  min-height: 0 !important;
+}
+
+.dashboard-system.super .ds-chat-console-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 34px !important;
+  padding: 0 8px 10px !important;
+  color: #e8eef8 !important;
+}
+
+.dashboard-system.super .ds-chat-console-head span,
+.dashboard-system.super .ds-chat-console-head small {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 20px !important;
+  padding: 0 8px !important;
+  border-radius: 999px !important;
+  background: rgba(91, 33, 182, .38) !important;
+  color: #d7c8ff !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+}
+
+.dashboard-system.super .ds-chat-console-head small {
+  background: rgba(15, 23, 42, .85) !important;
+  color: #aebcd0 !important;
+}
+
+.dashboard-system.super .ds-chat-console-head b {
+  margin-left: auto !important;
+  max-width: 360px !important;
+  min-height: 28px !important;
+  padding: 8px 14px !important;
+  border-radius: 7px !important;
+  background: linear-gradient(135deg, rgba(88, 28, 135, .95), rgba(79, 70, 229, .9)) !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.super .ds-main > .ds-panel:last-of-type {
+  min-height: 370px !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window {
+  display: grid !important;
+  grid-template-columns: 230px minmax(0, 1fr) !important;
+  gap: 0 !important;
+  min-height: 302px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(89, 131, 169, .23) !important;
+  border-radius: 8px !important;
+  background: linear-gradient(145deg, rgba(4, 14, 28, .82), rgba(8, 24, 46, .72)) !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window aside,
+.dashboard-system.super .ds-chat.ds-chat-window main {
+  min-height: 302px !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window aside {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 14px !important;
+  border-right: 1px solid rgba(89, 131, 169, .18) !important;
+  background: rgba(2, 8, 23, .28) !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window aside h3 {
+  margin: 0 0 12px !important;
+  color: #f8fafc !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list {
+  display: grid !important;
+  gap: 4px !important;
+  max-height: 206px !important;
+  overflow: auto !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list button {
+  display: grid !important;
+  grid-template-columns: 18px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 9px !important;
+  width: 100% !important;
+  padding: 8px 6px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #dbe5f2 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list button.active,
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list button:hover {
+  background: rgba(15, 23, 42, .72) !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #c4b5fd !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list span {
+  display: grid !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list b,
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list small {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list b {
+  color: #f1f5f9 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list small,
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-list time {
+  color: #93a4ba !important;
+  font-size: 10px !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-view-conversations {
+  margin-top: auto !important;
+  padding: 11px 0 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #a855f7 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window main {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 14px 14px 10px !important;
+}
+
+.dashboard-system.super .ds-chat-transcript {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-height: 174px !important;
+  padding: 0 18px !important;
+}
+
+.dashboard-system.super .ds-ai-message {
+  display: grid !important;
+  grid-template-columns: 32px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+  width: min(720px, 76%) !important;
+}
+
+.dashboard-system.super .ds-ai-message > i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  color: #22d3ee !important;
+  background: radial-gradient(circle, rgba(34, 211, 238, .24), rgba(88, 28, 135, .24)) !important;
+  box-shadow: 0 0 18px rgba(34, 211, 238, .18) !important;
+}
+
+.dashboard-system.super .ds-ai-message > div {
+  padding: 16px !important;
+  border: 1px solid rgba(89, 131, 169, .24) !important;
+  border-radius: 8px !important;
+  background: rgba(15, 23, 42, .58) !important;
+  color: #dbe5f2 !important;
+}
+
+.dashboard-system.super .ds-ai-message b {
+  display: block !important;
+  margin-bottom: 10px !important;
+  color: #f8fafc !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.dashboard-system.super .ds-ai-message p {
+  margin: 0 !important;
+  color: #cbd5e1 !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+  white-space: pre-line !important;
+}
+
+.dashboard-system.super .ds-ai-message small {
+  display: block !important;
+  margin-top: 10px !important;
+  color: #8fa1b9 !important;
+  font-size: 10px !important;
+}
+
+.dashboard-system.super .ds-chat-error {
+  margin: 0 0 8px !important;
+  color: #fb7185 !important;
+  font-size: 11px !important;
+}
+
+.dashboard-system.super .ds-chat-composer {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 50px !important;
+  padding: 8px 10px 8px 16px !important;
+  border: 1px solid rgba(89, 131, 169, .28) !important;
+  border-radius: 8px !important;
+  background: rgba(15, 23, 42, .58) !important;
+}
+
+.dashboard-system.super .ds-chat-composer input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: #e8eef8 !important;
+  font-size: 13px !important;
+}
+
+.dashboard-system.super .ds-chat-composer input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dashboard-system.super .ds-chat-tools {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  color: #cbd5e1 !important;
+}
+
+.dashboard-system.super .ds-chat-composer button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  min-width: 82px !important;
+  min-height: 36px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: linear-gradient(135deg, #5b21b6, #7c3aed) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+.dashboard-system.super .ds-chat-composer button:disabled {
+  cursor: not-allowed !important;
+  opacity: .58 !important;
+}
+
+@media (max-width: 980px) {
+  .dashboard-system.super .ds-chat.ds-chat-window {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-system.super .ds-chat.ds-chat-window aside {
+    min-height: 168px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(89, 131, 169, .18) !important;
+  }
+
+  .dashboard-system.super .ds-ai-message {
+    width: 100% !important;
+  }
+
+  .dashboard-system.super .ds-chat-console-head b {
+    max-width: 180px !important;
+  }
+}
+
+@media (min-width: 1366px) {
+  .dashboard-system.super .ds-super-content > .ds-panel:nth-child(2) {
+    height: auto !important;
+    min-height: 448px !important;
+    overflow: visible !important;
+  }
+
+  .dashboard-system.super .ds-super-content > .ds-panel:nth-child(2) .ds-empty-state {
+    min-height: 346px !important;
+  }
+}
+
+/* =========================================================
+   SAQSO ACTIVITY + CHAT POLISH 2026-07-14
+   Real audit data must remain readable inside dashboard cards.
+   ========================================================= */
+.dashboard-system.super .ds-project-events {
+  display: grid !important;
+  align-content: start !important;
+  gap: 0 !important;
+  min-width: 0 !important;
+  max-height: 238px !important;
+  overflow: auto !important;
+}
+
+.dashboard-system.super .ds-project-events article {
+  display: grid !important;
+  grid-template-columns: 22px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-height: 37px !important;
+  padding: 7px 6px !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .17) !important;
+}
+
+.dashboard-system.super .ds-project-events i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 6px !important;
+  color: #22d3ee !important;
+  background: rgba(6, 182, 212, .14) !important;
+}
+
+.dashboard-system.super .ds-project-events div {
+  display: grid !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+}
+
+.dashboard-system.super .ds-project-events b,
+.dashboard-system.super .ds-project-events span {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.super .ds-project-events b {
+  color: #f8fafc !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+.dashboard-system.super .ds-project-events span,
+.dashboard-system.super .ds-project-events time {
+  color: #9fb0c5 !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+.dashboard-system.super .ds-project-events time {
+  max-width: 72px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.super .ds-chat-console-head small::after {
+  display: none !important;
+  content: none !important;
+}
+
+.dashboard-system.super .ds-chat-transcript > .ds-empty-state {
+  width: 100% !important;
+  min-height: 168px !important;
+  border-radius: 8px !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-empty-state {
+  overflow: hidden !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window aside > .ds-empty-state {
+  min-height: 210px !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-empty-state b,
+.dashboard-system.super .ds-chat.ds-chat-window .ds-empty-state span {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.super .ds-chat.ds-chat-window .ds-chat-composer {
+  margin-top: 12px !important;
+}
+
+/* =========================================================
+   METRIC REPORT CLICK ACTION 2026-07-14
+   KPI cards remain visually identical but open source/fix reports.
+   ========================================================= */
+.dashboard-system .ds-kpi-button {
+  appearance: none !important;
+  width: 100% !important;
+  border-style: solid !important;
+  color: inherit !important;
+  font: inherit !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.dashboard-system .ds-kpi-button:hover,
+.dashboard-system .ds-kpi-button:focus-visible {
+  border-color: rgba(34, 211, 238, .45) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 1px rgba(34, 211, 238, .12),
+    0 14px 36px rgba(0,0,0,.28) !important;
+  outline: none !important;
+}
+
+.dashboard-system.admin .ds-kpi-button:hover,
+.dashboard-system.admin .ds-kpi-button:focus-visible {
+  border-color: rgba(249, 115, 22, .48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 1px rgba(249, 115, 22, .12),
+    0 14px 36px rgba(0,0,0,.28) !important;
+}
+
+.dashboard-system.manager .ds-kpi-button:hover,
+.dashboard-system.manager .ds-kpi-button:focus-visible {
+  border-color: rgba(34, 197, 94, .48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 1px rgba(34, 197, 94, .12),
+    0 14px 36px rgba(0,0,0,.28) !important;
+}
+
+.dashboard-system .ds-kpi-button > em {
+  position: absolute !important;
+  right: 11px !important;
+  bottom: 8px !important;
+  color: #38bdf8 !important;
+  font-size: 9px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  letter-spacing: .02em !important;
+  opacity: 0 !important;
+  transform: translateY(3px) !important;
+  transition: opacity .16s ease, transform .16s ease !important;
+}
+
+.dashboard-system.admin .ds-kpi-button > em { color: #fb923c !important; }
+.dashboard-system.manager .ds-kpi-button > em { color: #4ade80 !important; }
+
+.dashboard-system .ds-kpi-button:hover > em,
+.dashboard-system .ds-kpi-button:focus-visible > em {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.ds-metric-report {
+  width: min(620px, calc(100vw - 28px)) !important;
+}
+
+.ds-report-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 14px 0 !important;
+}
+
+.ds-report-grid article,
+.ds-report-summary,
+.ds-report-steps {
+  border: 1px solid rgba(89, 131, 169, .24) !important;
+  border-radius: 10px !important;
+  background: rgba(8, 18, 34, .72) !important;
+}
+
+.ds-report-grid article {
+  padding: 11px 12px !important;
+}
+
+.ds-report-grid article.wide {
+  grid-column: 1 / -1 !important;
+}
+
+.ds-report-grid span,
+.ds-report-summary b,
+.ds-report-steps b {
+  display: block !important;
+  margin-bottom: 6px !important;
+  color: #93a4ba !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.ds-report-grid strong {
+  display: block !important;
+  color: #f8fafc !important;
+  font-size: 16px !important;
+  overflow-wrap: anywhere !important;
+}
+
+.ds-report-summary,
+.ds-report-steps {
+  padding: 12px 13px !important;
+  margin: 0 0 12px !important;
+}
+
+.ds-report-summary p,
+.ds-report-steps li {
+  color: #d7e1ee !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+.ds-report-steps ol {
+  margin: 0 !important;
+  padding-left: 18px !important;
+}
+
+@media (max-width: 520px) {
+  .ds-report-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 1365px) {
+  .dashboard-system.super .ds-project-events article {
+    grid-template-columns: 20px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-system.super .ds-project-events time {
+    grid-column: 2 !important;
+    max-width: 100% !important;
+  }
+}

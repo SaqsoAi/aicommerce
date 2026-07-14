@@ -12,6 +12,10 @@ export async function resolveStorefrontContext(
   hostname: string | null,
   locale = "en",
 ): Promise<StorefrontResolution> {
+  if (!hostname && process.env.STOREFRONT_DEFAULT_HOSTNAME) {
+    hostname = String(process.env.STOREFRONT_DEFAULT_HOSTNAME).trim().toLowerCase();
+  }
+
   if (!hostname) {
     return {
       ok: false,
@@ -97,7 +101,7 @@ export async function resolveStorefrontContext(
 export async function readScopedStorefrontRuntime(
   context: ResolvedStorefrontContext,
 ) {
-  const [sections, settings] = await Promise.all([
+  const [sections, settings, activeAssignment] = await Promise.all([
     prisma.homepageSection.findMany({
       where: {
         tenantId: context.tenantId,
@@ -109,11 +113,19 @@ export async function readScopedStorefrontRuntime(
     prisma.storeSetting.findUnique({
       where: { singletonKey: `store:${context.storeId}` },
     }),
+    prisma.storeTemplate.findFirst({
+      where: { storeId: context.storeId, isActive: true },
+      include: { template: true },
+      orderBy: { updatedAt: "desc" },
+    }),
   ]);
 
   return {
     context,
-    template: settings?.activeTemplate || "saqsobuild",
+    template:
+      activeAssignment?.template?.slug ||
+      settings?.activeTemplate ||
+      "saqsobuild",
     settings: settings
       ? {
           storeName: settings.storeName,

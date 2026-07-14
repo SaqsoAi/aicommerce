@@ -37,8 +37,22 @@ export function SalesChart({ points }: { points: Array<{ label: string; value: n
 }
 
 export function Donut({ value, label, segments = [] }: { value: string; label: string; segments?: Array<[string, string]> }) {
-  const values = segments.map(([, count]) => Number(count)).filter(Number.isFinite);
+  const colors = ["#22c55e", "#2563eb", "#f59e0b", "#7c3aed", "#ef4444", "#06b6d4"];
+  const values = segments
+    .map(([, count]) => Number(count))
+    .map((count) => (Number.isFinite(count) && count > 0 ? count : 0));
   const total = values.reduce((sum, count) => sum + count, 0);
-  const percentage = total > 0 && values.length ? Math.round((values[0] / total) * 100) : 0;
-  return <div className="ds-donut" style={{ background: `conic-gradient(var(--accent) 0 ${percentage}%, rgba(15,23,42,.82) ${percentage}% 100%)` }}><div><strong>{value}</strong><span>{label}</span></div></div>;
+  let cursor = 0;
+  const stops = values.flatMap((count, index) => {
+    if (total <= 0 || count <= 0) return [];
+    const start = cursor;
+    cursor += (count / total) * 100;
+    return [`${colors[index % colors.length]} ${start.toFixed(2)}% ${cursor.toFixed(2)}%`];
+  });
+  const background = stops.length
+    ? `conic-gradient(${stops.join(", ")})`
+    : "conic-gradient(rgba(71, 85, 105, .7) 0 100%)";
+
+  return <div className="ds-donut" style={{ background }}><div><strong>{value}</strong><span>{label}</span></div></div>;
 }
+

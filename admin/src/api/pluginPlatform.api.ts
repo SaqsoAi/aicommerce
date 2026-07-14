@@ -236,6 +236,29 @@ function dataOf<T>(response: { data?: ApiEnvelope<T> | T }): T {
   return body as T;
 }
 
+
+async function getPluginPlatformWithFallback<T>(
+  primaryPath: string,
+  fallbackPath: string,
+  config?: Record<string, unknown>
+): Promise<T> {
+  try {
+    const response = await api.get(primaryPath, config);
+    return dataOf<T>(response);
+  } catch (primaryError) {
+    try {
+      const response = await api.get(fallbackPath, config);
+      return dataOf<T>(response);
+    } catch (fallbackError) {
+      const primaryMessage = primaryError instanceof Error ? primaryError.message : String(primaryError);
+      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      throw new Error(
+        `Plugin transaction API unavailable. Primary: ${primaryMessage}. Fallback: ${fallbackMessage}`
+      );
+    }
+  }
+}
+
 async function mutation<T>(
   path: string,
   body?: Record<string, unknown>,
@@ -405,19 +428,29 @@ export async function executePluginTransaction(input: {
 export async function listPluginTransactions(
   pluginKey?: string
 ): Promise<PluginTransactionSummary[]> {
-  const response = await api.get("/plugin-platform/transactions", {
-    params: pluginKey ? { pluginKey } : undefined,
-  });
-  return dataOf<PluginTransactionSummary[]>(response);
+  const config = { params: pluginKey ? { pluginKey } : undefined };
+  return getPluginPlatformWithFallback<PluginTransactionSummary[]>(
+    "/plugin-platform/transactions",
+    "/super-admin/plugins/transactions",
+    config
+  );
 }
 
 export async function getPluginTransaction(
   transactionId: string
 ): Promise<PluginTransactionSummary> {
-  const response = await api.get(
-    `/plugin-platform/transactions/${encodeURIComponent(transactionId)}`
+  const encoded = encodeURIComponent(transactionId);
+  return getPluginPlatformWithFallback<PluginTransactionSummary>(
+    `/plugin-platform/transactions/${encoded}`,
+    `/super-admin/plugins/transactions/${encoded}`,
+    {
+      params: { refresh: Date.now().toString() },
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+      },
+    },
   );
-  return dataOf<PluginTransactionSummary>(response);
 }
 
 export async function acknowledgePluginMigrationReview(
@@ -427,6 +460,36 @@ export async function acknowledgePluginMigrationReview(
   return mutation(
     `/plugin-platform/transactions/${encodeURIComponent(transactionId)}/migration-review`,
     { reason }
+  );
+}
+
+export async function continuePluginTransaction(
+  transactionId: string,
+  reason: string,
+): Promise<PluginTransactionSummary> {
+  return mutation(
+    `/plugin-platform/transactions/${encodeURIComponent(transactionId)}/continue`,
+    { reason },
+  );
+}
+
+export async function recoverPluginTransaction(
+  transactionId: string,
+  reason: string,
+): Promise<PluginTransactionSummary> {
+  return mutation(
+    `/plugin-platform/transactions/${encodeURIComponent(transactionId)}/recover`,
+    { reason },
+  );
+}
+
+export async function cancelPluginTransaction(
+  transactionId: string,
+  reason: string,
+): Promise<PluginTransactionSummary> {
+  return mutation(
+    `/plugin-platform/transactions/${encodeURIComponent(transactionId)}/cancel`,
+    { reason },
   );
 }
 

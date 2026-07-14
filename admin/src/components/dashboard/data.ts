@@ -47,13 +47,16 @@ export type DashboardModel = {
   metrics: Metric[];
   smallMetrics: Metric[];
   overview: Array<[string, string, DataState?, string?]>;
+  roleCoverage?: Array<[string, string, DataState?, string?]>;
   insights: Array<[string, string, string]>;
-  products: Array<[string, string, string]>;
-  orders: Array<[string, string, string, string]>;
+  products: Array<[string, string, string, string?]>;
+  orders: Array<[string, string, string, string, string?, string?]>;
   status: Array<[string, string]>;
   tasks: Array<[string, string]>;
   activities: Array<[string, string, string]>;
   salesTrend: Array<{ label: string; value: number }>;
+  projectActivity: Array<{ label: string; value: number }>;
+  conversations: Array<[string, string, string, string]>;
   customers: Array<[string, string, string]>;
   inventory: Array<[string, string]>;
   system: Array<[string, string]>;
@@ -65,7 +68,7 @@ export const unavailable = "Unavailable";
 const unavailableMetric = (label: string, icon: LucideIcon, source: string, tone?: string): Metric => ({
   label,
   value: unavailable,
-  sub: "Waiting for live API",
+  sub: "",
   icon,
   tone,
   source,
@@ -85,40 +88,40 @@ export const superDashboard: DashboardModel = {
   accent: "super",
   mode: "super",
   eyebrow: "Super Admin Enterprise Command",
-  title: "Platform Command Center",
-  subtitle: "AI Copilot command center uses live platform APIs only.",
-  dateLabel: "Live API",
+  title: "Good Evening, Super Admin! 👋",
+  subtitle: "AI Copilot is analyzing your project in real-time.",
+  dateLabel: "This Week",
   actionLabel: "Quick Actions",
   roleLabel: "Super Admin",
   themeLabel: "Blue / Purple",
   warning: "Unavailable widgets are intentionally not estimated or demo-filled.",
   sources: baseSources,
   metrics: [
-    unavailableMetric("AI Features", Bot, "/api/ai-control/dashboard", "green"),
-    unavailableMetric("AI Providers", Database, "/api/ai-control/dashboard", "cyan"),
-    unavailableMetric("Enabled Features", ShieldCheck, "/api/ai-control/dashboard", "green"),
-    unavailableMetric("Enabled Providers", Activity, "/api/ai-control/dashboard", "purple"),
-    unavailableMetric("Usage Events", Gauge, "/api/ai-control/dashboard", "yellow"),
-    unavailableMetric("Active Overrides", KeyRound, "/api/ai-control/dashboard", "red"),
+    unavailableMetric("Project Health Score", Gauge, "Project telemetry API", "green"),
+    unavailableMetric("Critical Bugs", AlertTriangle, "Bug severity telemetry API", "red"),
+    unavailableMetric("Medium Bugs", AlertTriangle, "Bug severity telemetry API", "orange"),
+    unavailableMetric("Low Priority", AlertTriangle, "Bug severity telemetry API", "yellow"),
+    unavailableMetric("Performance Score", Activity, "Performance telemetry API", "green"),
+    unavailableMetric("Security Score", ShieldCheck, "Security telemetry API", "green"),
   ],
   smallMetrics: [
-    unavailableMetric("API Health", Activity, "/api/health", "green"),
-    unavailableMetric("Roles", Users, "/api/roles", "cyan"),
-    unavailableMetric("Permissions", ShieldCheck, "/api/permissions", "green"),
-    unavailableMetric("AI Features", Bot, "/api/ai-control/dashboard", "purple"),
-    unavailableMetric("AI Providers", Database, "/api/ai-control/dashboard", "yellow"),
-    unavailableMetric("Usage Logs", Activity, "/api/ai-control/dashboard", "cyan"),
-    unavailableMetric("Overrides", KeyRound, "/api/ai-control/dashboard", "red"),
+    unavailableMetric("Build Status", Activity, "CI build telemetry API", "green"),
+    unavailableMetric("Test Coverage", ShieldCheck, "Test coverage telemetry API", "cyan"),
+    unavailableMetric("Code Quality", Code2, "Code quality telemetry API", "green"),
+    unavailableMetric("Tech Debt", Bot, "Code quality telemetry API", "purple"),
+    unavailableMetric("Duplicate Code", AlertTriangle, "Code quality telemetry API", "yellow"),
+    unavailableMetric("Unused Files", KeyRound, "Repository telemetry API", "red"),
+    unavailableMetric("Dependencies", Database, "Dependency telemetry API", "cyan"),
   ],
   overview: [
-    ["Platform API", unavailable, "unavailable", "/api/health"],
-    ["Roles", unavailable, "unavailable", "/api/roles"],
-    ["Permissions", unavailable, "unavailable", "/api/permissions"],
-    ["AI Features", unavailable, "unavailable", "/api/ai-control/dashboard"],
-    ["AI Providers", unavailable, "unavailable", "/api/ai-control/dashboard"],
-    ["Usage Events", unavailable, "unavailable", "/api/ai-control/dashboard"],
-    ["Role Menu Coverage", "Configured", "available", "Local role registry"],
-    ["Active Overrides", unavailable, "unavailable", "/api/ai-control/dashboard"],
+    ["Total Modules", unavailable, "unavailable", "Project telemetry API"],
+    ["Total APIs", unavailable, "unavailable", "Project telemetry API"],
+    ["Database Tables", unavailable, "unavailable", "Project telemetry API"],
+    ["React Components", unavailable, "unavailable", "Project telemetry API"],
+    ["Lines of Code", unavailable, "unavailable", "Repository telemetry API"],
+    ["Team Members", unavailable, "unavailable", "Project telemetry API"],
+    ["Commits (This Week)", unavailable, "unavailable", "Repository telemetry API"],
+    ["Active Branch", unavailable, "unavailable", "Repository telemetry API"],
   ],
   insights: [],
   products: [],
@@ -127,6 +130,8 @@ export const superDashboard: DashboardModel = {
   tasks: [],
   activities: [],
   salesTrend: [],
+  projectActivity: [],
+  conversations: [],
   customers: [],
   inventory: [],
   system: [],
@@ -138,7 +143,7 @@ export const adminDashboard: DashboardModel = {
   accent: "admin",
   mode: "commerce",
   eyebrow: "Store Operations",
-  title: "Store Command Center",
+  title: "Welcome back, Admin!",
   subtitle: "Here is what is happening with your store from live APIs.",
   dateLabel: "Live API",
   actionLabel: "Export Report",
@@ -168,6 +173,8 @@ export const adminDashboard: DashboardModel = {
   ],
   activities: [],
   salesTrend: [],
+  projectActivity: [],
+  conversations: [],
   customers: [],
   inventory: [],
   system: [],
@@ -179,9 +186,10 @@ export const managerDashboard: DashboardModel = {
   role: "MANAGER",
   accent: "manager",
   eyebrow: "Store Operations",
-  title: "Operations Command Center",
+  title: "Welcome back, User Admin!",
   subtitle: "Manage daily store operations within assigned permissions using live APIs.",
-  roleLabel: "Manager",
+  actionLabel: "View Orders",
+  roleLabel: "User Admin",
   themeLabel: "Green",
   warning: "Manager view hides platform/security/provider controls and only shows live store data.",
   metrics: [
@@ -201,17 +209,20 @@ export function cloneDashboard(model: DashboardModel): DashboardModel {
     smallMetrics: model.smallMetrics.map((metric) => ({ ...metric })),
     overview: model.overview.map((row) => [...row] as [string, string, DataState?, string?]),
     insights: model.insights.map((row) => [...row] as [string, string, string]),
-    products: model.products.map((row) => [...row] as [string, string, string]),
-    orders: model.orders.map((row) => [...row] as [string, string, string, string]),
+    products: model.products.map((row) => [...row] as [string, string, string, string?]),
+    orders: model.orders.map((row) => [...row] as [string, string, string, string, string?, string?]),
     status: model.status.map((row) => [...row] as [string, string]),
     tasks: model.tasks.map((row) => [...row] as [string, string]),
     activities: model.activities.map((row) => [...row] as [string, string, string]),
     salesTrend: model.salesTrend.map((point) => ({ ...point })),
+    projectActivity: model.projectActivity.map((point) => ({ ...point })),
+    conversations: model.conversations.map((row) => [...row] as [string, string, string, string]),
     customers: model.customers.map((row) => [...row] as [string, string, string]),
     inventory: model.inventory.map((row) => [...row] as [string, string]),
     system: model.system.map((row) => [...row] as [string, string]),
     store: model.store.map((row) => [...row] as [string, string]),
   };
 }
+
 
 
