@@ -695,7 +695,6 @@ export class PluginTransactionService {
           errorMessage: archiveExists
             ? "Transaction was safely closed by recovery. Recreate the installation plan to retry."
             : "Legacy transaction archive is unavailable. Re-upload the same package after recovery.",
-          rollbackStatus: transaction.rollbackStatus || "NOT_REQUIRED",
         },
       });
 
@@ -722,6 +721,7 @@ export class PluginTransactionService {
             transactionId,
             archiveExists,
             previousStatus: transaction.status,
+            rollbackDisposition: "NOT_REQUIRED",
           },
         },
       });

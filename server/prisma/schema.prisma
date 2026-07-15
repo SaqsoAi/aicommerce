@@ -63,16 +63,19 @@ model User {
   wishlist       Wishlist[]
   rewardWalletId String?
 
-  tenantId String?
-  storeId  String?
-  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-  store    Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  tenantId        String?
+  storeId         String?
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  store           Store?           @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  userTenantRoles UserTenantRole[]
 
   @@index([tenantId])
   @@index([storeId])
 }
 
 model Category {
+  tenantId      String?
+  storeId       String?
   id            String        @id @default(cuid())
   name          String        @unique
   slug          String        @unique
@@ -83,6 +86,8 @@ model Category {
 }
 
 model Subcategory {
+  tenantId   String?
+  storeId    String?
   id         String    @id @default(cuid())
   name       String
   slug       String    @unique
@@ -93,6 +98,8 @@ model Subcategory {
 }
 
 model Brand {
+  tenantId String?
+  storeId  String?
   id       String    @id @default(cuid())
   name     String    @unique
   logo     String?
@@ -100,6 +107,8 @@ model Brand {
 }
 
 model Product {
+  tenantId             String?
+  storeId              String?
   lookbookLinks        LookbookProduct[]
   virtualTryOnJobs     VirtualTryOnJob[]
   id                   String              @id @default(cuid())
@@ -160,6 +169,8 @@ model Product {
 }
 
 model ProductVariant {
+  tenantId          String?
+  storeId           String?
   id                String           @id @default(cuid())
   productId         String
   color             String
@@ -215,6 +226,8 @@ model ProductApproval {
 }
 
 model Review {
+  tenantId         String?
+  storeId          String?
   fitRating        String?
   bodyType         String?
   heightCm         Float?
@@ -235,6 +248,8 @@ model Review {
 }
 
 model Wishlist {
+  tenantId  String?
+  storeId   String?
   id        String   @id @default(cuid())
   userId    String
   productId String
@@ -244,6 +259,8 @@ model Wishlist {
 }
 
 model Cart {
+  tenantId  String?
+  storeId   String?
   id        String  @id @default(cuid())
   quantity  Int
   userId    String
@@ -253,6 +270,8 @@ model Cart {
 }
 
 model Coupon {
+  tenantId   String?
+  storeId    String?
   id         String   @id @default(cuid())
   code       String   @unique
   discount   Float
@@ -261,6 +280,8 @@ model Coupon {
 }
 
 model Order {
+  tenantId        String?
+  storeId         String?
   id              String          @id @default(cuid())
   totalAmount     Float
   status          OrderStatus     @default(PENDING)
@@ -291,6 +312,8 @@ model Order {
 }
 
 model OrderItem {
+  tenantId  String?
+  storeId   String?
   id        String  @id @default(cuid())
   quantity  Int
   price     Float
@@ -357,6 +380,8 @@ model Supplier {
 }
 
 model Campaign {
+  tenantId      String?
+  storeId       String?
   id            String   @id @default(cuid())
   title         String
   type          String
@@ -511,7 +536,8 @@ model Tenant {
   domains           StorefrontDomain[]
   homepageSections  HomepageSection[]
 
-  users User[]
+  users           User[]
+  userTenantRoles UserTenantRole[]
 
   @@index([status, storefrontEnabled])
 }
@@ -552,7 +578,8 @@ model Store {
   domains           StorefrontDomain[]
   homepageSections  HomepageSection[]
 
-  users User[]
+  users           User[]
+  userTenantRoles UserTenantRole[]
 
   @@index([tenantId])
   @@index([status, storefrontEnabled])
@@ -3121,4 +3148,138 @@ model ProjectTelemetrySnapshot {
 
   @@index([projectKey, kind, capturedAt])
   @@index([capturedAt])
+}
+
+model UserTenantRole {
+  id        String   @id @default(cuid())
+  userId    String
+  tenantId  String
+  storeId   String?
+  role      UserRole
+  status    String   @default("ACTIVE")
+  isDefault Boolean  @default(false)
+  createdBy String?
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  store  Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, tenantId, storeId, role])
+  @@index([tenantId, role, status])
+  @@index([storeId, role, status])
+}
+
+model AiBuilderMemory {
+  id         String   @id @default(cuid())
+  tenantId   String?
+  storeId    String?
+  userId     String?
+  key        String
+  category   String
+  language   String   @default("mixed")
+  summary    String
+  content    Json
+  confidence Float    @default(1)
+  source     String
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([tenantId, storeId, userId, key])
+  @@index([tenantId, storeId, category, status])
+}
+
+model AiBuilderTask {
+  id          String              @id @default(cuid())
+  tenantId    String?
+  storeId     String?
+  userId      String?
+  title       String
+  goal        String
+  status      String              @default("PLANNED")
+  riskLevel   String              @default("MEDIUM")
+  approvedAt  DateTime?
+  completedAt DateTime?
+  metadata    Json?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  artifacts   AiBuilderArtifact[]
+
+  @@index([tenantId, storeId, status])
+}
+
+model AiBuilderArtifact {
+  id        String        @id @default(cuid())
+  taskId    String
+  kind      String
+  fileName  String?
+  checksum  String?
+  content   Json
+  status    String        @default("DRAFT")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  task      AiBuilderTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, kind, status])
+}
+
+model BusinessAiSetting {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  storeId            String   @default("")
+  enabled            Boolean  @default(true)
+  approvalRequired   Boolean  @default(true)
+  monthlyBudgetLimit Float?
+  allowedRoles       Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([tenantId, storeId], name: "tenantId_storeId")
+}
+
+model BusinessAiConversation {
+  id        String              @id @default(cuid())
+  tenantId  String?
+  storeId   String?
+  userId    String
+  title     String?
+  language  String              @default("mixed")
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  messages  BusinessAiMessage[]
+}
+
+model BusinessAiMessage {
+  id             String                 @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  intent         String?
+  evidence       Json?
+  actions        Json?
+  createdAt      DateTime               @default(now())
+  conversation   BusinessAiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model BusinessAiPlan {
+  id             String    @id @default(cuid())
+  conversationId String?
+  tenantId       String?
+  storeId        String?
+  userId         String
+  planType       String
+  title          String
+  targetUnits    Int?
+  budget         Float?
+  content        Json
+  status         String    @default("DRAFT")
+  approvedBy     String?
+  approvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }

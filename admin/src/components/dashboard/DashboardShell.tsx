@@ -5,7 +5,7 @@ import { Bot, CalendarDays, ChartNoAxesCombined, CircleAlert, ClipboardList, Cod
 import type { LucideIcon } from "lucide-react";
 import ActionModal, { ActionInfo } from "./ActionModal";
 import { Donut, MiniLine, ProjectChart, SalesChart, Spark } from "./charts";
-import type { DashboardModel, DataState, Metric } from "./data";
+import type { DashboardModel, DataState, Metric, MetricFinding } from "./data";
 import { apiUrl, authHeaders } from "./liveData";
 
 type DashboardStoreContext = {
@@ -27,6 +27,7 @@ type MetricReport = {
   source: string;
   summary: string;
   instructions: string[];
+  findings: MetricFinding[];
 };
 
 type CopilotActionKey = "analyze" | "fix" | "performance" | "review" | "docs" | "feature";
@@ -73,6 +74,7 @@ function buildMetricReport(metric: Metric): MetricReport {
       ? `${metric.label} has no trusted live value from ${source}. Demo fallback is blocked, so the card waits for the real API/scanner source.`
       : `${metric.label} is showing ${metric.value}${metric.sub ? ` (${metric.sub})` : ""} from ${source}.`,
     instructions: metricInstructionMap[metric.label] || ["Inspect this widget's API/source first.", "Patch the existing owner file only if source mapping is wrong.", "Run build and dashboard visual validation after the fix."],
+    findings: (metric.findings || []).slice(0, 12),
   };
 }
 
@@ -146,6 +148,7 @@ function MetricReportModal({ report, onClose }: { report: MetricReport | null; o
           <article className="wide"><span>Source/API</span><strong>{report.source}</strong></article>
         </div>
         <section className="ds-report-summary"><b>Report</b><p>{report.summary}</p></section>
+        <section className="ds-report-findings"><b>Location evidence</b>{report.findings.length ? <div>{report.findings.map((finding, index) => <article key={`${finding.file}-${finding.line}-${index}`}><code>{finding.file}:{finding.line}</code><strong>{finding.category.replace(/_/g, " ")}</strong><p>{finding.message}</p><span>{finding.instruction}</span></article>)}</div> : <p>No file-level evidence returned for this metric yet. Re-index telemetry after the scanner reports detailed findings.</p>}</section>
         <section className="ds-report-steps"><b>Fix instruction</b><ol>{report.instructions.map((step) => <li key={step}>{step}</li>)}</ol></section>
         <button type="button" onClick={onClose}>Close Report</button>
       </div>
@@ -175,6 +178,32 @@ function Rows({ rows, fallback, source, icon: Icon = CircleAlert }: { rows: Arra
   return <div className="ds-rows">{rows.map(([a, b, state]) => <div key={a} className={state === "unavailable" ? "is-unavailable" : ""}><i className="ds-row-icon"><Icon size={14} /></i><span>{a}</span><b>{b}</b></div>)}</div>;
 }
 
+
+
+function insightMetricLabel(title: string): string {
+  const normalized = title.toLowerCase();
+  if (normalized.includes("critical")) return "Critical Bugs";
+  if (normalized.includes("performance")) return "Performance Score";
+  if (normalized.includes("security")) return "Security Score";
+  if (normalized.includes("low priority")) return "Low Priority";
+  if (normalized.includes("code improvement") || normalized.includes("duplicate")) return "Duplicate Code";
+  if (normalized.includes("repository") || normalized.includes("index")) return "Project Health Score";
+  return "Project Health Score";
+}
+function ProjectEvents({ rows }: { rows: Array<[string, string, string?]> }) {
+  if (!rows.length) return <EmptyState label="No persisted project activity yet." source="/api/audit-logs" icon={CalendarDays} />;
+  return (
+    <div className="ds-project-events">
+      {rows.map(([title, detail, time], index) => (
+        <article key={`${title}-${time || index}`}>
+          <i><CalendarDays size={14} /></i>
+          <div><b>{title}</b><span>{detail}</span></div>
+          <time>{time ? new Date(time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}</time>
+        </article>
+      ))}
+    </div>
+  );
+}
 function actionIcon(key: string): LucideIcon {
   return { analyze: Bot, fix: CircleAlert, performance: Gauge, review: Code2, docs: FileText, feature: PlusCircle, products: Package, orders: ClipboardList, coupon: Sparkles, report: ChartNoAxesCombined, users: UserRound, customers: UserRound }[key] ?? Sparkles;
 }
@@ -195,7 +224,7 @@ function Hero({ data, onAction }: { data: DashboardModel; onAction: (key: string
   );
 }
 
-type ProjectTab = "overview" | "api" | "roles" | "activity";
+type ProjectTab = "overview" | "modules" | "activity" | "statistics";
 type CopilotPreviewPayload = {
   success?: boolean;
   message?: string;
@@ -216,12 +245,8 @@ function SuperBody({ data, onAction, onMetricReport }: { data: DashboardModel; o
   }, [data.conversations]);
 
   const activeConversation = conversations[selectedConversation];
-  const apiRows = data.sources.map((source) => [
-    source.label,
-    source.state === "available" ? "Online" : "Unavailable",
-    source.state,
-    source.path,
-  ] as [string, string, DataState, string]);
+  const moduleRows = data.overview.filter(([label]) => ["Total Modules", "Total APIs", "Database Tables", "React Components", "Lines of Code"].includes(label));
+  const statisticsRows = data.overview.filter(([label]) => ["Team Members", "Commits (This Week)", "Active Branch"].includes(label));
   const activityRows = data.activities.map(([title, detail]) => [title, detail, "available", "/api/audit-logs"] as [string, string, DataState, string]);
 
   async function runCopilotPreview(nextPrompt: string, mode = "review", role = "AI_CODE_REVIEWER") {
@@ -276,23 +301,23 @@ function SuperBody({ data, onAction, onMetricReport }: { data: DashboardModel; o
   }, [submitting]);
 
   function projectTabContent() {
-    if (projectTab === "api") {
-      return <Rows rows={apiRows} fallback="Dashboard API health is unavailable." source="Dashboard API registry" />;
+    if (projectTab === "modules") {
+      return <Rows rows={moduleRows} fallback="Module telemetry endpoint returned no rows." source="/api/project-telemetry/latest" />;
     }
-    if (projectTab === "roles") {
-      return <Rows rows={data.roleCoverage || []} fallback="Role coverage endpoint returned no rows." source="/api/dashboard/summary" icon={UserRound} />;
+    if (projectTab === "statistics") {
+      return <Rows rows={statisticsRows.length ? statisticsRows : (data.roleCoverage || [])} fallback="Project statistics endpoint returned no rows." source="/api/project-telemetry/latest" icon={UserRound} />;
     }
     if (projectTab === "activity") {
       return (
         <div className="ds-project-layout">
-          <Rows rows={activityRows} fallback="No persisted project activity yet." source="/api/audit-logs" icon={CalendarDays} />
+          <ProjectEvents rows={activityRows.map(([title, detail]) => [title, detail, ""])} />
           <div><h3>Project Activity</h3>{data.projectActivity.length ? <ProjectChart points={data.projectActivity} /> : <EmptyState label="Project activity chart requires telemetry API." source="Project telemetry API" />}</div>
         </div>
       );
     }
     return (
       <div className="ds-project-layout">
-        <Rows rows={data.overview} fallback="Platform overview API did not return data." source="/api/dashboard/summary" />
+        <Rows rows={data.overview} fallback="Project overview API did not return data." source="/api/project-telemetry/latest" />
         <div><h3>Project Activity</h3>{data.projectActivity.length ? <ProjectChart points={data.projectActivity} /> : <EmptyState label="Project activity chart requires telemetry API." source="Project telemetry API" />}</div>
       </div>
     );
@@ -304,22 +329,26 @@ function SuperBody({ data, onAction, onMetricReport }: { data: DashboardModel; o
       <section className="ds-kpi-grid super">{data.metrics.map((m) => <KpiCard key={m.label} metric={m} onReport={onMetricReport} />)}</section>
       <section className="ds-small-kpi-grid">{data.smallMetrics.map((m) => <KpiCard key={m.label} metric={m} compact onReport={onMetricReport} />)}</section>
       <section className="ds-super-content">
-        <Panel title="Platform Overview" action={<button onClick={() => onAction("analyze")}>Live Sources</button>}>
+        <Panel title="Project Overview" action={<button onClick={() => onAction("analyze")}>Live Sources</button>}>
           <div className="ds-tabs" role="tablist" aria-label="Platform overview views">
-            {(["overview", "api", "roles", "activity"] as ProjectTab[]).map((tab) => (
+            {(["overview", "modules", "activity", "statistics"] as ProjectTab[]).map((tab) => (
               <button key={tab} type="button" role="tab" aria-selected={projectTab === tab} className={projectTab === tab ? "active" : ""} onClick={() => setProjectTab(tab)}>
-                {{ overview: "Overview", api: "API Health", roles: "Role Coverage", activity: "Activity" }[tab]}
+                {{ overview: "Overview", modules: "Modules", activity: "Activity", statistics: "Statistics" }[tab]}
               </button>
             ))}
           </div>
           <div className="ds-tab-content" role="tabpanel">{projectTabContent()}</div>
         </Panel>
         <Panel title="AI Project Insights" action={<button onClick={() => onAction("review")}>View All Insights</button>}>
-          {data.insights.length ? <div className="ds-insights">{data.insights.map(([a,b,c]) => <article key={a}><i><Sparkles size={15} /></i><div><b>{a}</b><p>{b}</p></div><small>{c}</small></article>)}</div> : <EmptyState label="AI insight API is unavailable for this dashboard." source="/api/ai/development-copilot" icon={Sparkles} />}
+          {data.insights.length ? <><div className="ds-insights">{data.insights.map(([a,b,c]) => {
+            const metricLabel = insightMetricLabel(a);
+            const metric = [...data.metrics, ...data.smallMetrics].find((item) => item.label === metricLabel) || data.metrics[0];
+            return <button type="button" className="ds-insight-button" key={`${a}-${b}`} onClick={() => metric && onMetricReport(metric)} aria-label={`Open ${a} report`}><i><Sparkles size={15} /></i><div><b>{a}</b><p>{b}</p></div><small>{c}</small></button>;
+          })}</div><button type="button" className="ds-insights-footer" onClick={() => onAction("review")}>View All Insights <span>→</span></button></> : <EmptyState label="AI insight API is unavailable for this dashboard." source="/api/ai/development-copilot" icon={Sparkles} />}
         </Panel>
       </section>
       <Panel title="AI Copilot Chat Console">
-        <div className="ds-chat-console-head"><span>AI Developer Mode</span><small>Preview only</small><b>{activeConversation?.[1] || "New project conversation"}</b></div>
+        <div className="ds-chat-console-head"><span>AI Developer Mode</span><small>GPT-4o</small><em>Preview only</em><b>{activeConversation?.[1] || "Why is the login API slow?"}</b></div>
         <div className="ds-chat ds-chat-window">
           <aside>
             <h3>Recent Conversations</h3>
@@ -375,7 +404,7 @@ function RightRail({ data, onAction }: { data: DashboardModel; onAction: (key: s
   if (data.mode === "super") {
     return (
       <aside className="ds-right">
-        <Panel title="AI Assistant" action={<button onClick={() => onAction("analyze")}>{data.system.length ? "Online" : "Unavailable"}</button>}>
+        <Panel title="AI Assistant" action={<button className="ds-online-pill" onClick={() => onAction("analyze")}>{data.system.length ? "● Online" : "Unavailable"}</button>}>
           <div className="ds-ai-orb"><span>AI</span></div>
           <h3>I am your AI Development Copilot.<br />How can I help you today?</h3>
           <div className="ds-ai-actions">{[["Analyze Project", "analyze"], ["Fix Bugs", "fix"], ["Optimize Performance", "performance"], ["Review Code", "review"], ["Generate Docs", "docs"], ["Add New Feature", "feature"]].map(([label, key]) => { const Icon = actionIcon(key); return <button key={label} onClick={() => onAction(key)}><Icon size={14} />{label}</button>; })}</div>

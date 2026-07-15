@@ -184,6 +184,19 @@ router.post("/tenants", async (req, res) => {
 });
 
 router.patch("/tenants/:id", async (req, res) => {
+  const existingTenant = await prisma.tenant.findUnique({
+    where: { id: req.params.id },
+    select: { id: true },
+  });
+  if (!existingTenant) {
+    return res.status(404).json({ success: false, message: "Tenant was not found." });
+  }
+  if (req.body?.name !== undefined && !cleanText(req.body.name)) {
+    return res.status(400).json({ success: false, message: "Tenant name cannot be empty." });
+  }
+  if (req.body?.slug !== undefined && !cleanSlug(req.body.slug)) {
+    return res.status(400).json({ success: false, message: "Tenant slug cannot be empty." });
+  }
   const tenant = await prisma.tenant.update({
     where: { id: req.params.id },
     data: {
@@ -228,6 +241,25 @@ router.post("/stores", async (req, res) => {
 });
 
 router.patch("/stores/:id", async (req, res) => {
+  const existingStore = await prisma.store.findUnique({
+    where: { id: req.params.id },
+    select: { id: true },
+  });
+  if (!existingStore) {
+    return res.status(404).json({ success: false, message: "Store was not found." });
+  }
+  if (req.body?.name !== undefined && !cleanText(req.body.name)) {
+    return res.status(400).json({ success: false, message: "Store name cannot be empty." });
+  }
+  if (req.body?.tenantId !== undefined) {
+    const targetTenant = await prisma.tenant.findUnique({
+      where: { id: cleanText(req.body.tenantId) },
+      select: { id: true },
+    });
+    if (!targetTenant) {
+      return res.status(400).json({ success: false, message: "Selected tenant was not found." });
+    }
+  }
   const store = await prisma.store.update({
     where: { id: req.params.id },
     data: {

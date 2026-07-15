@@ -5,98 +5,86 @@ import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { roleLabel, type UserRole } from "@/config/roles";
+import { readAdminSession, subscribeAdminSession } from "@/config/adminAccess.registry";
 import { filterAdminNavigationByRole, isAdminNavActive } from "./navigation.helpers";
-import type { AdminRole } from "./navigation";
-
-type DashboardRole = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
-
-function normalizeRole(value: unknown): DashboardRole {
-  const role = String(value ?? "").trim().toUpperCase().replace(/[-\s]+/g, "_");
-  if (role === "SUPER_ADMIN" || role === "SUPERADMIN") return "SUPER_ADMIN";
-  if (role === "ADMIN" || role === "TENANT_OWNER" || role === "TENANT_ADMIN") return "ADMIN";
-  return "MANAGER";
-}
-
-function readRole(): DashboardRole {
-  if (typeof window === "undefined") return "MANAGER";
-  try {
-    const raw = localStorage.getItem("user");
-    const user = raw ? (JSON.parse(raw) as { role?: unknown }) : null;
-    return normalizeRole(user?.role ?? localStorage.getItem("role") ?? localStorage.getItem("userRole"));
-  } catch {
-    return normalizeRole(localStorage.getItem("role") ?? localStorage.getItem("userRole"));
-  }
-}
-
-
-function readPermissions(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem("user");
-    const user = raw ? (JSON.parse(raw) as { permissions?: unknown }) : null;
-    return Array.isArray(user?.permissions)
-      ? user.permissions.map((permission) => String(permission))
-      : [];
-  } catch {
-    return [];
-  }
-}
+import { adminNavigation, type AdminNavGroup, type AdminRole } from "./navigation";
+import { loadPluginNavigation, mergeNavigationGroups } from "./pluginNavigation.registry";
 
 function iconFor(name: string): LucideIcon {
   const candidate = (Icons as unknown as Record<string, LucideIcon>)[name];
   return candidate ?? Icons.Circle;
 }
 
-function toRegistryRole(role: DashboardRole): AdminRole {
-  return role;
+function accentFor(role: UserRole): string {
+  if (role === "SUPER_ADMIN") return "super";
+  if (role === "ADMIN") return "admin";
+  return "manager";
+}
+
+function subtitleFor(role: UserRole): string {
+  if (role === "SUPER_ADMIN") return "Platform Admin Command Center";
+  if (role === "ADMIN") return "Store Administration";
+  return `${roleLabel(role)} Workspace`;
+}
+
+function statusFor(role: UserRole): string {
+  if (role === "SUPER_ADMIN") return "Platform-wide administrative access";
+  if (role === "ADMIN") return "Tenant business administration";
+  return "Role-scoped operational access";
 }
 
 export default function Sidebar({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
-  const [role, setRole] = useState<DashboardRole>("MANAGER");
+  const [role, setRole] = useState<UserRole>("MANAGER");
   const [permissions, setPermissions] = useState<string[]>([]);
+  const [pluginGroups, setPluginGroups] = useState<AdminNavGroup[]>([]);
   const navRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const refreshRole = () => {
-      setRole(readRole());
-      setPermissions(readPermissions());
+    const applySession = () => {
+      const session = readAdminSession();
+      setRole(session.role);
+      setPermissions(session.permissions);
     };
-    refreshRole();
-    window.addEventListener("storage", refreshRole);
-    window.addEventListener("auth:changed", refreshRole);
-    window.addEventListener("role:changed", refreshRole);
-    window.addEventListener("focus", refreshRole);
-    return () => {
-      window.removeEventListener("storage", refreshRole);
-      window.removeEventListener("auth:changed", refreshRole);
-      window.removeEventListener("role:changed", refreshRole);
-      window.removeEventListener("focus", refreshRole);
-    };
+
+    applySession();
+    return subscribeAdminSession(() => applySession());
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    loadPluginNavigation(role).then((groups) => {
+      if (active) setPluginGroups(groups);
+    });
+    return () => {
+      active = false;
+    };
+  }, [role]);
 
   useEffect(() => {
     navRef.current?.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname, role]);
 
-  const groups = useMemo(
-    () => filterAdminNavigationByRole(toRegistryRole(role), undefined, permissions),
-    [permissions, role],
-  );
-  const product = role === "SUPER_ADMIN" ? "AICopilot" : "AI-Commerce";
-  const subtitle = role === "SUPER_ADMIN" ? "Super Admin - AI Development Copilot" : role === "ADMIN" ? "Admin Dashboard" : "Manager Dashboard";
-  const status = role === "SUPER_ADMIN" ? "All Systems Operational" : role === "ADMIN" ? "Tenant Business Administration" : "Limited Operational Access";
-  const accentClass = role === "SUPER_ADMIN" ? "super" : role === "ADMIN" ? "admin" : "manager";
+  const groups = useMemo(() => {
+    const merged = mergeNavigationGroups(adminNavigation, pluginGroups);
+    return filterAdminNavigationByRole(role as AdminRole, merged, permissions);
+  }, [permissions, pluginGroups, role]);
+
+  const product = role === "SUPER_ADMIN" ? "SAQSO.AI" : "AI-Commerce";
+  const subtitle = subtitleFor(role);
+  const status = statusFor(role);
+  const accentClass = accentFor(role);
 
   return (
     <aside className={`ds-sidebar ${collapsed ? "collapsed" : ""} ${accentClass}`}>
       <div className="ds-brand"><i>AI</i><div><strong>{product}</strong><small>{subtitle}</small></div></div>
       <div className="ds-menu-search" aria-hidden="true">Search menu...</div>
-      <nav ref={navRef} id="admin-primary-navigation" aria-label={`${role} dashboard navigation`}>
+      <nav ref={navRef} id="admin-primary-navigation" aria-label={`${roleLabel(role)} dashboard navigation`}>
         {groups.map((group) => (
           <section key={group.id}>
             {group.label !== "Dashboard" ? <h3>{group.label}</h3> : null}
-            {group.items.map((item) => {
+            {group.items.filter((item) => !item.disabled).map((item) => {
               const Icon = iconFor(item.icon);
               const active = isAdminNavActive(pathname, item.href);
               return (
@@ -116,7 +104,7 @@ export default function Sidebar({ collapsed = false, onNavigate }: { collapsed?:
           </section>
         ))}
       </nav>
-      <div className="ds-status"><i>AI</i><div><strong>{role === "SUPER_ADMIN" ? "AI System Status" : "Current Role"}</strong><small>{status}</small></div><b /></div>
+      <div className="ds-status"><i>AI</i><div><strong>{role === "SUPER_ADMIN" ? "AI System Status" : roleLabel(role)}</strong><small>{status}</small></div><b /></div>
     </aside>
   );
 }

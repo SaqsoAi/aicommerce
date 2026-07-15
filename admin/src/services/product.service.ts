@@ -1,38 +1,5 @@
-﻿
-// PHASE_12_3B_TOKEN_EXPIRY_HANDLER
-const handleAuthExpiry = () => {
-  if (typeof window === "undefined") return;
-
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  localStorage.removeItem("admin");
-
-  const currentPath = window.location.pathname;
-  const loginPath = currentPath.startsWith("/login") ? "/login" : "/login";
-
-  if (!currentPath.includes("/login")) {
-    window.location.href = loginPath;
-  }
-};
-
-const attachAuthExpiryInterceptor = (instance: any) => {
-  if (!instance?.interceptors?.response) return;
-
-  instance.interceptors.response.use(
-    (response: any) => response,
-    (error: any) => {
-      const status = error?.response?.status;
-
-      if (status === 401) {
-        handleAuthExpiry();
-      }
-
-      return Promise.reject(error);
-    }
-  );
-};
-
-import axios from "axios";
+﻿import axios from "axios";
+import { attachAuthExpiryInterceptor, attachBearerToken } from "@/api/auth-expiry";
 
 const API =
   process.env.NEXT_PUBLIC_API_URL || "/api";
@@ -41,8 +8,9 @@ const api = axios.create({
   baseURL: API,
 });
 
-
+attachBearerToken(api);
 attachAuthExpiryInterceptor(api);
+
 const getAuthConfig = () => {
   const token =
     typeof window !== "undefined"
@@ -178,5 +146,7 @@ export const scheduleProduct = async (id: string, publishAt?: string, unpublishA
   const response = await api.post(`/products/${id}/schedule`, { publishAt, unpublishAt }, getAuthConfig());
   return response.data;
 };
+
+
 
 

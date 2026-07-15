@@ -4845,3 +4845,1576 @@
     max-width: 100% !important;
   }
 }
+
+/* Dashboard evidence reports + reference-aligned AI assistant polish 2026-07-15 */
+.ds-report-findings {
+  border: 1px solid rgba(99, 139, 190, 0.28) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  background: rgba(7, 18, 34, 0.72) !important;
+  display: grid !important;
+  gap: 12px !important;
+}
+.ds-report-findings > b { color: #9fb1c9 !important; font-size: 12px !important; }
+.ds-report-findings > div { display: grid !important; gap: 10px !important; max-height: 300px !important; overflow: auto !important; padding-right: 4px !important; }
+.ds-report-findings article { display: grid !important; gap: 5px !important; padding: 11px 12px !important; border: 1px solid rgba(56, 189, 248, 0.18) !important; border-radius: 12px !important; background: rgba(2, 8, 23, 0.62) !important; }
+.ds-report-findings code { color: #22d3ee !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+.ds-report-findings strong { color: #f8fafc !important; font-size: 12px !important; letter-spacing: .08em !important; text-transform: uppercase !important; }
+.ds-report-findings p, .ds-report-findings span { margin: 0 !important; color: #cbd5e1 !important; line-height: 1.55 !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child { background: radial-gradient(circle at 50% 25%, rgba(124, 58, 237, .20), transparent 11rem), linear-gradient(180deg, rgba(2, 23, 45, .96), rgba(3, 12, 25, .97)) !important; overflow: hidden !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2 { display: inline-flex !important; align-items: center !important; gap: 9px !important; font-size: 18px !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2::before { content: "✦" !important; color: #d946ef !important; font-size: 22px !important; text-shadow: 0 0 18px rgba(217, 70, 239, .85) !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child > header button { height: 24px !important; min-height: 24px !important; padding: 0 10px !important; border: 0 !important; border-radius: 999px !important; background: rgba(16, 185, 129, .14) !important; color: #34d399 !important; font-size: 12px !important; box-shadow: none !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child > header button::before { content: "" !important; width: 6px !important; height: 6px !important; margin-right: 6px !important; border-radius: 999px !important; display: inline-block !important; background: #22c55e !important; box-shadow: 0 0 12px rgba(34, 197, 94, .9) !important; }
+.dashboard-system.super .ds-ai-orb { width: 150px !important; height: 150px !important; margin: 22px auto 18px !important; position: relative !important; isolation: isolate !important; overflow: visible !important; border-radius: 50% !important; border: 1px solid rgba(34, 211, 238, .72) !important; background: radial-gradient(circle at center, rgba(34, 211, 238, .95) 0 20%, rgba(59, 130, 246, .74) 26%, rgba(124, 58, 237, .86) 52%, rgba(2, 8, 23, .08) 62%), conic-gradient(from 35deg, rgba(34, 211, 238, .9), rgba(124, 58, 237, .96), rgba(34, 211, 238, .9)) !important; box-shadow: 0 0 38px rgba(56, 189, 248, .48), 0 0 64px rgba(124, 58, 237, .38) !important; }
+.dashboard-system.super .ds-ai-orb::before { content: "" !important; position: absolute !important; inset: -16px !important; border-radius: 50% !important; background: repeating-conic-gradient(from 0deg, rgba(34, 211, 238, .7) 0 2deg, transparent 2deg 7deg) !important; -webkit-mask: radial-gradient(circle, transparent 0 54%, #000 55% 61%, transparent 62%) !important; mask: radial-gradient(circle, transparent 0 54%, #000 55% 61%, transparent 62%) !important; opacity: .85 !important; z-index: -1 !important; }
+.dashboard-system.super .ds-ai-orb::after { content: "" !important; position: absolute !important; inset: 15px !important; border-radius: 50% !important; border: 1px solid rgba(191, 219, 254, .38) !important; box-shadow: inset 0 0 24px rgba(124, 58, 237, .45) !important; }
+.dashboard-system.super .ds-ai-orb span { width: 64px !important; height: 64px !important; display: grid !important; place-items: center !important; border-radius: 18px !important; border: 2px solid rgba(125, 211, 252, .86) !important; background: rgba(15, 23, 42, .34) !important; color: #e0f2fe !important; font-size: 42px !important; font-weight: 900 !important; line-height: 1 !important; text-shadow: 0 0 18px rgba(224, 242, 254, .9) !important; position: relative !important; z-index: 2 !important; }
+.dashboard-system.super .ds-ai-actions { gap: 10px !important; }
+.dashboard-system.super .ds-ai-actions button { color: #f8fafc !important; border-color: rgba(139, 92, 246, .34) !important; background: rgba(15, 23, 42, .66) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important; }
+.dashboard-system.super .ds-ai-actions button svg { color: #c084fc !important; filter: drop-shadow(0 0 8px rgba(192, 132, 252, .72)) !important; }
+.dashboard-system.super .ds-super-content > .ds-panel > header, .dashboard-system.super .ds-right .ds-panel > header, .dashboard-system.super .ds-panel > header { padding-left: 16px !important; padding-right: 16px !important; }
+.dashboard-system.super .ds-tab-content { overflow: hidden !important; }
+.dashboard-system.super .ds-project-layout { grid-template-columns: 260px minmax(0, 1fr) !important; gap: 22px !important; align-items: start !important; }
+.dashboard-system.super .ds-project-layout .ds-rows { min-width: 0 !important; overflow: hidden !important; }
+.dashboard-system.super .ds-project-layout .ds-rows > div { grid-template-columns: 24px minmax(0, 1fr) auto !important; gap: 10px !important; min-height: 34px !important; }
+.dashboard-system.super .ds-project-layout .ds-rows span { overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+.dashboard-system.super .ds-insights article { grid-template-columns: 34px minmax(0, 1fr) auto !important; gap: 12px !important; min-height: 56px !important; }
+.dashboard-system.super .ds-insights p { overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+.dashboard-system.super .ds-chat-window { grid-template-columns: 300px minmax(0, 1fr) !important; min-height: 330px !important; padding: 0 !important; overflow: hidden !important; }
+.dashboard-system.super .ds-chat-window aside { padding: 18px !important; border-right: 1px solid rgba(56,189,248,.16) !important; min-height: 330px !important; }
+.dashboard-system.super .ds-chat-window main { display: grid !important; grid-template-rows: minmax(0, 1fr) auto auto !important; padding: 18px !important; gap: 14px !important; min-width: 0 !important; }
+.dashboard-system.super .ds-chat-transcript { min-height: 190px !important; border: 1px solid rgba(99, 139, 190, .22) !important; border-radius: 14px !important; background: rgba(15, 23, 42, .56) !important; padding: 18px !important; overflow: auto !important; }
+.dashboard-system.super .ds-chat-composer { display: grid !important; grid-template-columns: minmax(0, 1fr) auto auto !important; align-items: center !important; gap: 10px !important; padding: 10px 12px !important; border: 1px solid rgba(99,139,190,.25) !important; border-radius: 14px !important; background: rgba(15, 23, 42, .78) !important; }
+.dashboard-system.super .ds-chat-composer input { min-width: 0 !important; background: transparent !important; border: 0 !important; outline: 0 !important; }
+@media (max-width: 1180px) { .dashboard-system.super .ds-project-layout, .dashboard-system.super .ds-chat-window { grid-template-columns: 1fr !important; } .dashboard-system.super .ds-chat-window aside { border-right: 0 !important; border-bottom: 1px solid rgba(56,189,248,.16) !important; } }
+/* =========================================================
+   SUPER DASHBOARD FINAL REFERENCE POLISH 2026-07-15
+   Keeps live API data only; improves reference layout/graph/orb/readability.
+   ========================================================= */
+.dashboard-system.super .ds-panel > header h2 {
+  padding-left: 2px !important;
+  line-height: 1.2 !important;
+}
+.dashboard-system.super .ds-project-chart {
+  min-height: 250px !important;
+  height: 250px !important;
+  padding: 6px 10px 0 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, .58), rgba(8, 18, 34, .72)) !important;
+  overflow: hidden !important;
+}
+.dashboard-system.super .ds-project-chart svg {
+  width: 100% !important;
+  height: 218px !important;
+  overflow: visible !important;
+}
+.dashboard-system.super .ds-project-chart .grid {
+  stroke: rgba(148, 163, 184, .14) !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 2 4 !important;
+}
+.dashboard-system.super .ds-project-chart text {
+  fill: #8fa1b9 !important;
+  font-size: 11px !important;
+}
+.dashboard-system.super .ds-project-chart .area {
+  fill: rgba(124, 58, 237, .18) !important;
+}
+.dashboard-system.super .ds-project-chart .line {
+  fill: none !important;
+  stroke: #7c3aed !important;
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 0 8px rgba(124, 58, 237, .72)) !important;
+}
+.dashboard-system.super .ds-project-chart circle {
+  fill: #7c3aed !important;
+  stroke: #93c5fd !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 0 6px rgba(147, 197, 253, .75)) !important;
+}
+.dashboard-system.super .ds-project-chart-labels {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  color: #9fb0c5 !important;
+  font-size: 10px !important;
+  text-align: center !important;
+}
+.dashboard-system.super .ds-insights article:nth-child(1) i { color: #f97316 !important; background: rgba(248, 113, 113, .14) !important; }
+.dashboard-system.super .ds-insights article:nth-child(2) i { color: #facc15 !important; background: rgba(250, 204, 21, .13) !important; }
+.dashboard-system.super .ds-insights article:nth-child(3) i { color: #22d3ee !important; background: rgba(6, 182, 212, .14) !important; }
+.dashboard-system.super .ds-insights article:nth-child(4) i { color: #ef4444 !important; background: rgba(239, 68, 68, .14) !important; }
+.dashboard-system.super .ds-insights article:nth-child(5) i { color: #22c55e !important; background: rgba(34, 197, 94, .14) !important; }
+.dashboard-system.super .ds-insights b {
+  color: #fbbf24 !important;
+  font-size: 12px !important;
+}
+.dashboard-system.super .ds-insights article:nth-child(3) b,
+.dashboard-system.super .ds-insights article:nth-child(5) b { color: #22d3ee !important; }
+.dashboard-system.super .ds-insights p {
+  color: #d6e2f1 !important;
+  font-size: 11px !important;
+}
+.dashboard-system.super .ds-insights small {
+  color: #9fb0c5 !important;
+  font-size: 10px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child {
+  padding: 0 14px 14px !important;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(124, 58, 237, .30), transparent 10rem),
+    linear-gradient(180deg, rgba(2, 23, 45, .98), rgba(3, 12, 25, .98)) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child > header {
+  margin: 0 -14px 18px !important;
+  min-height: 58px !important;
+  padding: 0 18px !important;
+  background: rgba(2, 31, 57, .92) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, .16) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb {
+  width: 154px !important;
+  height: 154px !important;
+  margin: 18px auto 18px !important;
+  background:
+    radial-gradient(circle at center, rgba(224, 242, 254, .95) 0 11%, rgba(34, 211, 238, .92) 18%, rgba(59, 130, 246, .64) 32%, rgba(124, 58, 237, .88) 54%, rgba(2, 8, 23, .06) 67%),
+    conic-gradient(from 22deg, rgba(34, 211, 238, .95), rgba(124, 58, 237, .96), rgba(217, 70, 239, .9), rgba(34, 211, 238, .95)) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb::before {
+  inset: -13px !important;
+  background: repeating-conic-gradient(from 0deg, rgba(34, 211, 238, .82) 0 2deg, transparent 2deg 6deg) !important;
+  -webkit-mask: radial-gradient(circle, transparent 0 55%, #000 56% 62%, transparent 63%) !important;
+  mask: radial-gradient(circle, transparent 0 55%, #000 56% 62%, transparent 63%) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb span {
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 16px !important;
+  font-size: 40px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child h3 {
+  margin: 0 0 17px !important;
+  color: #f8fafc !important;
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions button {
+  min-height: 38px !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 0 9px !important;
+  border-radius: 8px !important;
+  border-color: rgba(139, 92, 246, .36) !important;
+  background: rgba(15, 23, 42, .72) !important;
+  color: #f8fafc !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+.dashboard-system.super .ds-chat-console-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 42px !important;
+  padding: 0 12px !important;
+}
+.dashboard-system.super .ds-chat-console-head b {
+  margin-left: auto !important;
+  max-width: 420px !important;
+}
+.dashboard-system.super .ds-chat.ds-chat-window {
+  min-height: 360px !important;
+  grid-template-columns: 320px minmax(0, 1fr) !important;
+  background: rgba(5, 14, 27, .82) !important;
+}
+.dashboard-system.super .ds-chat-transcript {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  min-height: 215px !important;
+}
+.dashboard-system.super .ds-ai-message {
+  width: min(720px, 82%) !important;
+}
+@media (max-width: 1280px) {
+  .dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+/* =========================================================
+   SUPER DASHBOARD INSIGHT CLICK + GAP/ASSISTANT POLISH 2026-07-15
+   ========================================================= */
+.dashboard-system.super .ds-super-content {
+  align-items: stretch !important;
+}
+.dashboard-system.super .ds-super-content > .ds-panel {
+  min-height: 0 !important;
+}
+.dashboard-system.super .ds-super-content > .ds-panel:first-child {
+  padding-bottom: 8px !important;
+}
+.dashboard-system.super .ds-super-content > .ds-panel:nth-child(2) {
+  padding-bottom: 8px !important;
+  overflow: hidden !important;
+}
+.dashboard-system.super .ds-super-content > .ds-panel:nth-child(2) .ds-insights {
+  display: grid !important;
+  gap: 0 !important;
+  align-content: start !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+.dashboard-system.super .ds-insight-button {
+  appearance: none !important;
+  display: grid !important;
+  width: 100% !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 52px !important;
+  padding: 8px 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(89, 131, 169, .22) !important;
+  background: transparent !important;
+  color: inherit !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+.dashboard-system.super .ds-insight-button:hover,
+.dashboard-system.super .ds-insight-button:focus-visible {
+  background: rgba(124, 58, 237, .08) !important;
+  outline: none !important;
+}
+.dashboard-system.super .ds-insight-button i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+}
+.dashboard-system.super .ds-insight-button div {
+  min-width: 0 !important;
+}
+.dashboard-system.super .ds-insight-button b,
+.dashboard-system.super .ds-insight-button p {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.dashboard-system.super .ds-insight-button b {
+  margin-bottom: 3px !important;
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+}
+.dashboard-system.super .ds-insight-button p {
+  margin: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+.dashboard-system.super .ds-insight-button small {
+  align-self: start !important;
+  padding-top: 2px !important;
+  font-size: 9px !important;
+  text-transform: uppercase !important;
+}
+.dashboard-system.super .ds-project-chart {
+  height: 230px !important;
+  min-height: 230px !important;
+  margin-bottom: 0 !important;
+}
+.dashboard-system.super .ds-project-chart svg {
+  height: 198px !important;
+}
+.dashboard-system.super .ds-tab-content {
+  padding-bottom: 0 !important;
+}
+.dashboard-system.super .ds-project-layout {
+  gap: 18px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child {
+  padding: 0 12px 12px !important;
+  border-color: rgba(56, 189, 248, .22) !important;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(124, 58, 237, .34), transparent 9.8rem),
+    linear-gradient(180deg, rgba(2, 23, 45, .98), rgba(3, 12, 25, .99)) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child > header {
+  margin: 0 -12px 14px !important;
+  min-height: 54px !important;
+  padding: 0 16px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2 {
+  font-size: 17px !important;
+  gap: 8px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2::before {
+  font-size: 20px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb {
+  width: 142px !important;
+  height: 142px !important;
+  margin: 14px auto 16px !important;
+  box-shadow:
+    0 0 34px rgba(56, 189, 248, .44),
+    0 0 62px rgba(124, 58, 237, .40) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb::before {
+  inset: -12px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb span {
+  width: 58px !important;
+  height: 58px !important;
+  font-size: 38px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child h3 {
+  margin: 0 0 14px !important;
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions {
+  gap: 8px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions button {
+  min-height: 36px !important;
+  padding: 0 8px !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+
+/* =========================================================
+   SUPER DASHBOARD GAP + KPI + AI ASSISTANT REFERENCE PASS 2026-07-15B
+   ========================================================= */
+.dashboard-system.super .ds-kpi-grid.super {
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+.dashboard-system.super .ds-kpi {
+  min-height: 132px !important;
+  padding: 14px 14px 10px !important;
+}
+.dashboard-system.super .ds-kpi > p {
+  margin: 0 0 8px !important;
+  color: #cdd8e8 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+.dashboard-system.super .ds-kpi > strong {
+  display: block !important;
+  margin-top: 2px !important;
+  color: #f8fafc !important;
+  font-size: 25px !important;
+  line-height: 1 !important;
+  letter-spacing: -.035em !important;
+}
+.dashboard-system.super .ds-kpi > small {
+  display: block !important;
+  margin-top: 7px !important;
+  color: #9fb0c5 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+.dashboard-system.super .ds-kpi-icon {
+  margin-bottom: 16px !important;
+}
+.dashboard-system.super .ds-small-kpi {
+  min-height: 64px !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  align-content: center !important;
+  gap: 9px 11px !important;
+  padding: 10px 12px !important;
+}
+.dashboard-system.super .ds-small-kpi > p {
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+  color: #e8eef8 !important;
+}
+.dashboard-system.super .ds-small-kpi > strong {
+  font-size: 16px !important;
+  line-height: 1.05 !important;
+}
+.dashboard-system.super .ds-small-kpi > small {
+  font-size: 9.5px !important;
+  color: #9fb0c5 !important;
+}
+.dashboard-system.super .ds-super-content {
+  align-items: start !important;
+  gap: 12px !important;
+}
+.dashboard-system.super .ds-super-content > .ds-panel:first-child,
+.dashboard-system.super .ds-super-content > .ds-panel:nth-child(2) {
+  min-height: auto !important;
+  height: auto !important;
+  padding-bottom: 10px !important;
+}
+.dashboard-system.super .ds-tab-content {
+  min-height: 0 !important;
+}
+.dashboard-system.super .ds-project-layout {
+  grid-template-columns: 250px minmax(0, 1fr) !important;
+  align-items: start !important;
+}
+.dashboard-system.super .ds-project-layout .ds-rows > div {
+  min-height: 31px !important;
+}
+.dashboard-system.super .ds-project-chart {
+  height: 222px !important;
+  min-height: 222px !important;
+  padding-bottom: 0 !important;
+}
+.dashboard-system.super .ds-project-chart svg {
+  height: 190px !important;
+}
+.dashboard-system.super .ds-insights {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.dashboard-system.super .ds-insight-button {
+  min-height: 48px !important;
+  padding: 7px 0 !important;
+}
+.dashboard-system.super .ds-insight-button:nth-child(1) i { color: #f97316 !important; background: rgba(248, 113, 113, .14) !important; }
+.dashboard-system.super .ds-insight-button:nth-child(2) i { color: #facc15 !important; background: rgba(250, 204, 21, .13) !important; }
+.dashboard-system.super .ds-insight-button:nth-child(3) i { color: #22d3ee !important; background: rgba(6, 182, 212, .14) !important; }
+.dashboard-system.super .ds-insight-button:nth-child(4) i { color: #ef4444 !important; background: rgba(239, 68, 68, .14) !important; }
+.dashboard-system.super .ds-insight-button:nth-child(5) i { color: #22c55e !important; background: rgba(34, 197, 94, .14) !important; }
+.dashboard-system.super .ds-right > .ds-panel:first-child {
+  padding: 0 14px 14px !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(56, 189, 248, .22), transparent 8rem),
+    radial-gradient(circle at 66% 30%, rgba(168, 85, 247, .22), transparent 8rem),
+    linear-gradient(180deg, rgba(2, 23, 45, .98), rgba(2, 10, 22, .99)) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child > header {
+  margin: 0 -14px 18px !important;
+  min-height: 56px !important;
+  padding: 0 18px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb {
+  width: 132px !important;
+  height: 132px !important;
+  margin: 16px auto 18px !important;
+  border: 1px solid rgba(34, 211, 238, .55) !important;
+  background:
+    radial-gradient(circle at center, rgba(15, 23, 42, .98) 0 30%, rgba(30, 41, 80, .92) 31% 43%, rgba(124, 58, 237, .74) 44% 58%, rgba(14, 165, 233, .22) 60% 100%),
+    conic-gradient(from 10deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .9), rgba(217, 70, 239, .9), rgba(34, 211, 238, .95)) !important;
+  box-shadow: 0 0 34px rgba(56, 189, 248, .34), 0 0 54px rgba(124, 58, 237, .34) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb::before {
+  inset: -10px !important;
+  opacity: .78 !important;
+  background: repeating-conic-gradient(from 0deg, rgba(34, 211, 238, .75) 0 1.6deg, transparent 1.6deg 5.5deg) !important;
+  -webkit-mask: radial-gradient(circle, transparent 0 57%, #000 58% 64%, transparent 65%) !important;
+  mask: radial-gradient(circle, transparent 0 57%, #000 58% 64%, transparent 65%) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb::after {
+  inset: 18px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(96, 165, 250, .36) !important;
+  box-shadow: inset 0 0 24px rgba(124, 58, 237, .42) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-orb span {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 13px !important;
+  border: 2px solid rgba(125, 211, 252, .82) !important;
+  background: rgba(15, 23, 42, .82) !important;
+  color: #dff7ff !important;
+  font-size: 34px !important;
+  box-shadow: 0 0 22px rgba(34, 211, 238, .34) !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child h3 {
+  margin: 0 0 16px !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions button {
+  min-height: 36px !important;
+  border-color: rgba(139, 92, 246, .42) !important;
+  background: rgba(15, 23, 42, .66) !important;
+  color: #f7f3ff !important;
+}
+.dashboard-system.super .ds-right > .ds-panel:first-child .ds-ai-actions button svg {
+  color: #c084fc !important;
+}
+
+/* =========================================================
+   Dashboard Deep Polish 2026-07-16 — reference card alignment
+   ========================================================= */
+.dashboard-system {
+  --ds-card-header: rgba(3, 31, 58, .82);
+}
+
+.dashboard-system .ds-main {
+  gap: 10px !important;
+}
+
+.dashboard-system .ds-panel {
+  overflow: hidden !important;
+}
+
+.dashboard-system .ds-panel > header {
+  min-height: 58px !important;
+  margin: -11px -11px 10px !important;
+  padding: 0 16px !important;
+  align-items: center !important;
+  background: var(--ds-card-header) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, .16) !important;
+}
+
+.dashboard-system .ds-panel > header h2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.ds-kpi-grid.super {
+  align-items: stretch !important;
+}
+
+.ds-kpi,
+.ds-small-kpi {
+  position: relative !important;
+  display: grid !important;
+  align-content: space-between !important;
+  text-align: left !important;
+  overflow: hidden !important;
+}
+
+.ds-kpi:not(.ds-health-kpi) {
+  grid-template-rows: auto minmax(20px, 1fr) auto auto !important;
+  min-height: 136px !important;
+  padding: 16px 18px 14px !important;
+}
+
+.ds-small-kpi {
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  column-gap: 10px !important;
+  min-height: 66px !important;
+  padding: 12px 14px !important;
+  align-content: center !important;
+}
+
+.ds-small-kpi .ds-kpi-icon {
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
+}
+
+.ds-kpi p,
+.ds-small-kpi p {
+  margin: 0 !important;
+  color: #c9d5e6 !important;
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+  white-space: normal !important;
+}
+
+.ds-kpi strong,
+.ds-small-kpi strong {
+  margin: 0 !important;
+  color: #f8fafc !important;
+  font-size: clamp(20px, 1.8vw, 27px) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.035em !important;
+}
+
+.ds-small-kpi strong {
+  font-size: 16px !important;
+  letter-spacing: -.02em !important;
+}
+
+.ds-kpi small,
+.ds-small-kpi small {
+  color: #96a8bf !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+.ds-kpi em,
+.ds-small-kpi em {
+  display: none !important;
+}
+
+.ds-health-kpi {
+  justify-items: start !important;
+  min-height: 136px !important;
+  padding: 14px 16px !important;
+}
+
+.ds-health-ring {
+  justify-self: center !important;
+  align-self: center !important;
+  width: 92px !important;
+  height: 92px !important;
+}
+
+.ds-super-content {
+  align-items: stretch !important;
+}
+
+.ds-super-content > .ds-panel {
+  min-height: 388px !important;
+}
+
+.ds-tab-content {
+  padding: 0 !important;
+  min-height: 290px !important;
+}
+
+.ds-tabs {
+  gap: 16px !important;
+  margin: 0 0 14px !important;
+  padding: 0 0 12px !important;
+  border-bottom: 1px solid rgba(148, 163, 184, .15) !important;
+}
+
+.ds-tabs button,
+.ds-tabs span,
+.ds-tabs b {
+  min-width: 72px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.ds-project-layout {
+  grid-template-columns: 235px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: start !important;
+}
+
+.ds-project-layout > div:last-child {
+  min-width: 0 !important;
+}
+
+.ds-project-layout h3 {
+  margin: 0 0 8px !important;
+  color: #f8fafc !important;
+  font-size: 14px !important;
+}
+
+.ds-rows {
+  gap: 0 !important;
+}
+
+.ds-rows > div {
+  min-height: 34px !important;
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  border-bottom: 1px solid rgba(148, 163, 184, .13) !important;
+}
+
+.ds-rows > div span,
+.ds-rows > div b {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ds-project-chart {
+  min-height: 248px !important;
+  padding: 10px 12px 8px !important;
+  border-radius: 18px !important;
+  background: rgba(11, 24, 43, .74) !important;
+}
+
+.ds-project-chart svg {
+  height: 210px !important;
+}
+
+.ds-project-chart .grid {
+  stroke: rgba(148, 163, 184, .13) !important;
+  stroke-dasharray: 2 5 !important;
+}
+
+.ds-project-chart .area {
+  fill: rgba(139, 92, 246, .24) !important;
+  opacity: .24 !important;
+}
+
+.ds-project-chart .line {
+  fill: none !important;
+  stroke: #8b5cf6 !important;
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, .55)) !important;
+}
+
+.ds-project-chart circle {
+  fill: #a78bfa !important;
+  stroke: #dbeafe !important;
+  stroke-width: 2 !important;
+}
+
+.ds-project-chart-labels,
+.ds-project-chart-legend {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  color: #b9c7dc !important;
+  font-size: 11px !important;
+}
+
+.ds-project-chart-legend {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(148, 163, 184, .12) !important;
+}
+
+.ds-project-chart-legend span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+}
+
+.ds-project-chart-legend i {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #38bdf8 !important;
+}
+
+.ds-project-chart-legend i.issues { background: #e879f9 !important; }
+.ds-project-chart-legend i.prs { background: #22d3ee !important; }
+.ds-project-chart-legend i.reviews { background: #8b5cf6 !important; }
+.ds-project-chart-legend b { color: #f8fafc !important; }
+
+.ds-insights {
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+.ds-insight-button {
+  min-height: 58px !important;
+  grid-template-columns: 36px minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid rgba(148, 163, 184, .14) !important;
+  background: transparent !important;
+}
+
+.ds-insight-button i {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 9px !important;
+  background: rgba(6, 182, 212, .16) !important;
+  color: #22d3ee !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.ds-insight-button:nth-child(1) i { color: #fb7185 !important; background: rgba(239, 68, 68, .18) !important; }
+.ds-insight-button:nth-child(2) i { color: #facc15 !important; background: rgba(250, 204, 21, .16) !important; }
+.ds-insight-button:nth-child(3) i { color: #22d3ee !important; background: rgba(14, 165, 233, .16) !important; }
+.ds-insight-button:nth-child(4) i { color: #fb7185 !important; background: rgba(239, 68, 68, .18) !important; }
+.ds-insight-button:nth-child(5) i { color: #22c55e !important; background: rgba(34, 197, 94, .16) !important; }
+
+.ds-insight-button b {
+  color: #facc15 !important;
+  font-size: 12px !important;
+}
+
+.ds-insight-button p {
+  max-width: 100% !important;
+  margin: 3px 0 0 !important;
+  overflow: hidden !important;
+  color: #d7e1ef !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ds-insight-button small {
+  color: #b8c5d9 !important;
+  font-size: 10px !important;
+  text-transform: none !important;
+}
+
+.ds-insights-footer {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 10px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #a855f7 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+.ds-right > .ds-panel:first-child {
+  padding-bottom: 14px !important;
+  background:
+    radial-gradient(circle at 48% 38%, rgba(124, 58, 237, .22), transparent 170px),
+    linear-gradient(145deg, rgba(7, 20, 38, .98), rgba(3, 11, 23, .98)) !important;
+}
+
+.ds-right > .ds-panel:first-child > header h2 {
+  color: #f8fafc !important;
+  font-size: 17px !important;
+}
+
+.ds-online-pill {
+  height: 26px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(16, 185, 129, .14) !important;
+  color: #34d399 !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+.ds-ai-orb {
+  width: 142px !important;
+  height: 142px !important;
+  margin: 14px auto 18px !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, .95), rgba(37, 99, 235, .48) 31%, rgba(124, 58, 237, .72) 52%, transparent 54%),
+    repeating-conic-gradient(from 0deg, rgba(34, 211, 238, .95) 0 2deg, transparent 2deg 6deg),
+    radial-gradient(circle, rgba(6, 12, 29, .95) 0 44%, transparent 45%) !important;
+  box-shadow: 0 0 42px rgba(59, 130, 246, .38), 0 0 54px rgba(168, 85, 247, .24) !important;
+}
+
+.ds-ai-orb::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 26px !important;
+  border: 1px solid rgba(34, 211, 238, .82) !important;
+  border-radius: 26px !important;
+  background: rgba(15, 23, 42, .48) !important;
+  box-shadow: inset 0 0 20px rgba(34, 211, 238, .35) !important;
+}
+
+.ds-ai-orb span {
+  position: relative !important;
+  z-index: 1 !important;
+  font-size: 38px !important;
+  line-height: 1 !important;
+}
+
+.ds-right h3 {
+  margin: 0 0 16px !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+
+.ds-ai-actions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.ds-ai-actions button {
+  display: flex !important;
+  min-height: 40px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 0 10px !important;
+  border-color: rgba(168, 85, 247, .32) !important;
+  background: rgba(15, 23, 42, .62) !important;
+  color: #f4f0ff !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+
+.ds-ai-actions button svg {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  color: #c084fc !important;
+}
+
+.ds-monitor {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.ds-monitor article {
+  min-height: 74px !important;
+  padding: 13px !important;
+}
+
+.ds-chat-console-head {
+  display: grid !important;
+  grid-template-columns: auto auto minmax(0, 1fr) minmax(240px, 370px) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  margin: 0 0 12px !important;
+}
+
+.ds-chat-console-head span,
+.ds-chat-console-head small,
+.ds-chat-console-head em {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 22px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: 850 !important;
+}
+
+.ds-chat-console-head span {
+  background: rgba(109, 40, 217, .55) !important;
+  color: #e9d5ff !important;
+}
+
+.ds-chat-console-head small,
+.ds-chat-console-head em {
+  background: rgba(15, 23, 42, .72) !important;
+  color: #cbd5e1 !important;
+}
+
+.ds-chat-console-head b {
+  justify-self: end !important;
+  max-width: 100% !important;
+  min-height: 34px !important;
+  padding: 9px 16px !important;
+  overflow: hidden !important;
+  border-radius: 9px !important;
+  background: linear-gradient(90deg, rgba(91, 33, 182, .95), rgba(88, 28, 135, .95)) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ds-chat-window {
+  grid-template-columns: 250px minmax(0, 1fr) !important;
+  min-height: 292px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(105, 146, 204, .2) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+.ds-chat-window aside {
+  padding: 16px !important;
+  border-right: 1px solid rgba(148, 163, 184, .14) !important;
+}
+
+.ds-chat-window aside h3 {
+  margin: 0 0 14px !important;
+  text-align: left !important;
+  font-size: 14px !important;
+}
+
+.ds-chat-list button {
+  min-height: 42px !important;
+  padding: 8px 0 !important;
+  gap: 9px !important;
+}
+
+.ds-chat-window main {
+  display: grid !important;
+  grid-template-rows: minmax(170px, 1fr) auto auto !important;
+  gap: 10px !important;
+  padding: 18px !important;
+}
+
+.ds-chat-transcript {
+  align-content: start !important;
+  padding-top: 0 !important;
+}
+
+.ds-ai-message {
+  max-width: 720px !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
+  gap: 12px !important;
+  margin: 0 !important;
+}
+
+.ds-ai-message > i {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  color: #22d3ee !important;
+  background: radial-gradient(circle, rgba(34, 211, 238, .22), rgba(109, 40, 217, .28)) !important;
+}
+
+.ds-ai-message > div {
+  padding: 14px 16px !important;
+  border: 1px solid rgba(105, 146, 204, .22) !important;
+  border-radius: 10px !important;
+  background: rgba(9, 17, 32, .82) !important;
+}
+
+.ds-ai-message b {
+  color: #f8fafc !important;
+  font-size: 13px !important;
+}
+
+.ds-ai-message p {
+  margin: 10px 0 0 !important;
+  white-space: pre-line !important;
+  color: #dbe6f5 !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+.ds-chat-composer {
+  min-height: 48px !important;
+  padding: 0 8px 0 16px !important;
+  border-radius: 10px !important;
+  background: rgba(15, 23, 42, .75) !important;
+}
+
+.ds-chat-composer button {
+  min-width: 78px !important;
+  height: 34px !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #6d28d9, #7c3aed) !important;
+}
+
+@media (max-width: 1536px) and (min-width: 981px) {
+  .dashboard-system {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 360px) !important;
+  }
+
+  .ds-ai-actions {
+    gap: 7px !important;
+  }
+
+  .ds-ai-actions button {
+    padding-inline: 6px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .ds-project-layout,
+  .ds-chat-window {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ds-chat-window aside {
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, .14) !important;
+  }
+}
+/* Dashboard Reference Layout Contract 2026-07-16
+   Surgical final layer: matches approved reference card grouping, spacing and widget polish. */
+.dashboard-system.super {
+  grid-template-columns: minmax(0, 1fr) clamp(350px, 20.5vw, 404px) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.dashboard-system.super .ds-main {
+  gap: 10px !important;
+}
+
+.dashboard-system.super .ds-hero {
+  min-height: 62px !important;
+  margin: 0 !important;
+  padding: 10px 6px 4px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dashboard-system.super .ds-hero h1 {
+  margin: 0 0 3px !important;
+  color: #f8fafc !important;
+  font-size: clamp(22px, 1.45vw, 28px) !important;
+  font-weight: 950 !important;
+  letter-spacing: -.045em !important;
+  line-height: 1.05 !important;
+}
+
+.dashboard-system.super .ds-hero p {
+  margin: 0 !important;
+  color: #a8b7cc !important;
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+.dashboard-system.super .ds-hero-actions {
+  align-self: center !important;
+  gap: 10px !important;
+}
+
+.dashboard-system.super .ds-hero-actions button {
+  min-width: 84px !important;
+  min-height: 46px !important;
+  border-radius: 10px !important;
+  font-weight: 900 !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi {
+  min-width: 0 !important;
+  min-height: 148px !important;
+  padding: 14px 15px 12px !important;
+  border-radius: 8px !important;
+  display: grid !important;
+  align-content: start !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi.ds-health-kpi {
+  display: block !important;
+  text-align: left !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi-icon {
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 0 16px !important;
+  border-radius: 999px !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi p,
+.dashboard-system.super .ds-small-kpi .ds-small-kpi-text p {
+  margin: 0 0 7px !important;
+  color: #c6d3e5 !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  letter-spacing: -.02em !important;
+  line-height: 1.05 !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi strong {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(22px, 1.55vw, 30px) !important;
+  font-weight: 950 !important;
+  letter-spacing: -.045em !important;
+  line-height: 1.02 !important;
+}
+
+.dashboard-system.super .ds-kpi-grid.super .ds-kpi span {
+  margin-top: 6px !important;
+  color: #a9b7ca !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.super .ds-health-ring {
+  width: 86px !important;
+  height: 86px !important;
+  margin: 6px auto 4px !important;
+}
+
+.dashboard-system.super .ds-health-ring::after {
+  inset: 9px !important;
+}
+
+.dashboard-system.super .ds-health-ring strong {
+  font-size: 25px !important;
+}
+
+.dashboard-system.super .ds-health-ring span {
+  font-size: 9px !important;
+}
+
+.dashboard-system.super .ds-small-kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.dashboard-system.super .ds-small-kpi {
+  min-width: 0 !important;
+  min-height: 68px !important;
+  padding: 12px 13px !important;
+  border-radius: 8px !important;
+  align-items: center !important;
+  gap: 11px !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.super .ds-small-kpi .ds-kpi-icon {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  margin: 0 !important;
+}
+
+.dashboard-system.super .ds-small-kpi .ds-small-kpi-text {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 2px !important;
+}
+
+.dashboard-system.super .ds-small-kpi .ds-small-kpi-text strong {
+  color: #ffffff !important;
+  font-size: clamp(15px, .95vw, 18px) !important;
+  font-weight: 950 !important;
+  line-height: 1.04 !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.super .ds-super-content {
+  grid-template-columns: minmax(0, 1.74fr) minmax(360px, .96fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+}
+
+.dashboard-system.super .ds-super-content > .ds-panel {
+  min-height: 406px !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.super .ds-panel > header {
+  min-height: 56px !important;
+  padding: 0 14px !important;
+  align-items: center !important;
+  background: rgba(1, 32, 61, .93) !important;
+}
+
+.dashboard-system.super .ds-panel > header h2 {
+  padding-left: 4px !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  letter-spacing: -.02em !important;
+  line-height: 1 !important;
+}
+
+.dashboard-system.super .ds-panel > header button {
+  min-height: 42px !important;
+  border-radius: 10px !important;
+  font-weight: 900 !important;
+}
+
+.dashboard-system.super .ds-tabs {
+  min-height: 50px !important;
+  padding: 0 0 0 !important;
+  gap: 18px !important;
+  border-bottom: 1px solid rgba(148, 163, 184, .14) !important;
+}
+
+.dashboard-system.super .ds-tabs button,
+.dashboard-system.super .ds-tabs b,
+.dashboard-system.super .ds-tabs span {
+  min-width: 86px !important;
+  min-height: 34px !important;
+  padding: 0 16px !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.dashboard-system.super .ds-tab-content {
+  padding-top: 12px !important;
+}
+
+.dashboard-system.super .ds-project-layout {
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) !important;
+  gap: 14px !important;
+  align-items: start !important;
+  min-height: 280px !important;
+}
+
+.dashboard-system.super .ds-project-layout h3 {
+  margin: 0 0 8px !important;
+  font-size: 14px !important;
+  line-height: 1.1 !important;
+}
+
+.dashboard-system.super .ds-rows > div {
+  min-height: 34px !important;
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
+}
+
+.dashboard-system.super .ds-project-chart {
+  min-height: 246px !important;
+  padding: 14px 18px 10px !important;
+  border-radius: 18px !important;
+}
+
+.dashboard-system.super .ds-project-chart svg {
+  height: 188px !important;
+}
+
+.dashboard-system.super .ds-project-chart-labels {
+  margin-top: 4px !important;
+}
+
+.dashboard-system.super .ds-project-chart-legend {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+}
+
+.dashboard-system.super .ds-insights {
+  display: grid !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+.dashboard-system.super .ds-insight-button {
+  min-height: 58px !important;
+  padding: 9px 0 !important;
+  grid-template-columns: 38px minmax(0, 1fr) 62px !important;
+  align-items: center !important;
+}
+
+.dashboard-system.super .ds-insight-button i {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+}
+
+.dashboard-system.super .ds-insight-button b {
+  font-size: 12.5px !important;
+  line-height: 1.1 !important;
+}
+
+.dashboard-system.super .ds-insight-button p {
+  max-width: 100% !important;
+  font-size: 11.5px !important;
+  line-height: 1.25 !important;
+}
+
+.dashboard-system.super .ds-insights-footer {
+  margin-top: 12px !important;
+  color: #a855f7 !important;
+  font-size: 13px !important;
+}
+
+.dashboard-system.super .ds-right {
+  gap: 12px !important;
+}
+
+.dashboard-system.super .ds-right > .ds-panel:first-child {
+  min-height: 378px !important;
+  border-color: rgba(14, 165, 233, .35) !important;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(91, 33, 182, .22), transparent 172px),
+    linear-gradient(145deg, rgba(5, 22, 42, .98), rgba(4, 12, 25, .99)) !important;
+}
+
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2 {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+}
+
+.dashboard-system.super .ds-right > .ds-panel:first-child > header h2::before {
+  content: "✦" !important;
+  color: #e879f9 !important;
+  font-size: 20px !important;
+  filter: drop-shadow(0 0 10px rgba(232, 121, 249, .75)) !important;
+}
+
+.dashboard-system.super .ds-online-pill {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 13px !important;
+  border-radius: 999px !important;
+  color: #34d399 !important;
+  background: rgba(16, 185, 129, .14) !important;
+  font-size: 12px !important;
+}
+
+.dashboard-system.super .ds-ai-orb {
+  width: 150px !important;
+  height: 150px !important;
+  margin: 18px auto 17px !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, .98) 0 16%, rgba(59, 130, 246, .66) 27%, rgba(124, 58, 237, .86) 45%, transparent 47%),
+    repeating-conic-gradient(from 0deg, rgba(34, 211, 238, .95) 0 2deg, transparent 2deg 5.5deg),
+    radial-gradient(circle, rgba(15, 23, 42, .98) 0 53%, rgba(34, 211, 238, .44) 54% 55%, transparent 56%) !important;
+  box-shadow: 0 0 46px rgba(14, 165, 233, .34), 0 0 50px rgba(168, 85, 247, .22) !important;
+}
+
+.dashboard-system.super .ds-ai-orb::before {
+  inset: 41px !important;
+  border-radius: 15px !important;
+  border: 2px solid rgba(125, 211, 252, .8) !important;
+  background: rgba(15, 23, 42, .62) !important;
+  box-shadow: 0 0 20px rgba(34, 211, 238, .42), inset 0 0 18px rgba(125, 211, 252, .22) !important;
+}
+
+.dashboard-system.super .ds-ai-orb span {
+  font-size: 38px !important;
+  font-weight: 950 !important;
+}
+
+.dashboard-system.super .ds-right > .ds-panel:first-child h3 {
+  max-width: 320px !important;
+  margin: 0 auto 17px !important;
+  font-size: 16px !important;
+  line-height: 1.32 !important;
+}
+
+.dashboard-system.super .ds-ai-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+  padding: 0 12px !important;
+}
+
+.dashboard-system.super .ds-ai-actions button {
+  min-width: 0 !important;
+  min-height: 39px !important;
+  padding: 0 8px !important;
+  border-radius: 8px !important;
+  gap: 6px !important;
+  color: #faf5ff !important;
+  font-size: clamp(9.5px, .56vw, 11px) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  text-wrap: balance !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.super .ds-ai-actions button svg {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+}
+
+.dashboard-system.super .ds-monitor {
+  padding: 10px 12px 12px !important;
+}
+
+.dashboard-system.super .ds-monitor article {
+  min-height: 74px !important;
+  border-radius: 8px !important;
+}
+
+.dashboard-system.super .ds-rail-activity article {
+  min-height: 54px !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  padding: 9px 12px !important;
+}
+
+.dashboard-system.super > .ds-main > .ds-panel {
+  min-height: 350px !important;
+  margin-top: 0 !important;
+}
+
+.dashboard-system.super > .ds-main > .ds-panel > header h2 {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+.dashboard-system.super > .ds-main > .ds-panel > header h2::before {
+  content: "✦" !important;
+  color: #e879f9 !important;
+  font-size: 15px !important;
+}
+
+.dashboard-system.super .ds-chat-console-head {
+  grid-template-columns: auto auto auto minmax(280px, 420px) !important;
+  padding: 10px 12px 4px !important;
+  margin: 0 0 6px !important;
+}
+
+.dashboard-system.super .ds-chat-window {
+  grid-template-columns: 250px minmax(0, 1fr) !important;
+  min-height: 300px !important;
+  margin: 0 12px 12px !important;
+}
+
+.dashboard-system.super .ds-chat-transcript {
+  min-height: 176px !important;
+}
+
+.dashboard-system.super .ds-ai-message > div {
+  max-width: 690px !important;
+}
+
+.dashboard-system.super .ds-chat-composer {
+  min-height: 48px !important;
+}
+
+@media (max-width: 1620px) and (min-width: 981px) {
+  .dashboard-system.super {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 370px) !important;
+  }
+
+  .dashboard-system.super .ds-kpi-grid.super {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-system.super .ds-kpi-grid.super .ds-kpi {
+    padding-inline: 12px !important;
+  }
+
+  .dashboard-system.super .ds-ai-actions {
+    gap: 7px !important;
+    padding-inline: 9px !important;
+  }
+}
+
+@media (max-width: 1366px) and (min-width: 981px) {
+  .dashboard-system.super .ds-kpi-grid.super {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-system.super .ds-small-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-system.super .ds-super-content {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .dashboard-system.super,
+  .dashboard-system.super .ds-super-content,
+  .dashboard-system.super .ds-project-layout,
+  .dashboard-system.super .ds-chat-window {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-system.super .ds-small-kpi-grid,
+  .dashboard-system.super .ds-kpi-grid.super {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .dashboard-system.super .ds-small-kpi-grid,
+  .dashboard-system.super .ds-kpi-grid.super,
+  .dashboard-system.super .ds-ai-actions {
+    grid-template-columns: 1fr !important;
+  }
+}

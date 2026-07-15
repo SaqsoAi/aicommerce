@@ -1,7 +1,7 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 import { execFileSync } from "child_process";
-import type { CopilotRequest, CopilotResponse, ImpactAnalysis, ProjectIndexSummary, SafeExecutionSandboxPlan } from "./types";
+import type { CopilotRequest, CopilotResponse, ImpactAnalysis, ProjectIndexFinding, ProjectIndexSummary, SafeExecutionSandboxPlan } from "./types";
 
 type GatewayLike = (payload: Record<string, unknown>) => Promise<unknown>;
 
@@ -115,8 +115,15 @@ export function buildProjectIndexSummary(projectRoot = process.cwd()): ProjectIn
   let debtMarkers = 0;
   let unusedFiles = 0;
   const normalizedLineCounts = new Map<string, number>();
+  const normalizedLineLocations = new Map<string, Array<{ file: string; line: number }>>();
   const sourceNames = new Map<string, string>();
   const sourceTextParts: string[] = [];
+  const findings: ProjectIndexFinding[] = [];
+
+  const relativeFile = (full: string) => path.relative(workspaceRoot, full).replace(/\\/g, "/");
+  const pushFinding = (category: ProjectIndexFinding["category"], full: string, line: number, message: string, instruction: string) => {
+    findings.push({ category, file: relativeFile(full), line, message, instruction });
+  };
 
   const walk = (dir: string) => {
     for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -141,24 +148,53 @@ export function buildProjectIndexSummary(projectRoot = process.cwd()): ProjectIn
       const extension = path.extname(full).toLowerCase();
       if (!SOURCE_EXTENSIONS.has(extension)) continue;
       const contents = fs.readFileSync(full, "utf8");
+      const lines = contents.split(/\r?\n/);
       sourceTextParts.push(contents);
-      linesOfCode += contents.split(/\r?\n/).filter((line) => line.trim()).length;
-      const todoCount = (contents.match(/\b(?:TODO|FIXME|HACK)\b/gi) || []).length;
-      const consoleCount = (contents.match(/\bconsole\.(?:log|warn|error)\s*\(/g) || []).length;
-      const looseAnyCount = (contents.match(/:\s*any\b|as\s+any\b/g) || []).length;
-      const securityCount = (contents.match(/sk-[A-Za-z0-9_-]{20,}|password\s*[:=]\s*["'][^"']{8,}["']|secret\s*[:=]\s*["'][^"']{8,}["']/gi) || []).length;
-      const performanceCount = (contents.match(/\bfor\s*\([^)]*\)\s*\{[\s\S]{0,240}\bawait\b/g) || []).length;
+      linesOfCode += lines.filter((line) => line.trim()).length;
+      let todoCount = 0;
+      let consoleCount = 0;
+      let looseAnyCount = 0;
+      let securityCount = 0;
+      let performanceCount = 0;
+      lines.forEach((lineText, index) => {
+        const lineNumber = index + 1;
+        if (/\b(?:TODO|FIXME|HACK)\b/i.test(lineText)) {
+          todoCount += 1;
+          pushFinding("MEDIUM_BUG", full, lineNumber, "TODO/FIXME/HACK marker found.", "Review the owner module and either complete the work or convert it into a tracked backlog item.");
+        }
+        if (/\bconsole\.(?:log|warn|error)\s*\(/.test(lineText)) {
+          consoleCount += 1;
+          pushFinding("LOW_PRIORITY", full, lineNumber, "Console statement found in source.", "Replace with structured logging or remove it after confirming it is not required for diagnostics.");
+        }
+        if (/\:\s*any\b|as\s+any\b/.test(lineText)) {
+          looseAnyCount += 1;
+          pushFinding("LOW_PRIORITY", full, lineNumber, "Loose TypeScript any usage found.", "Replace any with a narrow interface/type owned by this module.");
+        }
+        if (/sk-[A-Za-z0-9_-]{20,}|password\s*[:=]\s*["'][^"']{8,}["']|secret\s*[:=]\s*["'][^"']{8,}["']/i.test(lineText)) {
+          securityCount += 1;
+          pushFinding("CRITICAL_BUG", full, lineNumber, "Potential hard-coded credential or secret pattern found.", "Verify this is not a real secret, remove it from source, rotate externally if needed, and re-run security validation.");
+          pushFinding("SECURITY", full, lineNumber, "Security scanner matched a credential-like pattern.", "Keep credentials in environment/secret storage only; never commit live secrets.");
+        }
+        if (/\bfor\s*\([^)]*\)\s*\{/.test(lineText) && lines.slice(index, Math.min(lines.length, index + 8)).join("\n").includes("await")) {
+          performanceCount += 1;
+          pushFinding("PERFORMANCE", full, lineNumber, "Loop contains await nearby.", "Check if this can safely use Promise.all or batched database/API operations.");
+          pushFinding("MEDIUM_BUG", full, lineNumber, "Potential slow await-in-loop pattern.", "Inspect runtime behavior before changing; preserve ordering if it is required.");
+        }
+      });
       debtMarkers += todoCount;
       securityFindings += securityCount;
       performanceFindings += performanceCount;
       criticalIssues += securityCount;
       mediumIssues += todoCount + performanceCount;
       lowIssues += consoleCount + looseAnyCount;
-      for (const line of contents.split(/\r?\n/)) {
+      lines.forEach((line, index) => {
         const normalizedLine = line.trim().replace(/\s+/g, " ");
-        if (normalizedLine.length < 80) continue;
+        if (normalizedLine.length < 80) return;
         normalizedLineCounts.set(normalizedLine, (normalizedLineCounts.get(normalizedLine) || 0) + 1);
-      }
+        const current = normalizedLineLocations.get(normalizedLine) || [];
+        if (current.length < 6) current.push({ file: relativeFile(full), line: index + 1 });
+        normalizedLineLocations.set(normalizedLine, current);
+      });
       const baseName = path.basename(full, extension);
       if (/\.(?:tsx|jsx)$/i.test(full) && /^[A-Z]/.test(baseName)) sourceNames.set(full, baseName);
       if (/\.routes?\.[jt]s$/i.test(full) || normalized.endsWith("/app.ts")) {
@@ -185,9 +221,24 @@ export function buildProjectIndexSummary(projectRoot = process.cwd()): ProjectIn
   for (const [file, baseName] of sourceNames) {
     const importUse = new RegExp(`(?:import\\s+[^;]*\\b${baseName}\\b|<${baseName}\\b)`, "g");
     const occurrences = (combinedSourceText.match(importUse) || []).length;
-    if (occurrences <= 1 && !file.replace(/\\/g, "/").includes("/app/")) unusedFiles += 1;
+    if (occurrences <= 1 && !file.replace(/\\/g, "/").includes("/app/")) {
+      unusedFiles += 1;
+      pushFinding("UNUSED_FILE", file, 1, "Component appears to have no import/use references.", "Confirm route ownership and dynamic imports before removing or refactoring this file.");
+    }
   }
   const duplicatedLines = Array.from(normalizedLineCounts.values()).reduce((sum, count) => sum + Math.max(0, count - 1), 0);
+  for (const [lineText, count] of normalizedLineCounts) {
+    if (count < 2) continue;
+    for (const location of normalizedLineLocations.get(lineText) || []) {
+      findings.push({
+        category: "DUPLICATE_CODE",
+        file: location.file,
+        line: location.line,
+        message: `Repeated source line appears ${count} times.`,
+        instruction: "Compare repeated blocks before extracting a shared helper; keep the existing owner implementation.",
+      });
+    }
+  }
   const duplicateCodePercent = Math.min(100, Math.round((duplicatedLines / Math.max(1, linesOfCode)) * 100));
   const technicalDebtPercent = Math.min(100, Math.round(((debtMarkers + duplicatedLines) / Math.max(1, linesOfCode)) * 100));
   const performanceScore = Math.max(0, Math.min(100, 100 - performanceFindings * 5 - duplicateCodePercent));
@@ -250,6 +301,7 @@ export function buildProjectIndexSummary(projectRoot = process.cwd()): ProjectIn
     unusedFiles,
     dependencyUpdates: 0,
     dependencyCount,
+    findings: findings.slice(0, 300),
   };
 }
 

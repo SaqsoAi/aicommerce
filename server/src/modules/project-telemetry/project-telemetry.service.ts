@@ -12,7 +12,7 @@ function isRecord(value: Prisma.JsonValue): value is Prisma.JsonObject {
 }
 
 function hasRepositoryDiagnostics(value: Prisma.JsonValue): boolean {
-  return isRecord(value) && typeof value.securityScore === "number" && typeof value.performanceScore === "number" && typeof value.qualityGrade === "string";
+  return isRecord(value) && typeof value.securityScore === "number" && typeof value.performanceScore === "number" && typeof value.qualityGrade === "string" && Array.isArray(value.findings);
 }
 
 export type CreateTelemetryInput = {
@@ -81,6 +81,7 @@ export async function ensureRepositoryTelemetrySnapshot(projectKey = "default") 
         commitsThisWeek: index.commitsThisWeek,
         dependencyUpdates: index.dependencyUpdates,
         dependencyCount: index.dependencyCount,
+        findings: index.findings as unknown as Prisma.InputJsonValue,
         buildStatus: index.buildStatus,
         testCoverage: index.testCoverage,
         qualityGrade: index.codeQualityGrade,

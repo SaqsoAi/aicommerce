@@ -1,4 +1,4 @@
-import { cloneDashboard, type DashboardModel, type DataState, type Metric, unavailable } from "./data";
+import { cloneDashboard, type DashboardModel, type DataState, type Metric, type MetricFinding, unavailable } from "./data";
 
 type ApiResult<T> = { state: DataState; path: string; data: T | null; error?: string };
 type DashboardSummary = {
@@ -39,6 +39,7 @@ activities?: Array<Record<string, unknown>>;
     overview?: { totalModules?: number | null; totalApis?: number | null; databaseTables?: number | null; reactComponents?: number | null; linesOfCode?: number | null; teamMembers?: number | null; commitsThisWeek?: number | null; activeBranch?: string | null };
     history?: Array<{ label?: string; commits?: number; issues?: number; pullRequests?: number; codeReviews?: number }>;
     insights?: Array<{ title?: string; detail?: string; severity?: string; source?: string; capturedAt?: string }>;
+    findings?: MetricFinding[];
     sources?: Array<{ kind?: string; source?: string; capturedAt?: string }>;
   } | null;
   conversations?: Array<{ id?: string; feature?: string; prompt?: string; response?: string; createdAt?: string }>;
@@ -166,6 +167,25 @@ function setMetric(metrics: Metric[], label: string, value: string | null, sourc
   metric.sub = sub;
   metric.source = source;
   metric.state = "available";
+}
+
+function attachFindings(metrics: Metric[], allFindings: MetricFinding[]) {
+  const map: Record<string, string[]> = {
+    "Project Health Score": ["CRITICAL_BUG", "MEDIUM_BUG", "LOW_PRIORITY", "PERFORMANCE", "SECURITY", "DUPLICATE_CODE", "UNUSED_FILE"],
+    "Critical Bugs": ["CRITICAL_BUG", "SECURITY"],
+    "Medium Bugs": ["MEDIUM_BUG", "PERFORMANCE"],
+    "Low Priority": ["LOW_PRIORITY"],
+    "Performance Score": ["PERFORMANCE"],
+    "Security Score": ["SECURITY", "CRITICAL_BUG"],
+    "Code Quality": ["LOW_PRIORITY", "MEDIUM_BUG"],
+    "Tech Debt": ["MEDIUM_BUG", "DUPLICATE_CODE"],
+    "Duplicate Code": ["DUPLICATE_CODE"],
+    "Unused Files": ["UNUSED_FILE"],
+  };
+  for (const metric of metrics) {
+    const categories = map[metric.label] || [];
+    metric.findings = categories.length ? allFindings.filter((finding) => categories.includes(finding.category)) : [];
+  }
 }
 
 function countFromCollection(data: unknown): string | null {
@@ -345,21 +365,38 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
       const formatted = formatNumber(value);
       return formatted == null ? null : `${formatted}%`;
     };
+    const scoreLabel = (value: unknown) => {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) return "";
+      if (numeric >= 90) return "Excellent";
+      if (numeric >= 75) return "Good";
+      if (numeric >= 50) return "Needs Review";
+      if (numeric > 0) return "High Risk";
+      return "Requires Fix";
+    };
+    const issueLabel = (value: unknown, empty: string, low: string, high: string) => {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) return "";
+      if (numeric <= 0) return empty;
+      return numeric <= 25 ? low : high;
+    };
 
-    setMetric(model.metrics, "Project Health Score", percent(telemetry.healthScore), telemetrySource);
-    setMetric(model.metrics, "Critical Bugs", formatNumber(telemetry.criticalBugs), telemetrySource);
-    setMetric(model.metrics, "Medium Bugs", formatNumber(telemetry.mediumBugs), telemetrySource);
-    setMetric(model.metrics, "Low Priority", formatNumber(telemetry.lowPriority), telemetrySource);
-    setMetric(model.metrics, "Performance Score", percent(telemetry.performanceScore), telemetrySource);
-    setMetric(model.metrics, "Security Score", percent(telemetry.securityScore), telemetrySource);
-    setMetric(model.smallMetrics, "Build Status", telemetry.buildStatus || null, telemetrySource);
-    setMetric(model.smallMetrics, "Test Coverage", percent(telemetry.testCoverage), telemetrySource);
-    setMetric(model.smallMetrics, "Code Quality", telemetry.codeQuality || null, telemetrySource);
-    setMetric(model.smallMetrics, "Tech Debt", percent(telemetry.techDebt), telemetrySource);
-    setMetric(model.smallMetrics, "Duplicate Code", percent(telemetry.duplicateCode), telemetrySource);
-    setMetric(model.smallMetrics, "Unused Files", formatNumber(telemetry.unusedFiles), telemetrySource);
+
+    setMetric(model.metrics, "Project Health Score", percent(telemetry.healthScore), telemetrySource, scoreLabel(telemetry.healthScore));
+    setMetric(model.metrics, "Critical Bugs", formatNumber(telemetry.criticalBugs), telemetrySource, issueLabel(telemetry.criticalBugs, "No Critical Issues", "Needs Immediate Fix", "Critical Review"));
+    setMetric(model.metrics, "Medium Bugs", formatNumber(telemetry.mediumBugs), telemetrySource, issueLabel(telemetry.mediumBugs, "No Medium Issues", "Should Fix Soon", "Needs Cleanup"));
+    setMetric(model.metrics, "Low Priority", formatNumber(telemetry.lowPriority), telemetrySource, issueLabel(telemetry.lowPriority, "Clean", "Minor Issues", "Cleanup Queue"));
+    setMetric(model.metrics, "Performance Score", percent(telemetry.performanceScore), telemetrySource, scoreLabel(telemetry.performanceScore));
+    setMetric(model.metrics, "Security Score", percent(telemetry.securityScore), telemetrySource, scoreLabel(telemetry.securityScore));
+    setMetric(model.smallMetrics, "Build Status", telemetry.buildStatus || null, telemetrySource, telemetry.buildStatus === "SUCCESS" ? "Last build passed" : telemetry.buildStatus === "INDEXED" ? "Repository indexed" : "Live scanner");
+    setMetric(model.smallMetrics, "Test Coverage", percent(telemetry.testCoverage), telemetrySource, scoreLabel(telemetry.testCoverage));
+    setMetric(model.smallMetrics, "Code Quality", telemetry.codeQuality || null, telemetrySource, telemetry.codeQuality ? "Scanner grade" : "");
+    setMetric(model.smallMetrics, "Tech Debt", percent(telemetry.techDebt), telemetrySource, scoreLabel(100 - Number(telemetry.techDebt || 0)));
+    setMetric(model.smallMetrics, "Duplicate Code", percent(telemetry.duplicateCode), telemetrySource, issueLabel(telemetry.duplicateCode, "Clean", "Low", "Needs Refactor"));
+    setMetric(model.smallMetrics, "Unused Files", formatNumber(telemetry.unusedFiles), telemetrySource, issueLabel(telemetry.unusedFiles, "None", "Detected", "Needs Review"));
     const dependencyCount = formatNumber(telemetry.dependencies);
     setMetric(model.smallMetrics, "Dependencies", dependencyCount == null ? null : `${dependencyCount} ${telemetry.dependencyLabel || "Updates"}`, telemetrySource);
+    attachFindings([...model.metrics, ...model.smallMetrics], telemetry.findings || []);
 
     const overview = telemetry.overview || {};
     const overviewValues: Record<string, string | null> = {
@@ -378,9 +415,13 @@ model.salesTrend = (summary?.salesTrend || []).flatMap((point) => {
     });
 
     model.projectActivity = (telemetry.history || []).flatMap((point) => {
-      const value = [point.commits, point.issues, point.pullRequests, point.codeReviews]
-        .reduce<number>((sum, item) => sum + (Number.isFinite(Number(item)) ? Number(item) : 0), 0);
-      return point.label && Number.isFinite(value) ? [{ label: point.label, value }] : [];
+      const commits = Number(point.commits || 0);
+      const issues = Number(point.issues || 0);
+      const pullRequests = Number(point.pullRequests || 0);
+      const codeReviews = Number(point.codeReviews || 0);
+      const value = [commits, issues, pullRequests, codeReviews]
+        .reduce<number>((sum, item) => sum + (Number.isFinite(item) ? item : 0), 0);
+      return point.label && Number.isFinite(value) ? [{ label: point.label, value, commits, issues, pullRequests, codeReviews }] : [];
     });
     if (telemetry.insights?.length) {
       model.insights = telemetry.insights.slice(0, 8).map((item) => [String(item.title || "Insight"), String(item.detail || ""), String(item.severity || "INFO")]);

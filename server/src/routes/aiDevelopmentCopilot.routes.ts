@@ -1,64 +1,16 @@
-﻿import { Router } from "express";
-import { buildProjectIndexSummary, createSafeExecutionSandboxPlan, generateCopilotPreview, sanitizeCopilotText } from "../ai/developmentCopilot";
+import { Router } from "express";
 import prisma from "../config/prisma";
 import { protect, type AuthRequest } from "../modules/auth/auth.middleware";
-
-const router = Router();
-router.use(protect);
-
-router.get("/health", (_req, res) => {
-  res.json({
-    success: true,
-    module: "enterprise-super-admin-ai-development-copilot",
-    previewOnly: true,
-    autoApply: false,
-    autoMigration: false,
-    autoDeploy: false,
-  });
-});
-
-router.get("/project-index", (_req, res) => {
-  res.json({ success: true, data: buildProjectIndexSummary(process.cwd()) });
-});
-
-router.get("/sandbox", (_req, res) => {
-  res.json({ success: true, data: createSafeExecutionSandboxPlan() });
-});
-
-router.post("/preview", async (req: AuthRequest, res, next) => {
-  try {
-    const body = req.body || {};
-    const prompt = sanitizeCopilotText(String(body.prompt || "")).trim();
-    const result = await generateCopilotPreview({
-      mode: body.mode || "review",
-      role: body.role || "AI_CODE_REVIEWER",
-      prompt,
-      module: body.module,
-      tenantId: body.tenantId,
-      userId: body.userId,
-    });
-    const actorId = req.user?.id || req.user?.userId;
-    await prisma.$transaction([
-      prisma.aILog.create({
-        data: {
-          feature: `Development Copilot · ${result.mode}`,
-          prompt: prompt || "Project analysis preview",
-          response: [result.summary, ...result.recommendations].join("\n"),
-        },
-      }),
-      prisma.auditLog.create({
-        data: {
-          userId: actorId,
-          action: "COPILOT_PREVIEW_GENERATED",
-          module: "AI_DEVELOPMENT_COPILOT",
-          description: `${result.mode} preview completed without applying code`,
-        },
-      }),
-    ]);
-    res.json({ success: true, data: result });
-  } catch (error) {
-    next(error);
-  }
-});
-
+import { buildProjectIndexSummary, createSafeExecutionSandboxPlan, generateCopilotPreview, sanitizeCopilotText } from "../ai/developmentCopilot";
+import { answerBuilder } from "../ai/builder/orchestrator";
+import { inspectRepository } from "../ai/builder/repository";
+import { buildKnowledgeGraph } from "../ai/builder/knowledgeGraph";
+const router=Router(); router.use(protect);
+router.get("/health",(_req,res)=>res.json({success:true,module:"saqso-ai-builder",version:"1.9.0",voice:true,multilingual:true,autoApply:false,autoMigration:false,autoDeploy:false}));
+router.get("/project-index",(_req,res)=>res.json({success:true,data:buildProjectIndexSummary(process.cwd())}));
+router.get("/repository",(_req,res)=>res.json({success:true,data:inspectRepository(process.cwd())}));
+router.get("/knowledge-graph",(_req,res)=>{const repo=inspectRepository(process.cwd());res.json({success:true,data:buildKnowledgeGraph(repo)});});
+router.get("/sandbox",(_req,res)=>res.json({success:true,data:createSafeExecutionSandboxPlan()}));
+router.post("/chat",async(req:AuthRequest,res,next)=>{try{const prompt=sanitizeCopilotText(String(req.body?.prompt??"")).trim();if(!prompt)return res.status(400).json({success:false,error:{code:"PROMPT_REQUIRED",message:"Prompt is required"}});const data=answerBuilder(prompt);const actorId=req.user?.id||req.user?.userId;await prisma.$transaction([prisma.aILog.create({data:{feature:"SAQSO AI Builder",prompt,response:data.summary}}),prisma.auditLog.create({data:{userId:actorId,action:"AI_BUILDER_CHAT",module:"AI_BUILDER",description:`${data.intent} plan generated without auto-apply`}})]);return res.json({success:true,data});}catch(e){next(e);}});
+router.post("/preview",async(req:AuthRequest,res,next)=>{try{const body=req.body||{};const prompt=sanitizeCopilotText(String(body.prompt||"")).trim();const result=await generateCopilotPreview({mode:body.mode||"review",role:body.role||"AI_CODE_REVIEWER",prompt,module:body.module,tenantId:body.tenantId,userId:body.userId});return res.json({success:true,data:result});}catch(e){next(e);}});
 export default router;

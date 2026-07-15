@@ -1241,6 +1241,225 @@ function safeComponentIdentifier(
     : `Page${normalized}`;
 }
 
+
+type RouterRouteRecord = {
+  sourcePath: string;
+  routePath: string;
+  componentExpression: string;
+  generatedPagePath: string;
+  dynamic: boolean;
+};
+
+type RouterResolutionResult = {
+  source: string;
+  routes: RouterRouteRecord[];
+  unresolved: string[];
+};
+
+function normalizeNextRoutePath(routePath: string): string {
+  const value = routePath.trim();
+  if (!value || value === "/") return "";
+  return value
+    .replace(/^\/+|\/+$/g, "")
+    .split("/")
+    .map((segment) => {
+      if (segment === "*") return "[...slug]";
+      if (segment.startsWith(":")) {
+        const key =
+          segment.slice(1).replace(/[^a-zA-Z0-9_]/g, "") || "slug";
+        return `[${key}]`;
+      }
+      return segment.replace(/[^a-zA-Z0-9._-]/g, "-");
+    })
+    .filter(Boolean)
+    .join("/");
+}
+
+function extractReactRouterRoutes(
+  sourcePath: string,
+  source: string,
+): RouterRouteRecord[] {
+  const records: RouterRouteRecord[] = [];
+  const patterns = [
+    /<Route\s+[^>]*path\s*=\s*["']([^"']+)["'][^>]*element\s*=\s*\{([^}]+)\}[^>]*\/?>/g,
+    /<Route\s+[^>]*element\s*=\s*\{([^}]+)\}[^>]*path\s*=\s*["']([^"']+)["'][^>]*\/?>/g,
+  ];
+
+  patterns.forEach((pattern, index) => {
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(source))) {
+      const routePath = index === 0 ? match[1] : match[2];
+      const componentExpression = index === 0 ? match[2] : match[1];
+      const normalized = normalizeNextRoutePath(routePath);
+
+      records.push({
+        sourcePath,
+        routePath,
+        componentExpression: componentExpression.trim(),
+        generatedPagePath: normalized
+          ? `app/${normalized}/page.tsx`
+          : "app/page.tsx",
+        dynamic: /:|\*/.test(routePath),
+      });
+    }
+  });
+
+  return Array.from(
+    new Map(
+      records.map((record) => [
+        `${record.routePath}:${record.componentExpression}`,
+        record,
+      ]),
+    ).values(),
+  );
+}
+
+function resolveReactRouterSource(
+  sourcePath: string,
+  input: string,
+): RouterResolutionResult {
+  let source = input;
+  const routes = extractReactRouterRoutes(sourcePath, source);
+  const unresolved: string[] = [];
+
+  source = source.replace(
+    /import\s+\{([^}]+)\}\s+from\s+["']react-router-dom["'];?/g,
+    (_statement, body: string) => {
+      const names = body
+        .split(",")
+        .map((item: string) => item.trim())
+        .filter(Boolean);
+
+      const navigation = new Set<string>();
+      const unsupported = new Set<string>();
+      let needsLink = false;
+
+      names.forEach((name) => {
+        if (name === "Link" || name === "NavLink") needsLink = true;
+        else if (name === "useNavigate") navigation.add("useRouter");
+        else if (name === "useLocation") navigation.add("usePathname");
+        else if (name === "useParams") navigation.add("useParams");
+        else if (name === "useSearchParams") {
+          navigation.add("useSearchParams");
+        } else if (
+          ![
+            "BrowserRouter",
+            "HashRouter",
+            "Routes",
+            "Route",
+            "Outlet",
+          ].includes(name)
+        ) {
+          unsupported.add(name);
+        }
+      });
+
+      if (unsupported.size > 0) {
+        unresolved.push(
+          `Unsupported react-router-dom imports in ${sourcePath}: ${Array.from(
+            unsupported,
+          ).join(", ")}`,
+        );
+      }
+
+      const imports: string[] = [];
+      if (needsLink) imports.push('import Link from "next/link";');
+      if (navigation.size > 0) {
+        imports.push(
+          `import { ${Array.from(navigation).sort().join(", ")} } from "next/navigation";`,
+        );
+      }
+      return imports.join("\n");
+    },
+  );
+
+  source = source
+    .replace(/<\/?(?:BrowserRouter|HashRouter|Routes)>/g, "")
+    .replace(/<Outlet\s*\/>/g, "{children}")
+    .replace(/\buseNavigate\(\)/g, "useRouter()")
+    .replace(/\bnavigate\(([^)]+)\)/g, "router.push($1)")
+    .replace(/\buseLocation\(\)/g, "usePathname()")
+    .replace(/\blocation\.pathname\b/g, "pathname")
+    .replace(/<NavLink\b/g, "<Link")
+    .replace(/<\/NavLink>/g, "</Link>")
+    .replace(
+      /<Route\s+[^>]*path\s*=\s*["'][^"']+["'][^>]*element\s*=\s*\{([^}]+)\}[^>]*\/?>/g,
+      "{$1}",
+    )
+    .replace(
+      /<Route\s+[^>]*element\s*=\s*\{([^}]+)\}[^>]*path\s*=\s*["'][^"']+["'][^>]*\/?>/g,
+      "{$1}",
+    );
+
+  if (/\bcreateBrowserRouter\b|\bRouterProvider\b/.test(source)) {
+    unresolved.push(
+      `Data-router APIs remain in ${sourcePath}: createBrowserRouter/RouterProvider`,
+    );
+  }
+  if (/\bloader\b|\baction\b|\berrorElement\b/.test(source)) {
+    unresolved.push(
+      `Data-router loader/action/errorElement semantics require review in ${sourcePath}`,
+    );
+  }
+
+  return { source, routes, unresolved };
+}
+
+function generateNextRouteArtifacts(
+  templateKey: string,
+  records: RouterRouteRecord[],
+): CompletionArtifact[] {
+  const artifacts: CompletionArtifact[] = [];
+  const seen = new Set<string>();
+
+  for (const record of records) {
+    const path =
+      `src/templates/imported/${templateKey}/router-map/${record.generatedPagePath}`;
+    if (seen.has(path)) continue;
+    seen.add(path);
+
+    const componentName = safeComponentIdentifier(
+      record.routePath === "/" ? "Home" : record.routePath,
+      "MigratedRoute",
+    );
+
+    artifacts.push({
+      path,
+      category: "PAGE",
+      content: encode(`import * as React from "react";
+
+export const migratedRouteMetadata = ${JSON.stringify(
+        {
+          sourcePath: record.sourcePath,
+          routePath: record.routePath,
+          componentExpression: record.componentExpression,
+          dynamic: record.dynamic,
+        },
+        null,
+        2,
+      )} as const;
+
+export default function ${componentName}MigratedRoute(): React.ReactElement {
+  return (
+    <main
+      data-migrated-route=${JSON.stringify(record.routePath)}
+      data-status="ROUTER_RESOLVED_REVIEW_REQUIRED"
+    >
+      <h1>Migrated route: ${record.routePath}</h1>
+      <p>Source component mapping: ${record.componentExpression.replace(
+        /`/g,
+        "\\`",
+      )}</p>
+    </main>
+  );
+}
+`),
+    });
+  }
+
+  return artifacts;
+}
+
 function certifyGeneratedSource(
   path: string,
   source: string,
@@ -1291,6 +1510,7 @@ function certifyGeneratedSource(
 
 function convertText(path: string, source: string): string {
   let output = rewriteAliasImports(path, source);
+  output = resolveReactRouterSource(path, output).source;
   output = output.replace(
     /import\.meta\.env\.VITE_([A-Z0-9_]+)/g,
     "process.env.NEXT_PUBLIC_$1",
@@ -1678,7 +1898,7 @@ export default function ${name}CompletionPage(): React.ReactElement {
       <section>
         <h1>${page.label}</h1>
         <p>
-          Generated by SAQSO AI Migrator 2026.27 LTS because the imported page
+          Generated by SAQSO AI Migrator 2026.28 LTS because the imported page
           was ${page.status.toLowerCase()}. Preserve the imported theme and connect
           the current platform data contract before publish.
         </p>
@@ -2595,6 +2815,85 @@ export default function MigrationStudioFoundation() {
         operation: "create",
       });
 
+
+      const routerRecords: RouterRouteRecord[] = [];
+      const routerUnresolved: string[] = [];
+      const routerDecoder = new TextDecoder();
+
+      for (const file of payload) {
+        if (!/\.(tsx?|jsx?)$/i.test(file.path)) continue;
+        const resolution = resolveReactRouterSource(
+          file.path,
+          routerDecoder.decode(file.content),
+        );
+        routerRecords.push(...resolution.routes);
+        routerUnresolved.push(...resolution.unresolved);
+      }
+
+      const routerArtifacts = generateNextRouteArtifacts(
+        targetKey,
+        routerRecords,
+      );
+
+      for (const artifact of routerArtifacts) {
+        const sourcePath = normalizeArchivePath(
+          `payload/client/${artifact.path}`,
+        );
+        payload.push({ path: sourcePath, content: artifact.content });
+        fileDefinitions.push({
+          owner: "client",
+          sourcePath,
+          destinationPath: artifact.path,
+          sha256: await sha(artifact.content),
+          sizeBytes: artifact.content.length,
+          contentType: "text/typescript",
+          operation: "create",
+        });
+      }
+
+      const routerCertification = {
+        engineVersion: "2026.28.0",
+        generatedAt: new Date().toISOString(),
+        discoveredRoutes: routerRecords,
+        generatedArtifacts: routerArtifacts.map(
+          (artifact) => artifact.path,
+        ),
+        unresolved: routerUnresolved,
+        status: routerUnresolved.length
+          ? "REVIEW_REQUIRED"
+          : "PASS",
+      };
+
+      const routerCertificationDestination =
+        `src/templates/imported/${targetKey}/certification/router-2026.28.json`;
+      const routerCertificationSource = normalizeArchivePath(
+        `payload/client/${routerCertificationDestination}`,
+      );
+      const routerCertificationContent = encode(
+        JSON.stringify(routerCertification, null, 2),
+      );
+
+      payload.push({
+        path: routerCertificationSource,
+        content: routerCertificationContent,
+      });
+      fileDefinitions.push({
+        owner: "client",
+        sourcePath: routerCertificationSource,
+        destinationPath: routerCertificationDestination,
+        sha256: await sha(routerCertificationContent),
+        sizeBytes: routerCertificationContent.length,
+        contentType: "application/json",
+        operation: "create",
+      });
+
+      if (routerUnresolved.length > 0) {
+        throw new Error(
+          "React Router resolver requires review:\n" +
+            routerUnresolved.slice(0, 10).join("\n"),
+        );
+      }
+
       const manifest = {
         schemaVersion: "1.0",
         pluginKey: `saqso.migrated-template.${targetKey}`,
@@ -2790,18 +3089,166 @@ export default function MigrationStudioFoundation() {
     }
   }
 
+
+  const commandStage = !file
+    ? 1
+    : !analysis
+      ? 2
+      : !(tenant && store && targetKey)
+        ? 3
+        : state === "RUNNING"
+          ? 4
+          : state === "DONE"
+            ? 6
+            : 5;
+
+  const commandReadiness = [
+    { label: "Source", ready: Boolean(file), detail: file?.name || "Upload ZIP" },
+    {
+      label: "Discovery",
+      ready: Boolean(analysis),
+      detail: analysis
+        ? `${analysis.entries.length} files · ${analysis.routes.length} routes`
+        : "Pending",
+    },
+    {
+      label: "Target",
+      ready: Boolean(tenant && store),
+      detail: tenant && store ? "Tenant/store selected" : "Select target",
+    },
+    {
+      label: "Template",
+      ready: Boolean(targetKey),
+      detail: targetKey || "Set template key",
+    },
+    {
+      label: "Certification",
+      ready: Boolean(
+        validationCertification &&
+          validationCertification.status !== "BLOCKED",
+      ),
+      detail: validationCertification
+        ? `${validationCertification.score}% ${validationCertification.status}`
+        : "Pending",
+    },
+    {
+      label: "Package",
+      ready: state === "DONE" && Boolean(pluginBlob),
+      detail: state === "DONE" ? "Draft package ready" : "Not generated",
+    },
+  ];
+
+  const commandNav = [
+    ["source", "Source"],
+    ["discovery", "Discovery"],
+    ["validation", "Validation"],
+    ["mapping", "Mapping"],
+    ["options", "Options"],
+    ["target", "Tenant & Store"],
+    ["execute", "Generate"],
+    ["approval", "Approval"],
+  ] as const;
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>SAQSO AI MIGRATOR · FINAL SCHEMA CONSUMER RECOVERY</p>
-          <h1>Tenant-Aware AI Migration</h1>
-          <p>Create or select a real tenant and store, detect imported AI capabilities, reuse existing platform AI, and plan implementation for genuinely new AI features.</p>
+          <p className={styles.eyebrow}>SAQSO AI MIGRATOR · ENTERPRISE MIGRATION COMMAND CENTER</p>
+          <h1>Enterprise Platform Migration Studio</h1>
+          <p>Audit, convert, complete, certify and package external React, JSX, HTML, Laravel and legacy templates through one guided tenant-aware workflow.</p>
         </div>
-        <span className={styles.badge}>2026.27.0 LTS</span>
+        <span className={styles.badge}>2026.29.0 LTS</span>
       </header>
 
-      <section className={styles.card}>
+      <section className={styles.commandCenter}>
+        <div className={styles.commandHero}>
+          <div>
+            <span>ACTIVE WORKSPACE</span>
+            <strong>
+              {file?.name || "Create a new migration workspace"}
+            </strong>
+            <p>
+              Stage {commandStage} of 6 ·{" "}
+              {state === "RUNNING"
+                ? "Migration engine is running"
+                : state === "DONE"
+                  ? "Draft artifacts are ready for approval"
+                  : "Follow the guided workflow"}
+            </p>
+          </div>
+          <div className={styles.commandActions}>
+            <button
+              type="button"
+              className={styles.secondary}
+              onClick={refreshTargetCatalog}
+              disabled={loadingTargets}
+            >
+              {loadingTargets ? "Refreshing targets…" : "Refresh platform data"}
+            </button>
+            <button
+              type="button"
+              className={styles.secondary}
+              onClick={() =>
+                document
+                  .getElementById("migration-execute")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Continue workflow
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.readinessRail}>
+          {commandReadiness.map((item, index) => (
+            <article
+              key={item.label}
+              data-ready={item.ready}
+              data-current={commandStage === index + 1}
+            >
+              <span>{index + 1}</span>
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div className={styles.workspaceLayout}>
+        <aside className={styles.workspaceNav}>
+          <div>
+            <span>MIGRATION WORKSPACE</span>
+            <b>{targetKey || "No template target"}</b>
+          </div>
+          <nav>
+            {commandNav.map(([id, label], index) => (
+              <button
+                type="button"
+                key={id}
+                data-active={commandStage === Math.min(index + 1, 6)}
+                onClick={() =>
+                  document
+                    .getElementById(`migration-${id}`)
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {label}
+              </button>
+            ))}
+          </nav>
+          <div className={styles.workspacePolicy}>
+            <strong>Delivery policy</strong>
+            <p>Code → Plugin ZIP</p>
+            <p>Database/schema → PowerShell only</p>
+            <p>Publish → Certification + approval</p>
+          </div>
+        </aside>
+
+        <div className={styles.workspaceContent}>
+      <section id="migration-source" className={styles.card}>
         <h2>1. Upload source ZIP</h2>
         <label className={styles.drop}>
           <input type="file" accept=".zip" onChange={(event) => event.target.files?.[0] && choose(event.target.files[0])} />
@@ -2815,7 +3262,7 @@ export default function MigrationStudioFoundation() {
 
       {analysis && (
         <>
-          <section className={styles.metrics}>
+          <section id="migration-discovery" className={styles.metrics}>
             <div><span>Framework</span><strong>{analysis.framework}</strong></div>
             <div><span>Files</span><strong>{analysis.entries.length}</strong></div>
             <div><span>Routes</span><strong>{analysis.routes.length}</strong></div>
@@ -2979,7 +3426,7 @@ export default function MigrationStudioFoundation() {
 
           {completionPlan && (
             <>
-              <section className={styles.card}>
+              <section id="migration-mapping" className={styles.card}>
                 <div className={styles.cardTitle}>
                   <div>
                     <h2>Smart mapping decisions</h2>
@@ -3040,8 +3487,8 @@ export default function MigrationStudioFoundation() {
             </>
           )}
 
-          <section className={styles.card}>
-            <h2>2. Migration options</h2>
+          <section id="migration-options" className={styles.card}>
+            <h2>Migration policy & options</h2>
             <div className={styles.options}>
               {Object.entries({
                 convert: "Convert JS/JSX to TS/TSX",
@@ -3064,9 +3511,9 @@ export default function MigrationStudioFoundation() {
             </div>
           </section>
 
-          <section className={styles.card}>
+          <section id="migration-target" className={styles.card}>
             <div className={styles.cardTitle}>
-              <h2>3. Target assignment</h2>
+              <h2>Tenant, store & template target</h2>
               <button type="button" onClick={refreshTargetCatalog} className={styles.secondary} disabled={loadingTargets}>{loadingTargets ? "Refreshing…" : "Refresh APIs"}</button>
             </div>
             {loadingTargets && <p>Loading tenant data…</p>}
@@ -3111,7 +3558,7 @@ export default function MigrationStudioFoundation() {
             </div>
           </section>
 
-          <section className={styles.oneClickPanel}>
+          <section id="migration-execute" className={styles.oneClickPanel}>
             <div>
               <span className={styles.oneClickEyebrow}>ONE-CLICK WORKFLOW</span>
               <h2>Ready for guided enterprise migration</h2>
@@ -3127,7 +3574,7 @@ export default function MigrationStudioFoundation() {
           </section>
 
           <section className={styles.card}>
-            <h2>4. One-click migration</h2>
+            <div className={styles.cardTitle}><div><span className={styles.sectionEyebrow}>EXECUTION</span><h2>One-click migration</h2></div><b>{progress}%</b></div>
             <button className={styles.primary} disabled={!ready || state === "RUNNING"} onClick={execute}>
               {state === "RUNNING" ? "Running one-click migration…" : "Run One-Click Migration"}
             </button>
@@ -3135,7 +3582,7 @@ export default function MigrationStudioFoundation() {
             <div className={styles.logs}>{log.map((item, index) => <p key={`${item}-${index}`}>✓ {item}</p>)}</div>
             {state === "DONE" && (
               <>
-                <section className={styles.generatedWorkspace}>
+                <section id="migration-approval" className={styles.generatedWorkspace}>
                   <div className={styles.cardTitle}>
                     <div>
                       <h3>Generated code workspace</h3>
@@ -3200,7 +3647,13 @@ export default function MigrationStudioFoundation() {
           </section>
         </>
       )}
-    {analysis && <AiCapabilityDiscoveryPanel imported={analysis.ai} />}
+        </div>
+      </div>
+    {analysis && (
+      <div className={styles.aiWorkspace}>
+        <AiCapabilityDiscoveryPanel imported={analysis.ai} />
+      </div>
+    )}
 </main>
   );
 }

@@ -37,20 +37,27 @@ function systemMetrics() {
   ];
 }
 
+
+function hasRepositoryTelemetry(value: Awaited<ReturnType<typeof getProjectTelemetry>> | null) {
+  return Boolean(
+    value &&
+      value.overview &&
+      (
+        value.overview.totalModules != null ||
+        value.overview.totalApis != null ||
+        value.overview.reactComponents != null ||
+        value.overview.linesOfCode != null
+      ),
+  );
+}
+
 export async function getRoleDashboard(inputRole?: unknown) {
   const role = normalizeRole(inputRole);
-  if (role === "SUPER_ADMIN") {
-    try {
-      await ensureRepositoryTelemetrySnapshot();
-    } catch (error) {
-      console.error("repository telemetry refresh failed", { error });
-    }
-  }
   const since = new Date();
   since.setDate(since.getDate() - 6);
   since.setHours(0, 0, 0, 0);
 
-  const [totalProducts, totalCustomers, totalOrders, revenue, lowStock, outOfStock, recentOrders, trendOrders, statusRows, topProducts, topCustomers, auditRows, storeSetting, currencySetting, pendingReviews, unpaidOrders, roles, permissions, projectTelemetry, conversations] = await Promise.all([
+  const [totalProducts, totalCustomers, totalOrders, revenue, lowStock, outOfStock, recentOrders, trendOrders, statusRows, topProducts, topCustomers, auditRows, storeSetting, currencySetting, pendingReviews, unpaidOrders, roles, permissions, initialProjectTelemetry, conversations] = await Promise.all([
     prisma.product.count(),
     prisma.user.count({ where: { role: "CUSTOMER" } }),
     prisma.order.count(),
@@ -72,6 +79,22 @@ export async function getRoleDashboard(inputRole?: unknown) {
     role === "SUPER_ADMIN" ? getProjectTelemetry() : Promise.resolve(null),
     role === "SUPER_ADMIN" ? prisma.aILog.findMany({ take: 8, orderBy: { createdAt: "desc" }, select: { id: true, feature: true, prompt: true, response: true, createdAt: true } }) : Promise.resolve([]),
   ]);
+
+  let projectTelemetry = initialProjectTelemetry;
+  if (role === "SUPER_ADMIN") {
+    if (!hasRepositoryTelemetry(projectTelemetry)) {
+      try {
+        await ensureRepositoryTelemetrySnapshot();
+        projectTelemetry = await getProjectTelemetry();
+      } catch (error) {
+        console.error("repository telemetry refresh failed", { error });
+      }
+    } else {
+      void ensureRepositoryTelemetrySnapshot().catch((error) => {
+        console.error("repository telemetry background refresh failed", { error });
+      });
+    }
+  }
 
   const productIds = topProducts.map((item) => item.productId);
   const customerIds = topCustomers.map((item) => item.userId);

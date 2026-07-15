@@ -1,11 +1,17 @@
-﻿import { COPILOT_LOCKED_UI_NOTICE } from "@/lib/ai/developmentCopilot";
-
-export default function AiDevelopmentCopilotPage() {
-  return (
-    <main>
-      <h1>Enterprise AI Development Copilot</h1>
-      <p>{COPILOT_LOCKED_UI_NOTICE}</p>
-      <p>Use the approved locked UI shell. This placeholder only exposes the functional route if no approved page existed.</p>
-    </main>
-  );
+"use client";
+import { useEffect,useRef,useState } from "react";
+import styles from "./AiBuilder.module.css";
+import { askAiBuilder,getBuilderHealth } from "@/lib/ai/developmentCopilot";
+type Msg={role:"user"|"assistant";text:string};
+declare global { interface Window { webkitSpeechRecognition?: any; SpeechRecognition?: any; } }
+export default function AiDevelopmentCopilotPage(){
+ const [messages,setMessages]=useState<Msg[]>([{role:"assistant",text:"আমি SAQSO AI Builder। বাংলা, English বা Banglish-এ architecture, code, plugin, debug, template বা deployment নিয়ে বলুন।"}]);
+ const [text,setText]=useState("");const [busy,setBusy]=useState(false);const [online,setOnline]=useState(false);const end=useRef<HTMLDivElement>(null);
+ useEffect(()=>{getBuilderHealth().then(()=>setOnline(true)).catch(()=>setOnline(false));},[]);
+ useEffect(()=>end.current?.scrollIntoView({behavior:"smooth"}),[messages]);
+ async function send(value=text){const prompt=value.trim();if(!prompt||busy)return;setText("");setMessages(m=>[...m,{role:"user",text:prompt}]);setBusy(true);try{const r=await askAiBuilder(prompt);const d=r.data;const output=[d.title,d.summary,"",...(d.steps||[]).map((x:string,i:number)=>`${i+1}. ${x}`),d.repository?`\nRepository: ${d.repository.files} files · ${d.repository.models} models · ${d.repository.routes} routes`:""].join("\n");setMessages(m=>[...m,{role:"assistant",text:output}]);}catch(e:any){setMessages(m=>[...m,{role:"assistant",text:`Request failed: ${e?.message||"Unknown error"}`}]);}finally{setBusy(false);}}
+ function listen(){const C=window.SpeechRecognition||window.webkitSpeechRecognition;if(!C){alert("Voice input is not supported by this browser.");return;}const r=new C();r.lang="bn-BD";r.interimResults=false;r.onresult=(e:any)=>setText(e.results[0][0].transcript);r.start();}
+ function speakLast(){const last=[...messages].reverse().find(m=>m.role==="assistant");if(!last||!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(last.text);u.lang=/[\u0980-\u09ff]/.test(last.text)?"bn-BD":"en-US";window.speechSynthesis.speak(u);}
+ const prompts=["আমার project architecture audit করো","Make a modern ecommerce template for my client","এই build error debug করার plan দাও","Plugin installer ZIP structure বানাও","Production deployment checklist দাও"];
+ return <main className={styles.page}><section className={styles.main}><header className={styles.head}><div><h1 className={styles.title}>SAQSO AI Builder</h1><div>Architecture · Development · Review · Debug · Plugin · Deployment</div></div><span className={styles.badge}>{online?"Connected":"Offline"}</span></header><div className={styles.messages}>{messages.map((m,i)=><div key={`${m.role}-${i}`} className={`${styles.bubble} ${m.role==="user"?styles.user:styles.assistant}`}>{m.text}</div>)}{busy&&<div className={`${styles.bubble} ${styles.assistant}`}>Analyzing project context…</div>}<div ref={end}/></div><div className={styles.composer}><button className={styles.btn} onClick={listen} aria-label="Voice input">🎙</button><textarea value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}}} placeholder="বাংলা, English বা Banglish-এ বলুন…"/><button className={styles.btn} onClick={()=>send()} disabled={busy}>Send</button></div></section><aside className={styles.side}><div className={styles.card}><h3>Voice</h3><button className={styles.prompt} onClick={speakLast}>🔊 Read last answer</button></div><div className={styles.card}><h3>Suggested work</h3>{prompts.map(p=><button key={p} className={styles.prompt} onClick={()=>send(p)}>{p}</button>)}</div><div className={styles.card}><h3>Governance</h3><div>Preview only</div><div>No automatic migration</div><div>No automatic deployment</div><div>Approval required</div></div></aside></main>;
 }

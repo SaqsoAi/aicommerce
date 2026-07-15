@@ -21,6 +21,13 @@ import type { LucideIcon } from "lucide-react";
 export type RoleKey = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
 export type Accent = "super" | "admin" | "manager";
 export type DataState = "available" | "unavailable";
+export type MetricFinding = {
+  category: string;
+  file: string;
+  line: number;
+  message: string;
+  instruction: string;
+};
 export type Metric = {
   label: string;
   value: string;
@@ -29,6 +36,7 @@ export type Metric = {
   tone?: string;
   source: string;
   state: DataState;
+  findings?: MetricFinding[];
 };
 
 export type DashboardModel = {
@@ -55,12 +63,13 @@ export type DashboardModel = {
   tasks: Array<[string, string]>;
   activities: Array<[string, string, string]>;
   salesTrend: Array<{ label: string; value: number }>;
-  projectActivity: Array<{ label: string; value: number }>;
+  projectActivity: Array<{ label: string; value: number; commits?: number; issues?: number; pullRequests?: number; codeReviews?: number }>;
   conversations: Array<[string, string, string, string]>;
   customers: Array<[string, string, string]>;
   inventory: Array<[string, string]>;
   system: Array<[string, string]>;
   store: Array<[string, string]>;
+  findings?: MetricFinding[];
 };
 
 export const unavailable = "Unavailable";
@@ -87,12 +96,12 @@ export const superDashboard: DashboardModel = {
   role: "SUPER_ADMIN",
   accent: "super",
   mode: "super",
-  eyebrow: "Super Admin Enterprise Command",
-  title: "Good Evening, Super Admin! 👋",
-  subtitle: "AI Copilot is analyzing your project in real-time.",
+  eyebrow: "SAQSO.AI Platform Command",
+  title: "Platform Command Center",
+  subtitle: "Monitor tenants, AI usage, security, infrastructure and platform operations.",
   dateLabel: "This Week",
   actionLabel: "Quick Actions",
-  roleLabel: "Super Admin",
+  roleLabel: "Platform Admin",
   themeLabel: "Blue / Purple",
   warning: "Unavailable widgets are intentionally not estimated or demo-filled.",
   sources: baseSources,
@@ -143,11 +152,11 @@ export const adminDashboard: DashboardModel = {
   accent: "admin",
   mode: "commerce",
   eyebrow: "Store Operations",
-  title: "Welcome back, Admin!",
+  title: "Store Command Center",
   subtitle: "Here is what is happening with your store from live APIs.",
   dateLabel: "Live API",
   actionLabel: "Export Report",
-  roleLabel: "Administrator",
+  roleLabel: "Store Admin",
   themeLabel: "Orange",
   warning: "No demo sales, orders, customers, products, or customer names are rendered.",
   sources: baseSources.slice(0, 1),
@@ -186,10 +195,10 @@ export const managerDashboard: DashboardModel = {
   role: "MANAGER",
   accent: "manager",
   eyebrow: "Store Operations",
-  title: "Welcome back, User Admin!",
+  title: "Operations Dashboard",
   subtitle: "Manage daily store operations within assigned permissions using live APIs.",
   actionLabel: "View Orders",
-  roleLabel: "User Admin",
+  roleLabel: "Store Manager",
   themeLabel: "Green",
   warning: "Manager view hides platform/security/provider controls and only shows live store data.",
   metrics: [
@@ -221,6 +230,7 @@ export function cloneDashboard(model: DashboardModel): DashboardModel {
     inventory: model.inventory.map((row) => [...row] as [string, string]),
     system: model.system.map((row) => [...row] as [string, string]),
     store: model.store.map((row) => [...row] as [string, string]),
+    findings: (model.findings || []).map((finding) => ({ ...finding })),
   };
 }
 

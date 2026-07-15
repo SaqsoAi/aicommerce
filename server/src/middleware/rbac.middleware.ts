@@ -1,13 +1,3 @@
-export const rbac = (...roles: string[]) => {
-  return (req: any, res: any, next: any) => {
-    const userRole = req.user.role;
+import { requireRole } from "./authorize.middleware";
 
-    if (!roles.includes(userRole)) {
-      return res.status(403).json({
-        message: "Access Denied",
-      });
-    }
-
-    next();
-  };
-};
+export const rbac = (...roles: string[]) => requireRole(...roles);

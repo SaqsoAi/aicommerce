@@ -1,4 +1,4 @@
-﻿export type CopilotMode =
+export type CopilotMode =
   | "developer"
   | "architect"
   | "review"
@@ -25,6 +25,14 @@ export type CopilotRole =
   | "AI_UI_UX_AUDITOR";
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export interface ProjectIndexFinding {
+  category: "CRITICAL_BUG" | "MEDIUM_BUG" | "LOW_PRIORITY" | "PERFORMANCE" | "SECURITY" | "DUPLICATE_CODE" | "UNUSED_FILE";
+  file: string;
+  line: number;
+  message: string;
+  instruction: string;
+}
 
 export interface ProjectIndexSummary {
   folders: number;
@@ -61,6 +69,7 @@ export interface ProjectIndexSummary {
   unusedFiles: number;
   dependencyUpdates: number;
   dependencyCount: number;
+  findings: ProjectIndexFinding[];
 }
 
 export interface ImpactAnalysis {

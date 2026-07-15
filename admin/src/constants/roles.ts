@@ -1,19 +1,3 @@
-export const ROLES = {
-  SUPER_ADMIN:
-    "SUPER_ADMIN",
-
-  ADMIN:
-    "ADMIN",
-
-  MANAGER:
-    "MANAGER",
-
-  INVENTORY:
-    "INVENTORY",
-
-  MARKETING:
-    "MARKETING",
-
-  SUPPORT:
-    "SUPPORT",
-};
+export { USER_ROLES, ROLE_LABELS, ROLE_LANDING_ROUTES, normalizeUserRole, roleLabel, isPlatformAdmin, isTenantStaff } from "@/config/roles";
+export type { UserRole, AdminAppRole } from "@/config/roles";
+export const ROLES = { SUPER_ADMIN:"SUPER_ADMIN", ADMIN:"ADMIN", MANAGER:"MANAGER", INVENTORY:"INVENTORY", MARKETING:"MARKETING", SUPPORT:"SUPPORT", WAREHOUSE_MANAGER:"WAREHOUSE_MANAGER", DELIVERY_MANAGER:"DELIVERY_MANAGER", FINANCE_MANAGER:"FINANCE_MANAGER", CUSTOMER:"CUSTOMER" } as const;
