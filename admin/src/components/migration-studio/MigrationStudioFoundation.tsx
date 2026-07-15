@@ -1158,25 +1158,186 @@ function rewriteAliasImports(path: string, source: string): string {
     return `from ${quote}${relativeImport(path, target)}${quote}`;
   });
 }
+
+type SourceCertificationIssue = {
+  path: string;
+  code: string;
+  message: string;
+  severity: "BLOCKER" | "REVIEW";
+};
+
+function hasReactBinding(source: string): boolean {
+  return (
+    /import\s+\*\s+as\s+React\s+from\s+["']react["']/.test(source) ||
+    /import\s+React(?:\s*,|\s+from)\s*["']react["']/.test(source)
+  );
+}
+
+function resolveReactImports(source: string): string {
+  const imports =
+    source.match(/^import\s+[^;\n]+from\s+["']react["'];?\s*$/gm) ?? [];
+  const named = new Set<string>();
+  const needsReact = /\bReact\./.test(source);
+  let hadReactBinding = false;
+
+  for (const statement of imports) {
+    if (
+      /import\s+\*\s+as\s+React/.test(statement) ||
+      /import\s+React(?:\s*,|\s+from)/.test(statement)
+    ) {
+      hadReactBinding = true;
+    }
+    const match = statement.match(/\{([^}]+)\}/);
+    if (match) {
+      for (const token of match[1].split(",")) {
+        const value = token.trim();
+        if (value) named.add(value);
+      }
+    }
+  }
+
+  let output = source;
+  for (const statement of imports) output = output.replace(statement, "");
+  output = output.replace(/^\s*\n/gm, "\n").replace(/\n{3,}/g, "\n\n");
+
+  const nextImports: string[] = [];
+  if (needsReact || hadReactBinding) {
+    nextImports.push('import * as React from "react";');
+  }
+  if (named.size) {
+    nextImports.push(
+      `import { ${Array.from(named).sort().join(", ")} } from "react";`,
+    );
+  }
+  if (!nextImports.length) return output.trimStart();
+
+  const client = output.match(/^\s*["']use client["'];?\s*/);
+  if (client) {
+    const body = output.slice(client[0].length).trimStart();
+    return `"use client";\n\n${nextImports.join("\n")}\n\n${body}`;
+  }
+  return `${nextImports.join("\n")}\n\n${output.trimStart()}`;
+}
+
+function safeComponentIdentifier(
+  value: string,
+  fallback = "Generated",
+): string {
+  const aliases: Record<string, string> = {
+    "404": "Page404",
+    "403": "Page403",
+    "500": "Page500",
+    "*": "NotFound",
+  };
+  const raw = aliases[value.trim()] || value;
+  const identifier = raw
+    .split(/[^a-zA-Z0-9_$]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+  const normalized = identifier || fallback;
+  return /^[A-Za-z_$]/.test(normalized)
+    ? normalized
+    : `Page${normalized}`;
+}
+
+function certifyGeneratedSource(
+  path: string,
+  source: string,
+): SourceCertificationIssue[] {
+  const issues: SourceCertificationIssue[] = [];
+  const bindings =
+    source.match(
+      /import\s+(?:\*\s+as\s+React|React(?:\s*,|\s+from))/g,
+    ) ?? [];
+
+  const blocker = (code: string, message: string) =>
+    issues.push({ path, code, message, severity: "BLOCKER" });
+
+  if (bindings.length > 1) blocker(
+    "REACT_DUPLICATE_BINDING",
+    "React has conflicting bindings.",
+  );
+  if (/\bReact\./.test(source) && !hasReactBinding(source)) blocker(
+    "REACT_NAMESPACE_UNBOUND",
+    "React namespace is used without an import.",
+  );
+  if (/function\s+[0-9]/.test(source)) blocker(
+    "INVALID_COMPONENT_IDENTIFIER",
+    "Generated function starts with a number.",
+  );
+  if (/\bimport\.meta\.env\b/.test(source)) blocker(
+    "VITE_ENV_REMAINS",
+    "Vite environment access remains.",
+  );
+  if (/\bBrowserRouter\b|\buseNavigate\b/.test(source)) blocker(
+    "REACT_ROUTER_REMAINS",
+    "React Router runtime API remains.",
+  );
+  if (/\bclass=/.test(source)) blocker(
+    "JSX_CLASS_ATTRIBUTE",
+    "JSX contains class=.",
+  );
+  if (
+    /\b(window|document|localStorage|sessionStorage)\b/.test(source) &&
+    !/^\s*["']use client["'];/m.test(source)
+  ) blocker(
+    "CLIENT_BOUNDARY_REQUIRED",
+    "Browser API requires use client.",
+  );
+
+  return issues;
+}
+
 function convertText(path: string, source: string): string {
   let output = rewriteAliasImports(path, source);
-  output = output.replace(/import\.meta\.env\.VITE_([A-Z0-9_]+)/g, "process.env.NEXT_PUBLIC_$1");
+  output = output.replace(
+    /import\.meta\.env\.VITE_([A-Z0-9_]+)/g,
+    "process.env.NEXT_PUBLIC_$1",
+  );
   output = output.replace(/\bclass=/g, "className=");
-  output = output.replace(/import\s+React\s+from\s+["']react["'];?\s*/g, "");
-  output = output.replace(/import\s+\{\s*BrowserRouter[^;]+from\s+["']react-router-dom["'];?/g, "");
-  output = output.replace(/import\s+\{\s*useNavigate\s*\}\s+from\s+["']react-router-dom["'];?/g, 'import { useRouter } from "next/navigation";');
-  output = output.replace(/const\s+navigate\s*=\s*useNavigate\(\);/g, "const router = useRouter();");
+  output = output.replace(
+    /import\s+\{\s*BrowserRouter[^;]+from\s+["']react-router-dom["'];?/g,
+    "",
+  );
+  output = output.replace(
+    /import\s+\{\s*useNavigate\s*\}\s+from\s+["']react-router-dom["'];?/g,
+    'import { useRouter } from "next/navigation";',
+  );
+  output = output.replace(
+    /const\s+navigate\s*=\s*useNavigate\(\);/g,
+    "const router = useRouter();",
+  );
   output = output.replace(/navigate\(([^)]+)\)/g, "router.push($1)");
-  output = output.replace(/import\s+\{\s*useLocation\s*\}\s+from\s+["']react-router-dom["'];?/g, 'import { usePathname } from "next/navigation";');
-  output = output.replace(/const\s+location\s*=\s*useLocation\(\);/g, "const pathname = usePathname();");
+  output = output.replace(
+    /import\s+\{\s*useLocation\s*\}\s+from\s+["']react-router-dom["'];?/g,
+    'import { usePathname } from "next/navigation";',
+  );
+  output = output.replace(
+    /const\s+location\s*=\s*useLocation\(\);/g,
+    "const pathname = usePathname();",
+  );
   output = output.replace(/location\.pathname/g, "pathname");
-  if (/\b(useState|useEffect|useMemo|useCallback|useRef|useRouter|usePathname)\b/.test(output) && !/^\s*["']use client["'];/m.test(output)) {
+
+  if (
+    (
+      /\b(useState|useEffect|useMemo|useCallback|useRef|useRouter|usePathname)\b/.test(output) ||
+      /\b(window|document|localStorage|sessionStorage)\b/.test(output)
+    ) &&
+    !/^\s*["']use client["'];/m.test(output)
+  ) {
     output = `"use client";\n\n${output}`;
   }
+
   if (path.endsWith(".blade.php")) {
-    return `/* Converted from Laravel Blade. Dynamic Blade directives require manual review. */\nexport default function MigratedBladeView(){return <div className="migrated-blade-view"><pre>{${JSON.stringify(source.slice(0, 12_000))}}</pre></div>}\n`;
+    return `import * as React from "react";
+export default function MigratedBladeView(): React.ReactElement {
+  return <pre>{${JSON.stringify(source.slice(0, 12_000))}}</pre>;
+}
+`;
   }
-  return output;
+
+  return resolveReactImports(output);
 }
 
 function crcTable(): Uint32Array {
@@ -1490,11 +1651,7 @@ type CompletionArtifact = {
 };
 
 function completionComponentName(key: string): string {
-  return key
-    .split(/[^a-zA-Z0-9]+/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
+  return safeComponentIdentifier(key, "Generated");
 }
 
 function generateCompletionArtifacts(
@@ -1515,13 +1672,13 @@ function generateCompletionArtifacts(
 
 import React from "react";
 
-export default function ${name}CompletionPage() {
+export default function ${name}CompletionPage(): React.ReactElement {
   return (
     <main data-completion-page="${page.key}" data-status="REVIEW_REQUIRED">
       <section>
         <h1>${page.label}</h1>
         <p>
-          Generated by SAQSO AI Migrator 2026.24 LTS because the imported page
+          Generated by SAQSO AI Migrator 2026.27 LTS because the imported page
           was ${page.status.toLowerCase()}. Preserve the imported theme and connect
           the current platform data contract before publish.
         </p>
@@ -1553,7 +1710,7 @@ export type ${name}Props = {
   children?: React.ReactNode;
 };
 
-export default function ${name}({ className, children }: ${name}Props) {
+export default function ${name}({ className, children }: ${name}Props): React.ReactElement {
   return (
     <section
       className={className}
@@ -2382,6 +2539,62 @@ export default function MigrationStudioFoundation() {
         `Semantic Design Engine generated ${semanticDesignArtifacts.length} artifacts for all discovered pages`,
       ]);
 
+
+      const compilerIssues: SourceCertificationIssue[] = [];
+      const compilerDecoder = new TextDecoder();
+      for (const file of payload) {
+        if (!/\.(tsx?|jsx?)$/i.test(file.path)) continue;
+        compilerIssues.push(
+          ...certifyGeneratedSource(
+            file.path,
+            compilerDecoder.decode(file.content),
+          ),
+        );
+      }
+      const compilerBlockers = compilerIssues.filter(
+        (issue) => issue.severity === "BLOCKER",
+      );
+      if (compilerBlockers.length) {
+        throw new Error(
+          "Migration compiler blocked package generation:\n" +
+            compilerBlockers
+              .slice(0, 10)
+              .map((issue) => `${issue.code}: ${issue.path}`)
+              .join("\n"),
+        );
+      }
+
+      const compilerReport = {
+        engineVersion: "2026.27.0",
+        generatedAt: new Date().toISOString(),
+        checkedFiles: payload.filter((file) =>
+          /\.(tsx?|jsx?)$/i.test(file.path),
+        ).length,
+        blockers: compilerBlockers,
+        reviewItems: compilerIssues.filter(
+          (issue) => issue.severity === "REVIEW",
+        ),
+        status: "PASS",
+      };
+      const compilerDestination =
+        `src/templates/imported/${targetKey}/certification/compiler-2026.27.json`;
+      const compilerSource = normalizeArchivePath(
+        `payload/client/${compilerDestination}`,
+      );
+      const compilerContent = encode(
+        JSON.stringify(compilerReport, null, 2),
+      );
+      payload.push({ path: compilerSource, content: compilerContent });
+      fileDefinitions.push({
+        owner: "client",
+        sourcePath: compilerSource,
+        destinationPath: compilerDestination,
+        sha256: await sha(compilerContent),
+        sizeBytes: compilerContent.length,
+        contentType: "application/json",
+        operation: "create",
+      });
+
       const manifest = {
         schemaVersion: "1.0",
         pluginKey: `saqso.migrated-template.${targetKey}`,
@@ -2585,7 +2798,7 @@ export default function MigrationStudioFoundation() {
           <h1>Tenant-Aware AI Migration</h1>
           <p>Create or select a real tenant and store, detect imported AI capabilities, reuse existing platform AI, and plan implementation for genuinely new AI features.</p>
         </div>
-        <span className={styles.badge}>2026.26.2 LTS</span>
+        <span className={styles.badge}>2026.27.0 LTS</span>
       </header>
 
       <section className={styles.card}>

@@ -124,10 +124,7 @@ export default function PluginTransactionMonitorClient({
     void load();
   }, [load]);
 
-  useEffect(() => {
-    if (!transactionId || !transaction || !ACTIVE.has(transaction.status)) return;
-    const timer = window.setInterval(() => void load(), 2000);
-    async function executeReviewedInstallation() {
+  async function executeReviewedInstallation() {
     if (!transaction) return;
     setWorking(true);
     try {
@@ -139,7 +136,11 @@ export default function PluginTransactionMonitorClient({
       toast.success("Installation execution started");
       await load();
     } catch (requestError) {
-      toast.error(requestError instanceof Error ? requestError.message : "Execution failed");
+      toast.error(
+        requestError instanceof Error
+          ? requestError.message
+          : "Execution failed",
+      );
     } finally {
       setWorking(false);
     }
@@ -157,7 +158,11 @@ export default function PluginTransactionMonitorClient({
       toast.success("Transaction recovered. Recreate the installation plan.");
       await load();
     } catch (requestError) {
-      toast.error(requestError instanceof Error ? requestError.message : "Recovery failed");
+      toast.error(
+        requestError instanceof Error
+          ? requestError.message
+          : "Recovery failed",
+      );
     } finally {
       setWorking(false);
     }
@@ -175,13 +180,20 @@ export default function PluginTransactionMonitorClient({
       toast.success("Transaction cancelled");
       await load();
     } catch (requestError) {
-      toast.error(requestError instanceof Error ? requestError.message : "Cancellation failed");
+      toast.error(
+        requestError instanceof Error
+          ? requestError.message
+          : "Cancellation failed",
+      );
     } finally {
       setWorking(false);
     }
   }
 
-  return () => window.clearInterval(timer);
+  useEffect(() => {
+    if (!transactionId || !transaction || !ACTIVE.has(transaction.status)) return;
+    const timer = window.setInterval(() => void load(), 2000);
+    return () => window.clearInterval(timer);
   }, [load, transaction, transactionId]);
 
   const verifiedFiles = useMemo(
