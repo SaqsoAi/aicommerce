@@ -1,80 +1,32 @@
-export type AccountApiResponse<T> = {
-  success: boolean;
-  message?: string;
-  data: T;
-};
+import { cookies } from "next/headers";
 
-const DEFAULT_API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:5000/api";
-
-function normalizeBase(base: string) {
-  return base.replace(/\/$/, "");
-}
+export type AccountApiResponse<T> = { success: boolean; message?: string; data: T };
+const DEFAULT_API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
 async function accountFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const base = normalizeBase(DEFAULT_API_BASE);
-  const url = `${base}${path}`;
-  const response = await fetch(url, {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("customer_session")?.value;
+  if (!session) throw new Error("Authentication required");
+  const response = await fetch(`${DEFAULT_API_BASE.replace(/\/$/, "")}${path}`, {
     ...init,
     cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers || {}),
-    },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${session}`, ...(init?.headers || {}) },
   });
-
-  if (!response.ok) {
-    throw new Error(`Account API failed: ${response.status} ${response.statusText}`);
-  }
-
-  const json = (await response.json()) as AccountApiResponse<T>;
+  const json = (await response.json().catch(() => null)) as AccountApiResponse<T> | null;
+  if (!response.ok || !json?.success) throw new Error(json?.message || `Account API failed (${response.status})`);
   return json.data;
 }
 
-export async function getAccountDashboard(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<Record<string, any>>(`/account/dashboard${query}`);
-}
-
-export async function getAccountProfile(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<Record<string, any>>(`/account/profile${query}`);
-}
-
-export async function getAccountOrders(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<any[]>(`/account/orders${query}`);
-}
-
-export async function getAccountWishlist(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<any[]>(`/account/wishlist${query}`);
-}
-
-export async function getAccountRewards(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<Record<string, any>>(`/account/rewards${query}`);
-}
-
-export async function getAccountMembership(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<Record<string, any> | null>(`/account/membership${query}`);
-}
-
-export async function getAccountAddresses(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<any[]>(`/account/addresses${query}`);
-}
-export async function getProfileCompletionRewardStatus(userId?: string) {
-  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  return accountFetch<Record<string, any>>(`/account/profile-completion-reward${query}`);
-}
-
-export async function claimProfileCompletionReward(payload?: Record<string, any>) {
-  return accountFetch<Record<string, any>>(`/account/profile-completion-reward/claim`, {
-    method: "POST",
-    body: JSON.stringify(payload || {}),
-  });
-}
+export const getAccountDashboard = () => accountFetch<Record<string, any>>("/account/dashboard");
+export const getAccountProfile = () => accountFetch<Record<string, any>>("/account/profile");
+export const updateAccountProfile = (payload: Record<string, unknown>) => accountFetch<Record<string, any>>("/account/profile", { method: "PATCH", body: JSON.stringify(payload) });
+export const getAccountOrders = () => accountFetch<any[]>("/account/orders");
+export const getAccountWishlist = () => accountFetch<any[]>("/account/wishlist");
+export const getAccountRewards = () => accountFetch<Record<string, any>>("/account/rewards");
+export const getAccountMembership = () => accountFetch<Record<string, any> | null>("/account/membership");
+export const getAccountAddresses = () => accountFetch<any[]>("/account/addresses");
+export const createAccountAddress = (payload: Record<string, unknown>) => accountFetch<Record<string, any>>("/account/addresses", { method: "POST", body: JSON.stringify(payload) });
+export const updateAccountAddress = (id: string, payload: Record<string, unknown>) => accountFetch<Record<string, any>>(`/account/addresses/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(payload) });
+export const deleteAccountAddress = (id: string) => accountFetch<{ id: string }>(`/account/addresses/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getProfileCompletionRewardStatus = () => getAccountRewards();
+export const claimProfileCompletionReward = () => { throw new Error("Profile rewards must be awarded by the server ledger"); };

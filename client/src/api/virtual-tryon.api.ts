@@ -1,60 +1,19 @@
-﻿import api from "./client";
+import api from "./client";
 
-export const createVirtualTryOn = async (
-  payload: {
-    userId: string;
-    productId: string;
-    personImage: string;
-  }
-) => {
-  const res = await api.post(
-    "/virtual-tryon/create",
-    payload
-  );
-
-  return res.data;
+export type VirtualTryOnJob = {
+  id: string; productId: string; personImage: string; garmentImage: string;
+  resultImage?: string | null; status: string; error?: string | null; createdAt: string;
+  product?: { id: string; name?: string; thumbnail?: string; price?: number };
 };
 
-export const getVirtualTryOnHistory = async () => {
-  const res = await api.get(
-    "/virtual-tryon/history"
-  );
-
-  return res.data;
-};
-
-export const getMyVirtualTryOnHistory = async () => {
-  try {
-    const res = await api.get(
-      "/virtual-tryon/history/me"
-    );
-
-    return res.data;
-  } catch (error: any) {
-    if (error?.response?.status === 404) {
-      return {
-        success: true,
-        data: [],
-        fallback: true,
-      };
-    }
-
-    throw error;
-  }
-};
-
-export const retryVirtualTryOn = async (id: string) => {
-  const res = await api.post(
-    `/virtual-tryon/history/${id}/retry`
-  );
-
-  return res.data;
-};
-
-export const deleteVirtualTryOnHistory = async (id: string) => {
-  const res = await api.delete(
-    `/virtual-tryon/history/${id}`
-  );
-
-  return res.data;
-};
+export async function uploadVirtualTryOnPersonImage(file: Blob, filename = "person.jpg") {
+  const form = new FormData(); form.append("file", file, filename);
+  const response = await api.post("/virtual-tryon/person-image", form);
+  return response.data?.data as { url: string };
+}
+export async function createVirtualTryOn(payload: { productId: string; personImage: string }) {
+  const response = await api.post("/virtual-tryon/create", payload); return response.data;
+}
+export async function getMyVirtualTryOnHistory() { const response = await api.get("/virtual-tryon/history/me"); return response.data; }
+export async function retryVirtualTryOn(id: string) { const response = await api.post(`/virtual-tryon/history/${id}/retry`); return response.data; }
+export async function deleteVirtualTryOnHistory(id: string) { const response = await api.delete(`/virtual-tryon/history/${id}`); return response.data; }

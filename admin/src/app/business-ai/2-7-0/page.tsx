@@ -1,0 +1,1 @@
+"use client";export default function Page(){return <main className="ds-page"><h1>SAQSO Business AI — Forecast and scenario engine</h1><p>Evidence-backed, tenant-scoped and approval-controlled.</p></main>}

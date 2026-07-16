@@ -3309,3 +3309,165 @@ model AiBuilderMessage {
 
   @@index([workspaceId, createdAt])
 }
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BusinessUnit {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  code           String
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, status])
+}
+
+model Department {
+  id             String   @id @default(cuid())
+  tenantId       String
+  storeId        String?
+  businessUnitId String?
+  name           String
+  code           String
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([tenantId, storeId, status])
+}
+
+model PlatformLicense {
+  id        String    @id @default(cuid())
+  tenantId  String?
+  key       String    @unique
+  planKey   String
+  status    String    @default("ACTIVE")
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tenantId, status])
+}
+
+model AiBuilderSession {
+  id          String   @id @default(cuid())
+  userId      String
+  workspaceId String?
+  language    String   @default("auto")
+  status      String   @default("ACTIVE")
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, status, updatedAt])
+}
+
+model AiBuilderPatch {
+  id          String   @id @default(cuid())
+  userId      String
+  workspaceId String?
+  file        String
+  beforeHash  String?
+  afterHash   String?
+  diff        Json
+  status      String   @default("DRAFT")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, status, createdAt])
+}
+
+model AiBuilderTestPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  target    String
+  plan      Json
+  status    String   @default("DRAFT")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status, createdAt])
+}
+
+model BusinessAiScenario {
+  id        String   @id @default(cuid())
+  tenantId  String
+  storeId   String?
+  userId    String
+  name      String
+  input     Json
+  result    Json
+  status    String   @default("DRAFT")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, storeId, status])
+}
+
+model BusinessAiBoardReport {
+  id        String   @id @default(cuid())
+  tenantId  String
+  storeId   String?
+  userId    String
+  title     String
+  report    Json
+  path      String?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, storeId, createdAt])
+}
+
+model BusinessAiActionCertification {
+  id        String   @id @default(cuid())
+  tenantId  String
+  storeId   String?
+  actionId  String
+  checks    Json
+  passed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, storeId, actionId])
+}
+
+model AiProviderConversationLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  workspaceId String?
+  provider    String
+  model       String
+  prompt      String
+  response    String
+  auditId     String?
+  usage       Json?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, workspaceId, createdAt])
+}
+
+model BusinessAiAction {
+  id         String    @id @default(cuid())
+  tenantId   String
+  storeId    String?
+  userId     String
+  type       String
+  title      String
+  payload    Json?
+  status     String    @default("PENDING_APPROVAL")
+  approvedBy String?
+  approvedAt DateTime?
+  executedAt DateTime?
+  result     Json?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([tenantId, storeId, status, createdAt])
+}

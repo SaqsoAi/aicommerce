@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Eye, RefreshCw, RotateCcw, Save, Send, Sparkles } from "lucide-react";
@@ -89,6 +89,9 @@ const CORE_ITEMS: CoreItem[] = [
   { key: "instagram", label: "Instagram", type: "text", hint: "Instagram profile URL" },
   { key: "tiktok", label: "TikTok", type: "text", hint: "TikTok profile URL" },
   { key: "youtube", label: "YouTube", type: "text", hint: "YouTube channel URL" },
+  { key: "headerNavigation", label: "Header Navigation (JSON)", type: "textarea", hint: 'Example: [{"label":"Shop","href":"/shop"}]' },
+  { key: "footerNavigation", label: "Footer Navigation (JSON)", type: "textarea", hint: 'Example: [{"title":"Support","links":[["Track Order","/track-order"]]}]' },
+  { key: "footerText", label: "Footer Description", type: "textarea", hint: "Customer-facing footer description" },
 ];
 
 function normalize(value?: string) {
@@ -786,6 +789,7 @@ setFields(list);
     </section>
   );
 }
+
 
 
 

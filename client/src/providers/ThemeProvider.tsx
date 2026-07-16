@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -19,12 +19,15 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 const API = "/api";
+const THEME_KEY = "saqso-theme-mode";
 
 function applyTheme(theme: ThemeMode) {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const resolved = theme === "system" ? (prefersDark ? "dark" : "light") : theme;
 
   document.documentElement.classList.toggle("dark", resolved === "dark");
+  document.documentElement.dataset.theme = resolved;
+  document.documentElement.dataset.themeMode = theme;
   document.documentElement.style.colorScheme = resolved;
 
   return resolved;
@@ -46,25 +49,27 @@ async function fetchAdminDefaultTheme(): Promise<ThemeMode> {
     const value = String(found?.value || "").toLowerCase();
     if (value === "light" || value === "dark" || value === "system") return value;
   } catch {}
-  return "dark";
+  return "system";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>("dark");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
+  const [theme, setThemeState] = useState<ThemeMode>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     let alive = true;
 
     async function boot() {
-      const saved = localStorage.getItem("theme") as ThemeMode | null;
+      const stored = localStorage.getItem(THEME_KEY) || localStorage.getItem("theme");
+      const saved: ThemeMode | null = stored === "light" || stored === "dark" || stored === "system" ? stored : null;
       const adminDefault = await fetchAdminDefaultTheme();
-      const next = saved || adminDefault || "dark";
+      const next = saved || adminDefault || "system";
 
       if (!alive) return;
 
       setThemeState(next);
       setResolvedTheme(applyTheme(next));
+      window.dispatchEvent(new CustomEvent("saqso-theme-change", { detail: { mode: next } }));
     }
 
     boot();
@@ -82,14 +87,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setTheme = (next: ThemeMode) => {
+    localStorage.setItem(THEME_KEY, next);
     localStorage.setItem("theme", next);
-    localStorage.setItem("saqso-theme", next);
     setThemeState(next);
     setResolvedTheme(applyTheme(next));
+    window.dispatchEvent(new CustomEvent("saqso-theme-change", { detail: { mode: next } }));
   };
 
   const toggleTheme = () => {
-  setTheme(theme === "dark" ? "light" : "dark");
+  setTheme(resolvedTheme === "dark" ? "light" : "dark");
 };
 const value = useMemo(() => ({
   theme,
@@ -106,4 +112,7 @@ export function useTheme() {
 }
 
 export default ThemeProvider;
+
+
+
 

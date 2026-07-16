@@ -1,3 +1,8 @@
+import { certifyAction } from "./completion/action-certification.service";
+import { boardReport } from "./completion/board-report.service";
+import { executiveAdvisors } from "./completion/executive-advisors.service";
+import { forecast, scenario } from "./completion/forecast-scenario.service";
+import { businessVoice } from "./completion/voice-advisor.service";
 import { Router } from "express";
 import path from "path";
 import { protect, type AuthRequest } from "../../modules/auth/auth.middleware";
@@ -32,7 +37,7 @@ function context(req: AuthRequest) {
   };
 }
 
-router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-business-ai-advisor", version: "2.4.2", completionLevel: 5, tenantIsolation: true, multilingual: true, liveMutation: false }));
+router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-business-ai-advisor", version: "3.0.0", completionLevel: 10, tenantIsolation: true, multilingual: true, liveMutation: false }));
 router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "business-ai-advisor", completionLevel: 5, tenantIsolation: true } }));
 router.get("/snapshot", async (req, res, next) => { try { res.json({ success: true, data: await aiBusinessIntelligenceService.snapshot(context(req), Number(req.query.days ?? 30)) }); } catch (error) { next(error); } });
 router.post("/chat", async (req, res, next) => { try { res.json({ success: true, data: await aiBusinessIntelligenceService.chat(context(req), req.body ?? {}) }); } catch (error) { next(error); } });
@@ -65,5 +70,16 @@ router.post("/actions/:id/approve", async (req, res, next) => { try { res.json({
 router.post("/actions/:id/execute", async (req, res, next) => { try { res.json({ success: true, data: await executeAction(context(req), req.params.id) }); } catch (error) { next(error); } });
 router.get("/platform/control", async (req: any, res, next) => { try { if (String(req.user?.role) !== "SUPER_ADMIN") return res.status(403).json({ success: false, error: { code: "PLATFORM_ADMIN_REQUIRED" } }); res.json({ success: true, data: await businessAiControlService.get(String(req.query.tenantId ?? ""), String(req.query.storeId ?? "") || undefined) }); } catch (error) { next(error); } });
 router.post("/platform/control", async (req: any, res, next) => { try { if (String(req.user?.role) !== "SUPER_ADMIN") return res.status(403).json({ success: false, error: { code: "PLATFORM_ADMIN_REQUIRED" } }); res.json({ success: true, data: await businessAiControlService.save(req.body) }); } catch (error) { next(error); } });
+
+router.post("/voice-session",(req,res)=>res.json({success:true,data:businessVoice(req.body??{})}));
+
+router.get("/forecast",async(req,res,next)=>{try{const s=await aiBusinessIntelligenceService.snapshot(context(req),Number(req.query.days??30));res.json({success:true,data:forecast(s,Number(req.query.horizonDays??30))});}catch(e){next(e);}});
+router.post("/scenario",async(req,res,next)=>{try{const s=await aiBusinessIntelligenceService.snapshot(context(req),Number(req.body?.days??30));res.json({success:true,data:scenario(s,req.body??{})});}catch(e){next(e);}});
+
+router.get("/executive-advisors",async(req,res,next)=>{try{const s=await aiBusinessIntelligenceService.snapshot(context(req),Number(req.query.days??30));res.json({success:true,data:executiveAdvisors(s)});}catch(e){next(e);}});
+
+router.post("/reports/board",async(req,res,next)=>{try{const s=await aiBusinessIntelligenceService.snapshot(context(req),Number(req.body?.days??30));res.json({success:true,data:boardReport(root,context(req),{title:"Board Report",kpis:s.kpis})});}catch(e){next(e);}});
+
+router.post("/actions/certify",(req,res)=>res.json({success:true,data:certifyAction(req.body??{})}));
 
 export default router;

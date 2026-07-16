@@ -14,7 +14,7 @@ import { createVirtualTryOnSchema } from "./virtualTryOn.validation";
 
 const getUserId = (req: Request): string => {
   const user = (req as any).user;
-  return user?.id || user?.userId || req.body?.userId || "";
+  return user?.id || user?.userId || "";
 };
 
 const getParam = (value: unknown): string => {
@@ -28,8 +28,10 @@ export const createVirtualTryOn = async (
   res: Response
 ) => {
   try {
+    const userId = getUserId(req);
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
     const payload = createVirtualTryOnSchema.parse(req.body);
-    const job = await createVirtualTryOnJob(payload);
+    const job = await createVirtualTryOnJob({ ...payload, userId });
 
     res.json({
       success: true,
@@ -216,3 +218,4 @@ export const updateVirtualTryOnSettingController = async (
     data: settings,
   });
 };
+

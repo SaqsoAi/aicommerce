@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
@@ -13,16 +13,13 @@ import {
 } from "@/services/homepage-section.service";
 
 const SECTION_TYPES = [
-  "PERSONALIZATION_BANNER",
   "FEATURED_CATEGORIES",
-  "TRENDING_COLLECTIONS",
-  "FLASH_SALE",
-  "RECOMMENDATION_ENGINE",
-  "SOCIAL_FEEDS",
+  "PRODUCT_RAIL",
+  "CAMPAIGN",
+  "COLLECTION",
+  "SOCIAL_FEED",
   "NEWSLETTER",
-  "AI_MEMBERSHIP_BANNER",
-  "MEMBERSHIP_BANNER",
-  "SUSTAINABILITY_BLOCK",
+  "MEMBERSHIP",
 ];
 
 const SKIP_HERO_TYPES = ["HERO", "HOMEPAGE_HERO", "BANNER", "SLIDER"];
@@ -392,6 +389,7 @@ export default function HomepageBuilderPage() {
     </div></DashboardLayout>
   );
 }
+
 
 
 

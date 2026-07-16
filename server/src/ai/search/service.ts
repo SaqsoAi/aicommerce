@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { aiGateway } from "../core/gateway";
 import type {
   AiSearchContext,
@@ -14,6 +15,24 @@ import type {
 } from "./types";
 
 type GatewayResult = Awaited<ReturnType<typeof aiGateway.execute>>;
+
+type VisionAttributes = {
+  summary?: string; category?: string; subcategory?: string; colors?: string[]; materials?: string[];
+  patterns?: string[]; styles?: string[]; occasions?: string[]; gender?: string; visibleText?: string[]; confidence?: number;
+};
+
+function validVisionImageUrl(value: unknown): string {
+  const imageUrl = String(value || "").trim();
+  if (imageUrl.startsWith("data:image/") && imageUrl.length <= 11_000_000) return imageUrl;
+  let parsed: URL;
+  try { parsed = new URL(imageUrl); } catch { throw new Error("A valid HTTPS imageUrl is required"); }
+  if (parsed.protocol !== "https:") throw new Error("Vision imageUrl must use HTTPS");
+  return parsed.toString();
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(String).map((item) => item.trim()).filter(Boolean).slice(0, 12) : [];
+}
 
 const COLOR_WORDS = ["black", "white", "blue", "red", "green", "yellow", "pink", "purple", "brown", "grey", "gray", "navy", "maroon", "beige", "cream", "orange"];
 const CATEGORY_WORDS = ["shirt", "pant", "shoe", "watch", "belt", "cap", "bag", "panjabi", "saree", "kurti", "tshirt", "t-shirt", "accessory", "sunglass", "jacket"];
@@ -198,7 +217,7 @@ function rankProducts(candidates: SearchProduct[], intent: SearchIntent, limit: 
     .slice(0, limit);
 }
 
-async function throughGateway(feature: AiSearchFeature, input: Record<string, unknown>, context: AiSearchContext): Promise<GatewayResult> {
+async function throughGateway(feature: AiSearchFeature, input: Record<string, unknown>, context: AiSearchContext, modelType: "chat" | "vision" = "chat"): Promise<GatewayResult> {
   return aiGateway.execute({
     feature,
     input: {
@@ -206,7 +225,8 @@ async function throughGateway(feature: AiSearchFeature, input: Record<string, un
       providerDetailsHiddenFromClient: true,
       phase: "6.3",
     },
-    cacheKey: `ai-search:${feature}:${JSON.stringify(input).slice(0, 500)}`,
+    promptInput: modelType === "vision" ? { imageReference: "[redacted]", instruction: input.instruction } : undefined,
+    cacheKey: `ai-search:${feature}:${createHash("sha256").update(JSON.stringify(input)).digest("hex")}`,
     metadata: {
       phase: "6.3",
       gatewayOnly: true,
@@ -265,14 +285,40 @@ export const aiSearchService = {
     return response("similar_product_search", gateway, query, ranked, gateway.status !== "completed", { baseProductId: input.productId, fallback: "catalog_similarity" });
   },
 
-  async imageSearchFoundation(input: ImageSearchFoundationInput, context: AiSearchContext): Promise<AiSearchResponse<{ flow: string; visionDeferredToPhase: "6.5" }>> {
-    const extracted = normalizeText([input.fileName, input.imageUrl, input.metadata ? JSON.stringify(input.metadata) : ""].filter(Boolean).join(" "));
-    const intent = resolveSearchIntent({ query: extracted || "image metadata search", limit: input.limit });
-    const gateway = await throughGateway("image_search_foundation", { input, visionDeferredToPhase: "6.5" }, context);
-    const ranked = rankProducts(products(context), intent, Math.max(1, Math.min(input.limit || 10, 50)));
-    return response("image_search_foundation", gateway, intent.rawQuery, ranked, true, { flow: "upload_image_to_metadata_to_catalog_search", visionDeferredToPhase: "6.5" }, { noVisionModel: true });
-  },
+  async imageSearchFoundation(input: ImageSearchFoundationInput, context: AiSearchContext): Promise<AiSearchResponse<{ flow: string; visionApplied: boolean; attributes: VisionAttributes }>> {
+    const imageUrl = validVisionImageUrl(input.imageUrl);
+    const limit = Math.max(1, Math.min(input.limit || 10, 50));
 
+    try {
+      const gateway = await throughGateway("image_search_foundation", {
+        imageUrl,
+        instruction: "Extract apparel or retail-product attributes for similarity search.",
+      }, context, "vision");
+      const raw = gateway.output;
+      if (gateway.status !== "completed" && gateway.status !== "cached") throw new Error("Vision request was not completed");
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("Vision response was invalid");
+
+      const row = raw as Record<string, unknown>;
+      const attributes: VisionAttributes = {
+        summary: String(row.summary || "").trim(),
+        category: String(row.category || "").trim(),
+        subcategory: String(row.subcategory || "").trim(),
+        colors: stringList(row.colors), materials: stringList(row.materials), patterns: stringList(row.patterns),
+        styles: stringList(row.styles), occasions: stringList(row.occasions), gender: String(row.gender || "").trim(),
+        visibleText: stringList(row.visibleText), confidence: Math.max(0, Math.min(1, Number(row.confidence) || 0)),
+      };
+      const query = [attributes.summary, attributes.category, attributes.subcategory, ...(attributes.colors || []), ...(attributes.materials || []), ...(attributes.patterns || []), ...(attributes.styles || []), ...(attributes.occasions || []), attributes.gender, ...(attributes.visibleText || [])].filter(Boolean).join(" ");
+      const intent = resolveSearchIntent({ query: query || "visual product search", limit });
+      const ranked = rankProducts(products(context), intent, limit);
+      return response("image_search_foundation", gateway, intent.rawQuery, ranked, false, { flow: "image_to_vision_attributes_to_catalog_search", visionApplied: true, attributes }, { noVisionModel: false });
+    } catch {
+      const extracted = normalizeText([input.fileName, input.metadata ? JSON.stringify(input.metadata) : ""].filter(Boolean).join(" "));
+      const intent = resolveSearchIntent({ query: extracted || "image metadata search", limit });
+      const gateway = await throughGateway("image_search_foundation", { fileName: input.fileName, metadata: input.metadata, visionFallback: true }, context);
+      const ranked = rankProducts(products(context), intent, limit);
+      return response("image_search_foundation", gateway, intent.rawQuery, ranked, true, { flow: "image_metadata_fallback_to_catalog_search", visionApplied: false, attributes: {} }, { noVisionModel: true });
+    }
+  },
   async ocrSearchFoundation(input: OcrSearchFoundationInput, context: AiSearchContext): Promise<AiSearchResponse<{ flow: string; ocrProviderDeferredToPhase: "6.5" }>> {
     const query = input.extractedText || input.providerTextPlaceholder || input.imageUrl || "ocr placeholder search";
     const intent = resolveSearchIntent({ query, limit: input.limit });
@@ -289,4 +335,6 @@ export const aiSearchService = {
     return response("voice_search_foundation", gateway, query, ranked, true, { flow: "audio_to_transcript_placeholder_to_catalog_search", speechProviderDeferred: true }, { noSpeechProvider: true });
   },
 };
+
+
 

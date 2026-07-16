@@ -1,4 +1,4 @@
-﻿import { Response } from "express";
+import { Response } from "express";
 
 import {
   getAccountProfile,
@@ -8,7 +8,7 @@ import {
 } from "./account.service";
 
 function getUserId(req: any): string | null {
-  return req.user?.id || req.user?.userId || req.query?.userId || req.body?.userId || null;
+  return req.user?.id || req.user?.userId || null;
 }
 
 export const getProfile = async (req: any, res: Response) => {
@@ -33,7 +33,7 @@ export const updateProfile = async (req: any, res: Response) => {
 
 export const getMyOrders = async (req: any, res: Response) => {
   try {
-    const orders = await getAccountOrders();
+    const orders = await getAccountOrders(getUserId(req) || "");
     res.json({ success: true, data: orders });
   } catch (error) {
     console.error(error);
@@ -43,10 +43,12 @@ export const getMyOrders = async (req: any, res: Response) => {
 
 export const getMyWishlist = async (req: any, res: Response) => {
   try {
-    const wishlist = await getAccountWishlist();
+    const wishlist = await getAccountWishlist(getUserId(req) || "");
     res.json({ success: true, data: wishlist });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Failed to load account wishlist" });
   }
 };
+
+

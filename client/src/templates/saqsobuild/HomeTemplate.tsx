@@ -78,3 +78,4 @@ export default function SaqsoBuildHomeTemplate({ sections, emptyMessage }: Props
     </div>
   );
 }
+

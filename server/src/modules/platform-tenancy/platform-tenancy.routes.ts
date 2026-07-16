@@ -600,4 +600,10 @@ router.patch("/store-users/:id", async (req, res) => {
 });
 
 
+router.get("/enterprise/architecture", protect, requireSuperAdmin, async (_req,res)=>{const p:any=prisma;const data={organizations:await(p.organization?.findMany?.()??[]),businessUnits:await(p.businessUnit?.findMany?.()??[]),departments:await(p.department?.findMany?.()??[]),licenses:await(p.platformLicense?.findMany?.()??[])};res.json({success:true,data});});
+router.post("/enterprise/organizations", protect, requireSuperAdmin, async(req,res)=>{const p:any=prisma;if(!p.organization?.create)return res.status(409).json({success:false,message:"Run Enterprise DB PS1"});const data=await p.organization.create({data:{name:cleanText(req.body?.name),code:cleanText(req.body?.code||cleanSlug(req.body?.name)).toUpperCase(),status:"ACTIVE"}});res.status(201).json({success:true,data});});
+
+router.get("/enterprise/licenses",protect,requireSuperAdmin,async(_q,r)=>{const p:any=prisma;r.json({success:true,data:await(p.platformLicense?.findMany?.({orderBy:{createdAt:"desc"}})??[])});});
+router.get("/enterprise/operations",protect,requireSuperAdmin,async(_q,r)=>r.json({success:true,data:{runtime:{uptime:process.uptime(),node:process.version,memory:process.memoryUsage()},databaseConfigured:Boolean(process.env.DATABASE_URL),redisConfigured:Boolean(process.env.REDIS_URL),generatedAt:new Date().toISOString()}}));
+
 export default router;

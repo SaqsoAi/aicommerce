@@ -388,3 +388,73 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* 2026.29.1 workflow stability overrides */
+.oneClickPanel {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px) !important;
+}
+
+.oneClickPanel > * {
+  min-width: 0;
+}
+
+.oneClickSteps {
+  width: 100%;
+  min-width: 0;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 8px;
+}
+
+.oneClickSteps span {
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.workspaceContent,
+.commandCenter,
+.card,
+.generatedWorkspace,
+.metrics {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.logs {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.logs p {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1280px) {
+  .oneClickPanel {
+    grid-template-columns: 1fr !important;
+  }
+
+  .oneClickSteps {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .oneClickSteps {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* 2026.29.2 router output certification */
+.certificationBlocked {
+  border-color: rgba(248, 113, 113, .42);
+  background: rgba(127, 29, 29, .16);
+}

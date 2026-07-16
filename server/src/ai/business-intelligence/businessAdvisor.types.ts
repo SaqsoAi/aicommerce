@@ -1,4 +1,4 @@
-export type BusinessLanguage = "bn" | "en" | "mixed";
+﻿export type BusinessLanguage = "bn" | "en" | "mixed";
 export type BusinessIntent =
   | "SALES_DIAGNOSIS"
   | "PRODUCT_PERFORMANCE"
@@ -40,6 +40,12 @@ export type BusinessAdvisorAnswer = {
   risks: string[];
   assumptions: string[];
   printablePlan?: Record<string, unknown>;
+  provider?: {
+    name: string;
+    model: string;
+    status: string;
+    auditId?: string;
+  };
 };
 
 export type BusinessChatRequest = {
@@ -57,3 +63,4 @@ export type TenantBusinessContext = {
   tenantId?: string;
   storeId?: string;
 };
+

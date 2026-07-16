@@ -86,10 +86,18 @@ export function AccountPageShell({
                 </div>
               </div>
 
-              <Link href="/login" className="mt-4 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-zinc-200 hover:bg-white/10">
+              <button
+                type="button"
+                onClick={async () => {
+                  await fetch("/api/backend/auth/logout", { method: "POST" }).catch(() => undefined);
+                  ["token", "customerToken", "accessToken", "user", "customer", "role"].forEach((key) => localStorage.removeItem(key));
+                  window.location.assign("/login");
+                }}
+                className="mt-4 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-zinc-200 hover:bg-white/10"
+              >
                 <span className="account-sidebar-icon"><AccountGlyph icon="signout" /></span>
                 <b>Sign Out</b>
-              </Link>
+              </button>
             </div>
           </aside>
 
@@ -175,15 +183,21 @@ export function AccountForm({
     options?: string[];
   }>;
   submitLabel: string;
-  onComplete?: (data: Record<string, FormDataEntryValue>) => void;
+  onComplete?: (data: Record<string, FormDataEntryValue>) => void | Promise<void>;
 }) {
   const [status, setStatus] = useState("Ready");
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-    setStatus("Saved locally. API write binding will persist in backend reward phase.");
-    onComplete?.(data);
+    if (!onComplete) {
+      setStatus("This setting is not connected yet.");
+      return;
+    }
+    setStatus("Saving...");
+    Promise.resolve(onComplete(data))
+      .then(() => setStatus("Saved"))
+      .catch((error) => setStatus(error instanceof Error ? error.message : "Save failed"));
   }
 
   return (
@@ -274,3 +288,4 @@ export function ProfileCompletionRewardPopup({
     </div>
   );
 }
+

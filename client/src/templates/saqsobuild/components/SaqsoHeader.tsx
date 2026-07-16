@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Heart,
+  Home,
   Menu,
   Search,
   ShoppingBag,
@@ -14,13 +15,27 @@ import {
 import SaqsoThemeToggle from "./SaqsoThemeToggle";
 import { useBrand } from "@/providers/BrandProvider";
 
-const nav = [
+const defaultNav = [
   { label: "Home", href: "/", desc: "Premium homepage" },
   { label: "Shop", href: "/shop", desc: "All products" },
   { label: "Lookbook", href: "/lookbook", desc: "Style stories" },
   { label: "Size Guide", href: "/size-guide", desc: "Find your fit" },
   { label: "Try-On", href: "/virtual-tryon", desc: "AI fitting room" },
 ];
+
+type NavigationItem = { label: string; href: string; desc?: string };
+
+function parseNavigation(value: string | undefined): NavigationItem[] {
+  if (!value) return defaultNav;
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return defaultNav;
+    const valid = parsed.filter((item): item is NavigationItem => Boolean(item && typeof item.label === "string" && typeof item.href === "string" && item.href.startsWith("/")));
+    return valid.length ? valid.slice(0, 8) : defaultNav;
+  } catch {
+    return defaultNav;
+  }
+}
 
 function HeaderLogo() {
   const { brand } = useBrand();
@@ -74,6 +89,8 @@ function HeaderLogo() {
 }
 
 export default function SaqsoHeader() {
+  const { brand } = useBrand();
+  const nav = useMemo(() => parseNavigation(brand.raw.headerNavigation), [brand.raw.headerNavigation]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -117,7 +134,7 @@ export default function SaqsoHeader() {
               <Sparkles size={16} /> Shop
             </Link>
 
-            <Link href="/search" className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:h-11 sm:w-11" aria-label="Search">
+            <Link href="/shop" className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:h-11 sm:w-11" aria-label="Search">
               <Search size={18} />
             </Link>
 
@@ -189,6 +206,14 @@ export default function SaqsoHeader() {
           </Link>
         </div>
       </aside>
+
+      <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-[70] grid grid-cols-5 border-t border-black/10 bg-white/95 px-1 pb-[max(.35rem,env(safe-area-inset-bottom))] pt-1 text-zinc-700 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur-xl dark:border-white/10 dark:bg-black/92 dark:text-zinc-200 md:hidden">
+        {[{ label: "Home", href: "/", icon: Home }, { label: "Shop", href: "/shop", icon: Search }, { label: "Try", href: "/virtual-tryon", icon: Sparkles }, { label: "Cart", href: "/cart", icon: ShoppingBag }, { label: "Account", href: "/account", icon: UserRound }].map((item) => {
+          const Icon = item.icon;
+          return <Link key={item.href} href={item.href} className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-bold"><Icon size={20} aria-hidden="true" /><span>{item.label}</span></Link>;
+        })}
+      </nav>
     </>
   );
 }
+

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import "./plugin-enterprise-dashboard.css";
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body suppressHydrationWarning>
 <script
   id="admin-theme-bootstrap"
@@ -46,5 +46,6 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 

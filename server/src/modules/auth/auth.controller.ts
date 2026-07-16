@@ -24,6 +24,22 @@ import {
   loginWithFacebookService,
 } from "./auth.service";
 
+const SESSION_COOKIE = "customer_session";
+const setSessionCookie = (res: Response, token: string) => {
+  res.cookie(SESSION_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+};
+
+const authPayload = <T extends { token: string }>(res: Response, payload: T): T => {
+  setSessionCookie(res, payload.token);
+  return payload;
+};
+
 export const register = async (
   req: Request,
   res: Response
@@ -39,7 +55,7 @@ export const register = async (
 
     return res.status(201).json({
       success: true,
-      ...buildAuthResponse(user),
+      ...authPayload(res, buildAuthResponse(user)),
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -63,7 +79,7 @@ export const loginUser = async (
 
     return res.status(200).json({
       success: true,
-      ...buildAuthResponse(user),
+      ...authPayload(res, buildAuthResponse(user)),
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -109,7 +125,7 @@ export const verifyPhoneOtp = async (
 
     return res.json({
       success: true,
-      ...result,
+      ...authPayload(res, result),
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -196,7 +212,7 @@ export const googleLoginController = async (
 
     return res.json({
       success: true,
-      ...result,
+      ...authPayload(res, result),
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -217,7 +233,7 @@ export const facebookLoginController = async (
 
     return res.json({
       success: true,
-      ...result,
+      ...authPayload(res, result),
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -226,3 +242,5 @@ export const facebookLoginController = async (
     });
   }
 };
+
+

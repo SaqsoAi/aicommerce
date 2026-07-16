@@ -1,3 +1,8 @@
+import { developerConversation, providerStatus } from "../ai/developmentCopilot/completion/live-provider.service";
+import { composePlugin } from "../ai/developmentCopilot/completion/plugin-composer.service";
+import { generateTestPlan } from "../ai/developmentCopilot/completion/test-generator.service";
+import { createDiff } from "../ai/developmentCopilot/completion/patch-diff.service";
+import { voiceSession, memoryPolicy } from "../ai/developmentCopilot/completion/voice-memory.service";
 import { Router } from "express";
 import path from "path";
 import prisma from "../config/prisma";
@@ -19,7 +24,7 @@ router.use(protect);
 router.use(...(requirePlatformAdmin as any));
 const root = path.resolve(process.env.PROJECT_ROOT ?? path.join(process.cwd(), ".."));
 
-router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-ai-builder", version: "2.6.1", completionLevel: 6, voice: true, multilingual: true, liveMutation: false, approvalRequired: true }));
+router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-ai-builder", version: "3.0.0", completionLevel: 10, voice: true, multilingual: true, liveMutation: false, approvalRequired: true }));
 router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "saqso-ai-builder", completionLevel: 6, liveMutation: false, approvalRequired: true } }));
 router.get("/project-index", (_req, res) => res.json({ success: true, data: buildProjectIndexSummary(process.cwd()) }));
 router.get("/repository", (_req, res) => res.json({ success: true, data: inspectLegacyRepository(process.cwd()) }));
@@ -43,4 +48,22 @@ router.post("/plugin-blueprint", (req, res) => res.json({ success: true, data: c
 router.get("/deployment-plan", (_req, res) => res.json({ success: true, data: deploymentPlan() }));
 router.post("/build", (req, res) => res.json({ success: true, data: runBuild(root, req.body?.app) }));
 
+router.post("/voice-session",(req,res)=>res.json({success:true,data:voiceSession(req.body??{})}));
+router.get("/memory-policy",(_q,res)=>res.json({success:true,data:memoryPolicy()}));
+
+router.post("/patch-diff",(req,res,next)=>{try{res.json({success:true,data:createDiff(path.resolve(root,String(req.body?.file??"")),String(req.body?.next??""))});}catch(e){next(e);}});
+
+router.post("/test-plan",(req,res)=>res.json({success:true,data:generateTestPlan(req.body??{})}));
+
+router.post("/compose-plugin",(req,res)=>res.json({success:true,data:composePlugin(req.body??{})}));
+
+router.get("/providers", (_req,res)=>res.json({success:true,data:providerStatus()}));
+router.post("/live-chat", async(req:AuthRequest,res,next)=>{try{
+ const prompt=sanitizeCopilotText(String(req.body?.prompt??"")).trim();
+ if(!prompt)return res.status(400).json({success:false,error:{code:"PROMPT_REQUIRED",message:"Prompt is required"}});
+ const data=await developerConversation({prompt,userId:String(req.user?.id??req.user?.userId??""),workspaceId:req.body?.workspaceId,context:req.body?.context});
+ const model=(prisma as any).aiBuilderMessage;
+ if(model?.create && req.body?.workspaceId) await model.create({data:{workspaceId:String(req.body.workspaceId),userId:String(req.user?.id??req.user?.userId),role:"ASSISTANT",content:data.answer,metadata:{provider:data.provider,model:data.model,auditId:data.auditId}}});
+ return res.json({success:true,data});
+}catch(error){next(error);}});
 export default router;

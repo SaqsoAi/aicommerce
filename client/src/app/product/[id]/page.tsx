@@ -58,8 +58,8 @@ export default async function ProductDetailPage({ params }: Props) {
   const price = product.discountPrice || product.price;
 
   return (
-    <main className="min-h-screen pt-24 lg:pt-28 bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr]">
+    <main className="min-h-screen bg-zinc-50 pt-4 sm:pt-8 lg:pt-12 text-zinc-900 dark:bg-black dark:text-zinc-100">
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <ProductGallery
           thumbnail={product.thumbnail}
           images={images}
@@ -76,7 +76,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 : ""}
             </p>
 
-            <h1 className="mt-3 text-4xl font-black leading-tight md:text-5xl">
+            <h1 className="mt-3 text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">
               {product.name}
             </h1>
 
@@ -87,7 +87,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </p>
           </div>
 
-          <div className="rounded-3xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-3xl font-black">Tk {price}</span>
 
@@ -105,22 +105,22 @@ export default async function ProductDetailPage({ params }: Props) {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-              <div className="rounded-2xl bg-zinc-100 p-4 dark:bg-zinc-900">
+              <div className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
                 <p className="text-zinc-500">SKU</p>
                 <p className="font-semibold">{product.sku || "-"}</p>
               </div>
 
-              <div className="rounded-2xl bg-zinc-100 p-4 dark:bg-zinc-900">
+              <div className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
                 <p className="text-zinc-500">Style No</p>
                 <p className="font-semibold">{product.styleNo || "-"}</p>
               </div>
 
-              <div className="rounded-2xl bg-zinc-100 p-4 dark:bg-zinc-900">
+              <div className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
                 <p className="text-zinc-500">Barcode</p>
                 <p className="font-semibold">{product.barcode || "-"}</p>
               </div>
 
-              <div className="rounded-2xl bg-zinc-100 p-4 dark:bg-zinc-900">
+              <div className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
                 <p className="text-zinc-500">Condition</p>
                 <p className="font-semibold">{product.condition || "NEW"}</p>
               </div>
@@ -141,7 +141,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
           <ReviewSummary productId={product.id} />
 
-          <div className="rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
             <h2 className="mb-3 text-2xl font-bold">Description</h2>
 
             {product.shortDescription && (
@@ -157,29 +157,30 @@ export default async function ProductDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 pb-12 lg:grid-cols-2">
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-6 lg:grid-cols-2">
         <ProductSpecifications specifications={product.specifications || []} />
 
         <ProductAttributes attributes={product.attributes || []} />
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-16">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
         <RelatedProducts
           currentProductId={product.id}
           categoryId={product.categoryId}
         />
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-16">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
         <RecommendedProducts />
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-16">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
         <RecentlyViewed />
       </section>
     </main>
   );
 }
+
 
 
 

@@ -32,10 +32,12 @@ export interface AiGatewayRequest<TInput = unknown> {
   feature: string;
   provider?: AiProviderName;
   model?: string;
+  modelType?: AiModelType;
   promptKey?: string;
   promptVersion?: number;
   category?: string;
   input: TInput;
+  promptInput?: unknown;
   variables?: Record<string, string | number | boolean | null | undefined>;
   actor?: AiActor;
   cacheKey?: string;
@@ -157,3 +159,4 @@ export interface AiProviderAdapter {
     raw?: unknown;
   }>;
 }
+

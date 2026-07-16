@@ -74,7 +74,10 @@ export function attachBearerToken(instance: any): void {
 
   instance.interceptors.request.use((config: any) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") ??
+        localStorage.getItem("accessToken") ??
+        localStorage.getItem("authToken");
       if (token) {
         config.headers = config.headers ?? {};
         config.headers.Authorization = `Bearer ${token}`;
@@ -83,3 +86,4 @@ export function attachBearerToken(instance: any): void {
     return config;
   });
 }
+

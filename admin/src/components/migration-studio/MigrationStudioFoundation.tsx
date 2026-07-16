@@ -1275,6 +1275,81 @@ function normalizeNextRoutePath(routePath: string): string {
     .join("/");
 }
 
+
+type RouterAliasMap = {
+  BrowserRouter: Set<string>;
+  HashRouter: Set<string>;
+  Routes: Set<string>;
+  Route: Set<string>;
+  Outlet: Set<string>;
+  Link: Set<string>;
+  NavLink: Set<string>;
+};
+
+function collectReactRouterAliases(source: string): RouterAliasMap {
+  const aliases: RouterAliasMap = {
+    BrowserRouter: new Set(["BrowserRouter"]),
+    HashRouter: new Set(["HashRouter"]),
+    Routes: new Set(["Routes"]),
+    Route: new Set(["Route"]),
+    Outlet: new Set(["Outlet"]),
+    Link: new Set(["Link"]),
+    NavLink: new Set(["NavLink"]),
+  };
+
+  const importPattern =
+    /import\s+\{([^}]+)\}\s+from\s+["']react-router-dom["'];?/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = importPattern.exec(source))) {
+    for (const token of match[1].split(",")) {
+      const parts = token.trim().split(/\s+as\s+/);
+      const imported = parts[0]?.trim() as keyof RouterAliasMap;
+      const local = (parts[1] || parts[0] || "").trim();
+
+      if (imported in aliases && local) {
+        aliases[imported].add(local);
+      }
+    }
+  }
+
+  return aliases;
+}
+
+function normalizeReactRouterJsxAliases(source: string): string {
+  const aliases = collectReactRouterAliases(source);
+  let output = source;
+
+  const normalizeTag = (
+    canonical: keyof RouterAliasMap,
+    values: Set<string>,
+  ) => {
+    for (const local of values) {
+      if (local === canonical) continue;
+      const escaped = local.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      output = output
+        .replace(
+          new RegExp(`<${escaped}(?=\\s|/|>)`, "g"),
+          `<${canonical}`,
+        )
+        .replace(
+          new RegExp(`</${escaped}>`, "g"),
+          `</${canonical}>`,
+        );
+    }
+  };
+
+  normalizeTag("BrowserRouter", aliases.BrowserRouter);
+  normalizeTag("HashRouter", aliases.HashRouter);
+  normalizeTag("Routes", aliases.Routes);
+  normalizeTag("Route", aliases.Route);
+  normalizeTag("Outlet", aliases.Outlet);
+  normalizeTag("Link", aliases.Link);
+  normalizeTag("NavLink", aliases.NavLink);
+
+  return output;
+}
+
 function extractReactRouterRoutes(
   sourcePath: string,
   source: string,
@@ -1318,7 +1393,7 @@ function resolveReactRouterSource(
   sourcePath: string,
   input: string,
 ): RouterResolutionResult {
-  let source = input;
+  let source = normalizeReactRouterJsxAliases(input);
   const routes = extractReactRouterRoutes(sourcePath, source);
   const unresolved: string[] = [];
 
@@ -1335,11 +1410,16 @@ function resolveReactRouterSource(
       let needsLink = false;
 
       names.forEach((name) => {
-        if (name === "Link" || name === "NavLink") needsLink = true;
-        else if (name === "useNavigate") navigation.add("useRouter");
-        else if (name === "useLocation") navigation.add("usePathname");
-        else if (name === "useParams") navigation.add("useParams");
-        else if (name === "useSearchParams") {
+        const importedName = name.split(/\s+as\s+/)[0]?.trim() || name;
+        if (importedName === "Link" || importedName === "NavLink") {
+          needsLink = true;
+        } else if (importedName === "useNavigate") {
+          navigation.add("useRouter");
+        } else if (importedName === "useLocation") {
+          navigation.add("usePathname");
+        } else if (importedName === "useParams") {
+          navigation.add("useParams");
+        } else if (importedName === "useSearchParams") {
           navigation.add("useSearchParams");
         } else if (
           ![
@@ -1348,9 +1428,9 @@ function resolveReactRouterSource(
             "Routes",
             "Route",
             "Outlet",
-          ].includes(name)
+          ].includes(importedName)
         ) {
-          unsupported.add(name);
+          unsupported.add(importedName);
         }
       });
 
@@ -1396,9 +1476,29 @@ function resolveReactRouterSource(
       `Data-router APIs remain in ${sourcePath}: createBrowserRouter/RouterProvider`,
     );
   }
-  if (/\bloader\b|\baction\b|\berrorElement\b/.test(source)) {
+  const dataRouterSignals = [
+    /\bcreateBrowserRouter\s*\(/,
+    /\bRouterProvider\b/,
+    /\buseLoaderData\s*\(/,
+    /\buseActionData\s*\(/,
+    /\buseRouteError\s*\(/,
+    /\buseFetcher\s*\(/,
+    /\bdefer\s*\(/,
+    /<Await\b/,
+    /<Form\b/,
+    /\bexport\s+(?:async\s+)?function\s+loader\s*\(/,
+    /\bexport\s+(?:async\s+)?function\s+action\s*\(/,
+    /\b(?:loader|action|errorElement)\s*:\s*(?:async\s*)?(?:\(|[A-Za-z_$])/,
+    /\b(?:loader|action)\s*=\s*(?:async\s*)?\(/,
+  ];
+
+  const detectedDataRouterSignals = dataRouterSignals.filter((pattern) =>
+    pattern.test(source),
+  );
+
+  if (detectedDataRouterSignals.length > 0) {
     unresolved.push(
-      `Data-router loader/action/errorElement semantics require review in ${sourcePath}`,
+      `React Router Data API semantics require review in ${sourcePath}`,
     );
   }
 
@@ -1492,6 +1592,15 @@ function certifyGeneratedSource(
   if (/\bBrowserRouter\b|\buseNavigate\b/.test(source)) blocker(
     "REACT_ROUTER_REMAINS",
     "React Router runtime API remains.",
+  );
+  if (
+    /\bRouterRoutes\b|\bRouterRoute\b/.test(source) &&
+    !/import\s+\{[^}]*\b(?:Routes|Route)\s+as\s+(?:RouterRoutes|RouterRoute)/.test(
+      source,
+    )
+  ) blocker(
+    "ROUTER_ALIAS_UNBOUND",
+    "An aliased React Router JSX symbol remains without a valid import.",
   );
   if (/\bclass=/.test(source)) blocker(
     "JSX_CLASS_ATTRIBUTE",
@@ -2555,6 +2664,11 @@ export default function MigrationStudioFoundation() {
 
       const payload: GeneratedFile[] = [];
       const fileDefinitions: Array<Record<string, unknown>> = [];
+      const generatedRouteWrappers: Array<{
+        routePath: string;
+        component: string;
+        destinationPath: string;
+      }> = [];
       const sourceBase = `src/templates/imported/${targetKey}/source`;
       const convertedNames = new Set<string>();
 
@@ -2601,7 +2715,20 @@ export default function MigrationStudioFoundation() {
         const sourcePath = normalizeArchivePath(`payload/client/${destinationPath}`);
         const content = encode(generatedRoutePage(targetKey, route));
         payload.push({ path: sourcePath, content });
-        fileDefinitions.push({ owner: "client", sourcePath, destinationPath, sha256: await sha(content), sizeBytes: content.length, contentType: "text/typescript", operation: "create" });
+        fileDefinitions.push({
+          owner: "client",
+          sourcePath,
+          destinationPath,
+          sha256: await sha(content),
+          sizeBytes: content.length,
+          contentType: "text/typescript",
+          operation: "create",
+        });
+        generatedRouteWrappers.push({
+          routePath: route.path,
+          component: route.component,
+          destinationPath,
+        });
       }
 
       if (options.missing) {
@@ -2816,56 +2943,95 @@ export default function MigrationStudioFoundation() {
       });
 
 
-      const routerRecords: RouterRouteRecord[] = [];
+      const routerRecords: RouterRouteRecord[] = analysis.routes.map(
+        (route) => ({
+          sourcePath: route.sourceImport || "analysis.routes",
+          routePath: route.path,
+          componentExpression: route.component,
+          generatedPagePath:
+            route.path === "*"
+              ? "app/[...slug]/page.tsx"
+              : route.path === "/"
+                ? "app/page.tsx"
+                : `app/${normalizeNextRoutePath(route.path)}/page.tsx`,
+          dynamic: /:|\*/.test(route.path),
+        }),
+      );
+
+      const expectedWrapperRoutes = analysis.routes.filter(
+        (route) => route.path !== "*",
+      );
       const routerUnresolved: string[] = [];
       const routerDecoder = new TextDecoder();
 
       for (const file of payload) {
         if (!/\.(tsx?|jsx?)$/i.test(file.path)) continue;
-        const resolution = resolveReactRouterSource(
-          file.path,
-          routerDecoder.decode(file.content),
-        );
-        routerRecords.push(...resolution.routes);
+        const text = routerDecoder.decode(file.content);
+        const resolution = resolveReactRouterSource(file.path, text);
         routerUnresolved.push(...resolution.unresolved);
+
+        if (
+          /\bRouterRoutes\b|\bRouterRoute\b/.test(text) &&
+          !/import\s+\{[^}]*\b(?:Routes|Route)\s+as\s+(?:RouterRoutes|RouterRoute)/.test(
+            text,
+          )
+        ) {
+          routerUnresolved.push(
+            `Undefined aliased router symbol remains in ${file.path}`,
+          );
+        }
       }
 
-      const routerArtifacts = generateNextRouteArtifacts(
-        targetKey,
-        routerRecords,
+      const wrapperRoutes = new Set(
+        generatedRouteWrappers.map((item) => item.routePath),
+      );
+      const missingWrappers = expectedWrapperRoutes.filter(
+        (route) => !wrapperRoutes.has(route.path),
       );
 
-      for (const artifact of routerArtifacts) {
-        const sourcePath = normalizeArchivePath(
-          `payload/client/${artifact.path}`,
+      if (analysis.routes.length > 0 && routerRecords.length === 0) {
+        routerUnresolved.push(
+          "Source routes were discovered but router certification produced zero route records.",
         );
-        payload.push({ path: sourcePath, content: artifact.content });
-        fileDefinitions.push({
-          owner: "client",
-          sourcePath,
-          destinationPath: artifact.path,
-          sha256: await sha(artifact.content),
-          sizeBytes: artifact.content.length,
-          contentType: "text/typescript",
-          operation: "create",
-        });
       }
 
+      if (missingWrappers.length > 0) {
+        routerUnresolved.push(
+          `Missing generated Next wrappers: ${missingWrappers
+            .map((route) => route.path)
+            .join(", ")}`,
+        );
+      }
+
+      const uniqueRouterUnresolved = Array.from(
+        new Set(routerUnresolved),
+      );
+
       const routerCertification = {
-        engineVersion: "2026.28.0",
+        engineVersion: "2026.29.2",
         generatedAt: new Date().toISOString(),
+        sourceRouteCount: analysis.routes.length,
+        expectedWrapperCount: expectedWrapperRoutes.length,
+        generatedWrapperCount: generatedRouteWrappers.length,
         discoveredRoutes: routerRecords,
-        generatedArtifacts: routerArtifacts.map(
-          (artifact) => artifact.path,
-        ),
-        unresolved: routerUnresolved,
-        status: routerUnresolved.length
-          ? "REVIEW_REQUIRED"
-          : "PASS",
+        generatedWrappers: generatedRouteWrappers,
+        missingWrappers: missingWrappers.map((route) => ({
+          path: route.path,
+          component: route.component,
+        })),
+        unresolved: uniqueRouterUnresolved,
+        detectionMode: "ROUTE_ANALYSIS_AND_WRAPPER_CERTIFICATION",
+        zeroRouteFalsePassProtection: true,
+        status:
+          uniqueRouterUnresolved.length === 0 &&
+          missingWrappers.length === 0 &&
+          (analysis.routes.length === 0 || routerRecords.length > 0)
+            ? "PASS"
+            : "INSTALL_BLOCKED",
       };
 
       const routerCertificationDestination =
-        `src/templates/imported/${targetKey}/certification/router-2026.28.json`;
+        `src/templates/imported/${targetKey}/certification/router-2026.29.2.json`;
       const routerCertificationSource = normalizeArchivePath(
         `payload/client/${routerCertificationDestination}`,
       );
@@ -2887,12 +3053,20 @@ export default function MigrationStudioFoundation() {
         operation: "create",
       });
 
-      if (routerUnresolved.length > 0) {
+      if (routerCertification.status !== "PASS") {
         throw new Error(
-          "React Router resolver requires review:\n" +
-            routerUnresolved.slice(0, 10).join("\n"),
+          "Router output certification blocked package generation:\n" +
+            [
+              ...uniqueRouterUnresolved,
+              ...routerCertification.missingWrappers.map(
+                (item) => `Missing wrapper: ${item.path}`,
+              ),
+            ]
+              .slice(0, 12)
+              .join("\n"),
         );
       }
+
 
       const manifest = {
         schemaVersion: "1.0",
@@ -3153,11 +3327,11 @@ export default function MigrationStudioFoundation() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>SAQSO AI MIGRATOR · ENTERPRISE MIGRATION COMMAND CENTER</p>
+          <p className={styles.eyebrow}>SAQSO AI MIGRATOR · ROUTER OUTPUT CERTIFICATION</p>
           <h1>Enterprise Platform Migration Studio</h1>
           <p>Audit, convert, complete, certify and package external React, JSX, HTML, Laravel and legacy templates through one guided tenant-aware workflow.</p>
         </div>
-        <span className={styles.badge}>2026.29.0 LTS</span>
+        <span className={styles.badge}>2026.29.2 LTS</span>
       </header>
 
       <section className={styles.commandCenter}>
@@ -3267,7 +3441,7 @@ export default function MigrationStudioFoundation() {
             <div><span>Files</span><strong>{analysis.entries.length}</strong></div>
             <div><span>Routes</span><strong>{analysis.routes.length}</strong></div>
             <div><span>Responsive</span><strong>{analysis.responsive}</strong></div>
-            <div><span>Completeness</span><strong>{analysis.quality.completeness}%</strong></div>
+            <div><span>Source completeness</span><strong>{analysis.quality.completeness}%</strong></div>
             <div><span>Difficulty</span><strong>{analysis.quality.difficulty}</strong></div>
           </section>
 
@@ -3574,7 +3748,7 @@ export default function MigrationStudioFoundation() {
           </section>
 
           <section className={styles.card}>
-            <div className={styles.cardTitle}><div><span className={styles.sectionEyebrow}>EXECUTION</span><h2>One-click migration</h2></div><b>{progress}%</b></div>
+            <div className={styles.cardTitle}><div><span className={styles.sectionEyebrow}>EXECUTION PROGRESS</span><h2>One-click migration</h2></div><b>{progress}%</b></div>
             <button className={styles.primary} disabled={!ready || state === "RUNNING"} onClick={execute}>
               {state === "RUNNING" ? "Running one-click migration…" : "Run One-Click Migration"}
             </button>

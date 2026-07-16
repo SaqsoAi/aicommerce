@@ -2,34 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Laptop, Moon, Sun } from "lucide-react";
-import { getStoredThemeMode, setSaqsoThemeMode } from "./SaqsoThemeExperience";
+import { useTheme } from "@/providers/ThemeProvider";
 
 type ThemeMode = "light" | "dark" | "system";
 
 const order: ThemeMode[] = ["light", "dark", "system"];
 
 export default function SaqsoThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>("system");
-
-  useEffect(() => {
-    const sync = () => {
-      setMode(getStoredThemeMode() || "system");
-    };
-
-    sync();
-    window.addEventListener("saqso-theme-change", sync);
-    window.addEventListener("storage", sync);
-
-    return () => {
-      window.removeEventListener("saqso-theme-change", sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+  const { theme: mode, setTheme } = useTheme();
 
   const nextMode = () => {
     const next = order[(order.indexOf(mode) + 1) % order.length];
-    setMode(next);
-    setSaqsoThemeMode(next, true);
+    setTheme(next);
   };
 
   const Icon = mode === "light" ? Sun : mode === "dark" ? Moon : Laptop;
@@ -45,3 +29,5 @@ export default function SaqsoThemeToggle() {
     </button>
   );
 }
+
+

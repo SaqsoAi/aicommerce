@@ -19,7 +19,7 @@ function normalizeUploadUrl(url: unknown) {
 }
 
 function getDisplayName(profile: AnyRecord) {
-  return profile?.displayName || profile?.name || profile?.email || "Test Customer";
+  return profile?.displayName || profile?.name || profile?.email || "Customer";
 }
 
 function initials(name: string) {
@@ -35,7 +35,7 @@ function initials(name: string) {
 
 function memberSince(profile: AnyRecord) {
   const value = profile?.joinedAt || profile?.createdAt || profile?.memberSince;
-  if (!value) return "March 2022";
+  if (!value) return "Unavailable";
 
   try {
     return new Date(value).toLocaleDateString("en-US", {
@@ -43,7 +43,7 @@ function memberSince(profile: AnyRecord) {
       year: "numeric",
     });
   } catch {
-    return "March 2022";
+    return "Unavailable";
   }
 }
 
@@ -122,8 +122,8 @@ export default async function AccountOverviewPage() {
   const name = getDisplayName(profile);
   const membership = dashboard?.membership || {};
   const rewards = dashboard?.rewards || {};
-  const loyaltyPoints = Number(membership?.stylePoints || rewards?.balance || 2450);
-  const membershipTier = String(membership?.tier || "Gold");
+  const loyaltyPoints = Number(membership?.stylePoints || rewards?.balance || 0);
+  const membershipTier = String(membership?.tier || "Not enrolled");
   const recentOrders = Array.isArray(dashboard?.recentOrders) ? dashboard.recentOrders : [];
   const wishlist = Array.isArray(dashboard?.wishlist) ? dashboard.wishlist : [];
   const recommendations = Array.isArray(dashboard?.recommendations) ? dashboard.recommendations : [];
@@ -138,23 +138,9 @@ export default async function AccountOverviewPage() {
     { title: "Get Help", subtitle: "24/7 support", href: "/account/support", icon: "help", tone: "cyan" },
   ];
 
-  const fallbackOrders = [
-    { id: "SH2024001", itemCount: 2, totalAmount: 189.99, status: "Delivered" },
-    { id: "SH2024002", itemCount: 3, totalAmount: 299.5, status: "Shipped" },
-    { id: "SH2024003", itemCount: 1, totalAmount: 125, status: "Processing" },
-  ];
-
-  const fallbackWishlist = [
-    { title: "Work Wardrobe", updated: "2 days ago" },
-    { title: "Weekend Looks", updated: "1 week ago" },
-    { title: "Special Occasions", updated: "Recently" },
-  ];
-
-  const fallbackRecommendations = [
-    { name: "Cashmere Turtleneck", price: 149.99, brand: "Luxury Essentials" },
-    { name: "Midi Wrap Dress", price: 149.99, brand: "Luxury Essentials" },
-    { name: "Leather Ankle Boots", price: 149.99, brand: "Luxury Essentials" },
-  ];
+  const fallbackOrders: AnyRecord[] = [];
+  const fallbackWishlist: AnyRecord[] = [];
+  const fallbackRecommendations: AnyRecord[] = [];
 
   return (
     <AccountPageShell active="Overview" eyebrow="" title="" description="">
@@ -209,7 +195,7 @@ export default async function AccountOverviewPage() {
         </div>
 
         <div className="account-order-list">
-          {(recentOrders.length ? recentOrders.slice(0, 3) : fallbackOrders).map(
+          {recentOrders.slice(0, 3).map(
             (order: AnyRecord, index: number) => (
               <Link href="/account/orders" key={order?.id || index} className="account-order-row">
                 <div>
@@ -236,7 +222,7 @@ export default async function AccountOverviewPage() {
         </div>
 
         <div className="account-wishlist-grid">
-          {(wishlist.length ? wishlist.slice(0, 3) : fallbackWishlist).map(
+          {wishlist.slice(0, 3).map(
             (item: AnyRecord, index: number) => (
               <Link href="/account/wishlist" key={item?.id || index} className="account-wishlist-card">
                 {productImage(item) && (
@@ -262,7 +248,7 @@ export default async function AccountOverviewPage() {
         </div>
 
         <div className="account-reco-grid">
-          {(recommendations.length ? recommendations.slice(0, 3) : fallbackRecommendations).map(
+          {recommendations.slice(0, 3).map(
             (item: AnyRecord, index: number) => {
               const image = productImage(item);
               return (
@@ -289,3 +275,6 @@ export default async function AccountOverviewPage() {
     </AccountPageShell>
   );
 }
+
+
+

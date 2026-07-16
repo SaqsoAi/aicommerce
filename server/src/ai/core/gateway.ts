@@ -8,9 +8,15 @@ import { aiPromptRegistry } from "./promptRegistry";
 import { aiProviderRegistry } from "./providerRegistry";
 import { aiSafetyEngine } from "./safetyEngine";
 import { aiUsageEngine } from "./usageEngine";
-import { AiGatewayRequest, AiGatewayResponse, AiProviderAdapter, AiProviderName, AiTokenUsage } from "./types";
+import { AiGatewayRequest, AiGatewayResponse, AiModelType, AiProviderAdapter, AiProviderName, AiTokenUsage } from "./types";
+import { openAiVisionAdapter } from "./openAiVisionAdapter";
+import { openAiChatAdapter, openRouterChatAdapter, claudeChatAdapter, geminiChatAdapter, ollamaChatAdapter } from "./realChatAdapters";
 
-const adapters = new Map<AiProviderName, AiProviderAdapter>();
+const adapters = new Map<string, AiProviderAdapter>();
+
+function adapterKey(provider: AiProviderName, type?: AiModelType): string {
+  return type ? `${provider}:${type}` : provider;
+}
 
 function countTokens(value: unknown): number {
   const text = typeof value === "string" ? value : JSON.stringify(value ?? "");
@@ -45,15 +51,16 @@ const dryRunAdapter: AiProviderAdapter = {
 };
 
 export const aiGateway = {
-  registerAdapter(adapter: AiProviderAdapter): void {
-    adapters.set(adapter.name, adapter);
+  registerAdapter(adapter: AiProviderAdapter, modelType?: AiModelType): void {
+    adapters.set(adapterKey(adapter.name, modelType), adapter);
   },
 
   async execute<TOutput = unknown, TInput = unknown>(request: AiGatewayRequest<TInput>): Promise<AiGatewayResponse<TOutput>> {
     const started = Date.now();
     const safety = aiSafetyEngine.inspect(request);
-    const provider = aiProviderRegistry.resolve(request.provider, "chat");
-    const model = aiModelRegistry.resolve(provider.name, "chat", request.model);
+    const modelType = request.modelType || "chat";
+    const provider = aiProviderRegistry.resolve(request.provider, modelType);
+    const model = aiModelRegistry.resolve(provider.name, modelType, request.model);
     const prompt = request.promptKey ? aiPromptRegistry.approved(request.promptKey, request.promptVersion) : aiPromptRegistry.approved("ai.core.default", 1);
     const renderedPrompt = aiPromptRegistry.render(prompt.template, {
       input: typeof request.input === "string" ? request.input : JSON.stringify(request.input),
@@ -130,7 +137,7 @@ export const aiGateway = {
       return { status: "cached", feature: request.feature, provider: provider.name, model: model.id, promptKey: prompt.key, promptVersion: prompt.version, output: cached, latencyMs, usage, estimatedCostUsd: 0, auditId: audit.id, cached: true };
     }
 
-    const adapter = adapters.get(provider.name) || dryRunAdapter;
+    const adapter = adapters.get(adapterKey(provider.name, modelType)) || adapters.get(adapterKey(provider.name)) || dryRunAdapter;
     const result = await adapter.invoke({ model, prompt, renderedPrompt, input: request.input, variables: request.variables, metadata: request.metadata });
     const usage = normalizeUsage(renderedPrompt, result.output, result.usage);
     const estimatedCostUsd = aiCostEngine.estimate(provider, usage);
@@ -162,3 +169,11 @@ export const aiGateway = {
 };
 
 aiGateway.registerAdapter(dryRunAdapter);
+aiGateway.registerAdapter(openAiVisionAdapter, "vision");
+if (process.env.OPENAI_API_KEY) aiGateway.registerAdapter(openAiChatAdapter, "chat");
+if (process.env.OPENROUTER_API_KEY) aiGateway.registerAdapter(openRouterChatAdapter, "chat");
+if (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY) aiGateway.registerAdapter(claudeChatAdapter, "chat");
+if (process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY) aiGateway.registerAdapter(geminiChatAdapter, "chat");
+if (process.env.OLLAMA_BASE_URL) aiGateway.registerAdapter(ollamaChatAdapter, "chat");
+
+

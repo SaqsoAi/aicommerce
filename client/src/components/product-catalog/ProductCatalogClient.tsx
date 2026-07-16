@@ -1,436 +1,106 @@
-// PHASE_3_2_TOP_RISK_HARDENED
-/* PHASE_3_1_RESPONSIVE_GUARD */
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { ChevronDown, LoaderCircle, RotateCcw, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import Link from "next/link";
+import { FormEvent, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { getProductCatalogFilters, getProductCatalogProducts, getProductCatalogRecommended, getProductCatalogStylistPicks } from "@/api/product-catalog.api";
 import ProductCard from "@/components/products/ProductCard";
-import {
-  getProductCatalogFilters,
-  getProductCatalogProducts,
-  getProductCatalogRecommended,
-  getProductCatalogStylistPicks,
-} from "@/api/product-catalog.api";
+import { useBrand } from "@/providers/BrandProvider";
 
-type FilterState = {
-  search: string;
-  category: string;
-  size: string;
-  color: string;
-  priceMin: string;
-  priceMax: string;
-  occasion: string;
-  style: string;
-  sustainability: string;
-  sort: string;
-};
+type FilterState = { search: string; category: string; size: string; color: string; priceMin: string; priceMax: string; occasion: string; style: string; sustainability: string; sort: string };
+const initialFilters: FilterState = { search: "", category: "", size: "", color: "", priceMin: "", priceMax: "", occasion: "", style: "", sustainability: "", sort: "latest" };
 
-const initialFilters: FilterState = {
-  search: "",
-  category: "",
-  size: "",
-  color: "",
-  priceMin: "",
-  priceMax: "",
-  occasion: "",
-  style: "",
-  sustainability: "",
-  sort: "latest",
-};
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
+function cx(...classes: Array<string | false | null | undefined>) { return classes.filter(Boolean).join(" "); }
+function queryOf(filters: FilterState) { return Object.fromEntries(Object.entries(filters).filter(([, value]) => Boolean(value))); }
 
 export default function ProductCatalogClient() {
-  const [filtersData, setFiltersData] = useState<any>(null);
+  const { brand } = useBrand();
+  const [filtersData, setFiltersData] = useState<any>({});
   const [products, setProducts] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
   const [stylistPicks, setStylistPicks] = useState<any[]>([]);
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
+  const requestId = useRef(0);
 
-  const activeFilterCount = useMemo(
-    () =>
-      Object.entries(filters).filter(
-        ([key, value]) => key !== "sort" && value && value.length > 0
-      ).length,
-    [filters]
-  );
+  const activeFilterCount = useMemo(() => Object.entries(filters).filter(([key, value]) => key !== "sort" && Boolean(value)).length, [filters]);
 
-  async function loadAll(nextFilters = filters) {
-    setLoading(true);
-    try {
-      const query: Record<string, string> = {};
-      Object.entries(nextFilters).forEach(([key, value]) => {
-        if (value) query[key] = value;
-      });
-
-      const [filterRes, productRes, picksRes, recRes] = await Promise.allSettled([
-        getProductCatalogFilters(),
-        getProductCatalogProducts(query),
-        getProductCatalogStylistPicks(),
-        getProductCatalogRecommended(),
-      ]);
-
-      if (filterRes.status === "fulfilled") setFiltersData(filterRes.value);
-      if (productRes.status === "fulfilled") setProducts(productRes.value?.items || []);
-      else setProducts([]);
-      if (picksRes.status === "fulfilled") setStylistPicks(Array.isArray(picksRes.value) ? picksRes.value : []);
-      else setStylistPicks([]);
-      if (recRes.status === "fulfilled") setRecommended(Array.isArray(recRes.value) ? recRes.value : []);
-      else setRecommended([]);
-    } catch {
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
+  async function loadProducts(next: FilterState) {
+    const id = ++requestId.current; setLoading(true);
+    try { const response = await getProductCatalogProducts(queryOf(next)); if (id === requestId.current) setProducts(Array.isArray(response?.items) ? response.items : []); }
+    catch { if (id === requestId.current) setProducts([]); }
+    finally { if (id === requestId.current) setLoading(false); }
   }
 
   useEffect(() => {
-    loadAll();
+    let active = true;
+    Promise.allSettled([getProductCatalogFilters(), getProductCatalogStylistPicks(), getProductCatalogRecommended()]).then(([filterResult, picksResult, recommendedResult]) => {
+      if (!active) return;
+      if (filterResult.status === "fulfilled") setFiltersData(filterResult.value || {});
+      if (picksResult.status === "fulfilled") setStylistPicks(Array.isArray(picksResult.value) ? picksResult.value : []);
+      if (recommendedResult.status === "fulfilled") setRecommended(Array.isArray(recommendedResult.value) ? recommendedResult.value : []);
+    });
+    void loadProducts(initialFilters);
+    return () => { active = false; requestId.current += 1; };
   }, []);
 
-  function updateFilter(key: keyof FilterState, value: string) {
-    const next = { ...filters, [key]: value };
-    setFilters(next);
-    loadAll(next);
-  }
+  function apply(next: FilterState, closeDrawer = false) { setFilters(next); void loadProducts(next); if (closeDrawer) setFilterOpen(false); }
+  function update(key: keyof FilterState, value: string) { apply({ ...filters, [key]: value }); }
+  function submitSearch(event: FormEvent) { event.preventDefault(); void loadProducts(filters); }
+  function clearFilters() { apply(initialFilters); }
+  function setPriceRange(range: any) { apply({ ...filters, priceMin: String(range.min ?? ""), priceMax: range.max == null ? "" : String(range.max) }); }
 
-  function clearFilters() {
-    setFilters(initialFilters);
-    loadAll(initialFilters);
-  }
+  const filterProps = { filters, activeFilterCount, clearFilters, updateFilter: update, setPriceRange, categories: filtersData.categories || [], sizes: filtersData.sizes || [], colors: filtersData.colors || [], priceRanges: filtersData.priceRanges || [], occasions: filtersData.occasions || [], styles: filtersData.styles || [], sustainability: filtersData.sustainability || [] };
 
-  function setPriceRange(range: any) {
-    const next = {
-      ...filters,
-      priceMin: String(range.min ?? ""),
-      priceMax: range.max === null || range.max === undefined ? "" : String(range.max),
-    };
-    setFilters(next);
-    loadAll(next);
-  }
-
-  const hotOffers = filtersData?.hotOffers || [];
-  const categories = filtersData?.categories || [];
-  const sizes = filtersData?.sizes || [];
-  const colors = filtersData?.colors || [];
-  const occasions = filtersData?.occasions || [];
-  const styles = filtersData?.styles || [];
-  const sustainability = filtersData?.sustainability || [];
-  const priceRanges = filtersData?.priceRanges || [];
-
-  const filterPanel = (
-    <FilterPanel
-      activeFilterCount={activeFilterCount}
-      clearFilters={clearFilters}
-      hotOffers={hotOffers}
-      categories={categories}
-      sizes={sizes}
-      colors={colors}
-      priceRanges={priceRanges}
-      occasions={occasions}
-      styles={styles}
-      sustainability={sustainability}
-      filters={filters}
-      updateFilter={updateFilter}
-      setPriceRange={setPriceRange}
-    />
-  );
-
-  return (
-    <main className="min-h-screen overflow-x-hidden bg-white text-neutral-950 dark:bg-[#081221] dark:text-white">
-      <section className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 px-3 py-10 sm:px-4 sm:py-14 dark:border-white/10 dark:from-[#081221] dark:via-[#0f172a] dark:to-[#020617]">
-        <div className="absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="mx-auto max-w-[1500px]">
-          <div className="rounded-[2rem] border border-neutral-200 bg-white/80 p-5 shadow-xl backdrop-blur dark:border-white/10 dark:bg-white/5 sm:p-8 transition-colors duration-200 motion-reduce:transition-none">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#d4af37]">
-              RoshniTemp Product Catalog
-            </p>
-            <div className="mt-4 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end enterprise-mobile-stack">
-              <div>
-                <h1 className="text-4xl font-black tracking-tight md:text-6xl">
-                  Discover Your Style
-                </h1>
-                <p className="mt-4 max-w-3xl text-base text-neutral-600 dark:text-white/70">
-                  Explore luxury collections with real categories, variants, offers, style attributes and premium catalog filters.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-neutral-200 bg-neutral-50 p-4 dark:border-white/10 dark:bg-black/20 transition-colors duration-200 motion-reduce:transition-none">
-                <label className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500 dark:text-white/50">
-                  Smart Search
-                </label>
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                  <input
-                    value={filters.search}
-                    onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") loadAll();
-                    }}
-                    placeholder="Search product, SKU, style no..."
-                    className="min-w-0 flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-[#081221] transition-colors duration-200 motion-reduce:transition-none"
-                  />
-                  <button type="button" onClick={() => loadAll()} className="rounded-2xl bg-[#d4af37] px-5 py-3 font-bold text-black">
-                    Search
-                  </button>
-                </div>
-                <button type="button"
-                  onClick={() => alert("✨ AI Style It will connect to AI recommendation workflow.")}
-                  className="mt-3 w-full rounded-2xl border border-blue-400/40 px-4 py-3 text-sm font-bold text-blue-600 hover:bg-blue-500/10 dark:text-blue-300 transition-colors duration-200 motion-reduce:transition-none"
-                >
-                  ✨ AI Style It
-                </button>
-              </div>
-            </div>
-          </div>
+  return <main className="min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-950 dark:bg-black dark:text-white">
+    <header className="border-b border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-950">
+      <div className="mx-auto max-w-[1500px] px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl"><p className="text-xs font-bold uppercase text-rose-600 dark:text-rose-400">{brand.storeName} collection</p><h1 className="mt-2 text-3xl font-black sm:text-4xl">Find something that feels right</h1><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">Browse live products, compare variants and use AI styling tools without leaving the catalog.</p></div>
+          <form onSubmit={submitSearch} className="flex w-full max-w-xl items-center gap-2">
+            <label className="relative min-w-0 flex-1"><span className="sr-only">Search products</span><Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"/><input value={filters.search} onChange={(event)=>setFilters((current)=>({...current,search:event.target.value}))} placeholder="Search products, SKU or style" className="min-h-12 w-full rounded-md border border-zinc-300 bg-white pl-10 pr-3 text-sm outline-none transition focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 dark:border-white/15 dark:bg-black dark:focus:border-white"/></label>
+            <button type="submit" className="inline-flex min-h-12 items-center justify-center rounded-md bg-zinc-950 px-5 text-sm font-bold text-white dark:bg-white dark:text-black">Search</button>
+          </form>
         </div>
-      </section>
-
-      <section className="mx-auto grid max-w-[1500px] gap-6 px-3 py-8 sm:px-4 lg:grid-cols-[300px_1fr] lg:gap-8 enterprise-mobile-stack">
-        <aside className="hidden lg:block lg:sticky lg:top-[112px] lg:self-start">
-          {filterPanel}
-        </aside>
-
-        <div className="min-w-0">
-          <div className="sticky top-[92px] z-30 mb-5 rounded-3xl border border-neutral-200 bg-white/85 p-3 shadow-xl backdrop-blur-2xl dark:border-white/10 dark:bg-[#081221]/80 transition-colors duration-200 motion-reduce:transition-none">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between enterprise-mobile-stack">
-              <div>
-                <p className="text-sm text-neutral-500">Showing {products.length} products</p>
-                <h2 className="text-2xl font-black">Luxury Product Catalog</h2>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button type="button"
-                  onClick={() => setFilterOpen(true)}
-                  className="rounded-2xl border border-neutral-200 px-4 py-3 text-sm font-black lg:hidden dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none"
-                >
-                  Filters ({activeFilterCount})
-                </button>
-
-                <select
-                  value={filters.sort}
-                  onChange={(event) => updateFilter("sort", event.target.value)}
-                  className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-white/10 dark:bg-[#081221] transition-colors duration-200 motion-reduce:transition-none"
-                >
-                  <option value="latest">Latest</option>
-                  <option value="trending">Trending</option>
-                  <option value="price-low">Price Low</option>
-                  <option value="price-high">Price High</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
-              {Array.from({ length: 10 }).map((_, index) => (
-                <div key={index} className="h-72 animate-pulse motion-reduce:animate-none rounded-3xl bg-neutral-100 sm:h-96 dark:bg-white/10" />
-              ))}
-            </div>
-          ) : products.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-neutral-300 p-12 text-center dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
-              <h3 className="text-xl font-black">No products found</h3>
-              <p className="mt-2 text-neutral-500">Try clearing filters or searching another keyword.</p>
-              <button type="button" onClick={clearFilters} className="mt-5 rounded-xl bg-[#d4af37] px-5 py-3 font-bold text-black">
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-
-          <CatalogSection title="Stylist Picks" subtitle="Curated from Lookbook">
-            {stylistPicks.length === 0 ? (
-              <EmptyMini text="No stylist picks found yet." />
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 enterprise-mobile-stack">
-                {stylistPicks.slice(0, 4).map((item: any) => (
-                  <div key={item.id} className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
-                    <h3 className="font-black">{item.title || item.name || "Lookbook Pick"}</h3>
-                    <p className="mt-2 text-sm text-neutral-500">{item.description || "Curated styling inspiration."}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CatalogSection>
-
-          <CatalogSection title="Recommended For You" subtitle="Featured and trending products">
-            {recommended.length === 0 ? (
-              <EmptyMini text="No recommended products yet." />
-            ) : (
-              <div className="enterprise-responsive-guard grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 enterprise-mobile-stack">
-                {recommended.slice(0, 10).map((product: any) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </CatalogSection>
-        </div>
-      </section>
-
-      {filterOpen ? (
-        <div className="fixed inset-0 z-[70] lg:hidden">
-          <button type="button" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setFilterOpen(false)} />
-          <aside className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-[2rem] bg-white p-4 text-neutral-950 shadow-2xl dark:bg-[#081221] dark:text-white">
-            <div className="mb-4 flex items-center justify-between enterprise-mobile-stack">
-              <h3 className="text-xl font-black">Filters</h3>
-              <button type="button" onClick={() => setFilterOpen(false)} className="rounded-2xl border border-neutral-200 px-4 py-2 text-sm font-black dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
-                Close
-              </button>
-            </div>
-            {filterPanel}
-          </aside>
-        </div>
-      ) : null}
-    </main>
-  );
-}
-
-function FilterPanel({
-  activeFilterCount,
-  clearFilters,
-  hotOffers,
-  categories,
-  sizes,
-  colors,
-  priceRanges,
-  occasions,
-  styles,
-  sustainability,
-  filters,
-  updateFilter,
-  setPriceRange,
-}: any) {
-  return (
-    <div className="rounded-[1.5rem] border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
-      <div className="mb-5 flex items-center justify-between enterprise-mobile-stack">
-        <h2 className="font-black">Filters</h2>
-        <button type="button" onClick={clearFilters} className="text-xs font-bold text-[#d4af37]">
-          Clear All ({activeFilterCount})
-        </button>
       </div>
+    </header>
 
-      <div className="space-y-4 overflow-x-hidden sm:space-y-6">
-        <FilterGroup title="Hot Offer">
-          <div className="space-y-2">
-            {hotOffers.length === 0 ? (
-              <p className="text-xs text-neutral-500">No active offers</p>
-            ) : (
-              hotOffers.slice(0, 8).map((offer: any) => (
-                <button type="button" key={`${offer.type}-${offer.id}`} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-xs font-semibold hover:border-[#d4af37] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
-                  {offer.label}
-                </button>
-              ))
-            )}
-          </div>
-        </FilterGroup>
+    <section className="mx-auto grid max-w-[1500px] gap-6 px-4 py-5 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8 lg:py-8">
+      <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start"><FilterPanel {...filterProps}/></aside>
+      <div className="min-w-0">
+        <div className="sticky top-[var(--ai-header-h-mobile)] z-30 -mx-4 border-y border-zinc-200 bg-zinc-50/95 px-4 py-3 backdrop-blur-xl dark:border-white/10 dark:bg-black/90 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:rounded-lg lg:border lg:bg-white lg:px-4 lg:dark:bg-zinc-950">
+          <div className="flex items-center justify-between gap-3"><div className="min-w-0"><h2 className="truncate text-base font-black sm:text-lg">All products</h2><p className="text-xs text-zinc-500">{loading ? "Updating catalog..." : `${products.length} items found`}</p></div><div className="flex shrink-0 items-center gap-2"><button type="button" onClick={()=>setFilterOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-xs font-bold dark:border-white/15 dark:bg-zinc-950 lg:hidden"><SlidersHorizontal size={16}/> Filters{activeFilterCount ? <span className="grid h-5 min-w-5 place-items-center rounded bg-zinc-950 px-1 text-[10px] text-white dark:bg-white dark:text-black">{activeFilterCount}</span> : null}</button><label className="relative"><span className="sr-only">Sort products</span><select value={filters.sort} onChange={(event)=>update("sort",event.target.value)} className="min-h-11 appearance-none rounded-md border border-zinc-300 bg-white py-2 pl-3 pr-8 text-xs font-bold dark:border-white/15 dark:bg-zinc-950"><option value="latest">Latest</option><option value="trending">Trending</option><option value="price-low">Price: Low</option><option value="price-high">Price: High</option></select><ChevronDown size={14} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"/></label></div></div>
+          {activeFilterCount ? <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1"><button type="button" onClick={clearFilters} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-md border px-3 text-xs font-bold"><RotateCcw size={14}/> Clear {activeFilterCount}</button>{Object.entries(filters).filter(([key,value])=>key!=="sort"&&value).map(([key,value])=><button key={key} type="button" onClick={()=>update(key as keyof FilterState,"")} className="min-h-9 shrink-0 rounded-md bg-zinc-200 px-3 text-xs font-semibold dark:bg-zinc-800">{String(value)} ×</button>)}</div> : null}
+        </div>
 
-        <FilterGroup title="Category">
-          <div className="space-y-2">
-            {categories.map((cat: any) => (
-              <button type="button"
-                key={cat.id}
-                onClick={() => updateFilter("category", cat.slug)}
-                className={cx(
-                  "block w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-neutral-100 dark:hover:bg-white/10",
-                  filters.category === cat.slug && "bg-neutral-950 text-white dark:bg-white dark:text-black"
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </FilterGroup>
+        <div className="mt-4">
+          {loading ? <ProductSkeleton/> : products.length ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4 2xl:grid-cols-5">{products.map((product)=><ProductCard key={product.id} product={product}/>)}</div> : <div className="grid min-h-72 place-items-center rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-center dark:border-white/15 dark:bg-zinc-950"><div><Search className="mx-auto text-zinc-400" size={30}/><h3 className="mt-3 text-lg font-black">No matching products</h3><p className="mt-1 text-sm text-zinc-500">Change the search or clear filters to see the full catalog.</p><button type="button" onClick={clearFilters} className="mt-5 min-h-11 rounded-md bg-zinc-950 px-5 text-sm font-bold text-white dark:bg-white dark:text-black">Reset catalog</button></div></div>}
+        </div>
 
-        <FilterGroup title="Size">
-          <ChipGrid items={sizes} value={filters.size} onChange={(v) => updateFilter("size", v)} />
-        </FilterGroup>
-
-        <FilterGroup title="Color">
-          <ChipGrid items={colors} value={filters.color} onChange={(v) => updateFilter("color", v)} />
-        </FilterGroup>
-
-        <FilterGroup title="Price Range">
-          <div className="space-y-2">
-            {priceRanges.map((range: any) => (
-              <button type="button" key={range.label} onClick={() => setPriceRange(range)} className="block w-full rounded-xl border border-neutral-200 px-3 py-2 text-left text-sm hover:border-[#d4af37] dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
-                {range.label}
-              </button>
-            ))}
-          </div>
-        </FilterGroup>
-
-        <FilterGroup title="Occasion">
-          <ChipGrid items={occasions} value={filters.occasion} onChange={(v) => updateFilter("occasion", v)} />
-        </FilterGroup>
-
-        <FilterGroup title="Style Personality">
-          <ChipGrid items={styles} value={filters.style} onChange={(v) => updateFilter("style", v)} />
-        </FilterGroup>
-
-        <FilterGroup title="Sustainability">
-          <ChipGrid items={sustainability} value={filters.sustainability} onChange={(v) => updateFilter("sustainability", v)} />
-        </FilterGroup>
+        {stylistPicks.length ? <CatalogSection title="Stylist edits" subtitle="Curated looks"><div className="grid gap-3 sm:grid-cols-2">{stylistPicks.slice(0,4).map((item:any)=><Link key={item.id} href={item.slug?`/lookbook/${item.slug}`:"/lookbook"} className="rounded-lg border border-zinc-200 bg-white p-4 transition hover:border-zinc-400 dark:border-white/10 dark:bg-zinc-950"><h3 className="font-bold">{item.title||item.name||"Lookbook edit"}</h3><p className="mt-1 line-clamp-2 text-sm text-zinc-500">{item.description||"Explore a curated styling story."}</p></Link>)}</div></CatalogSection> : null}
+        {recommended.length ? <div id="recommended-for-you" className="scroll-mt-28"><CatalogSection title="Recommended for you" subtitle="AI-assisted selection"><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4 2xl:grid-cols-5">{recommended.slice(0,10).map((product:any)=><ProductCard key={product.id} product={product}/>)}</div></CatalogSection></div> : null}
       </div>
-    </div>
-  );
-}
-
-function FilterGroup({ title, children }: { title: string; children: ReactNode }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <section className="rounded-2xl border border-neutral-200 bg-white/70 dark:border-white/10 dark:bg-white/[0.03] transition-colors duration-200 motion-reduce:transition-none">
-      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left enterprise-mobile-stack">
-        <span className="text-xs font-black uppercase tracking-[0.22em] text-neutral-600 dark:text-white/60">{title}</span>
-        <span className="text-lg font-black text-neutral-500 dark:text-white/60">{open ? "−" : "+"}</span>
-      </button>
-      {open ? <div className="border-t border-neutral-200 px-4 py-4 dark:border-white/10">{children}</div> : null}
     </section>
-  );
+
+    {filterOpen ? <div className="fixed inset-0 z-[100] lg:hidden"><button type="button" aria-label="Close filters" onClick={()=>setFilterOpen(false)} className="absolute inset-0 bg-black/55"/><aside role="dialog" aria-label="Product filters" className="absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-y-auto rounded-t-lg bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-white"><div className="sticky top-0 z-10 -mx-4 -mt-4 mb-3 flex items-center justify-between border-b bg-white px-4 py-3 dark:border-white/10 dark:bg-zinc-950"><div><h2 className="font-black">Filters</h2><p className="text-xs text-zinc-500">{activeFilterCount} active</p></div><button type="button" onClick={()=>setFilterOpen(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-md border dark:border-white/15"><X size={18}/></button></div><FilterPanel {...filterProps}/><button type="button" onClick={()=>setFilterOpen(false)} className="sticky bottom-0 mt-4 min-h-12 w-full rounded-md bg-zinc-950 text-sm font-bold text-white dark:bg-white dark:text-black">Show {products.length} products</button></aside></div> : null}
+  </main>;
 }
 
-function ChipGrid({ items, value, onChange }: { items: string[]; value: string; onChange: (value: string) => void }) {
-  if (!items || items.length === 0) return <p className="text-xs text-neutral-500">No data</p>;
-
-  return (
-    <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
-        <button type="button"
-          key={item}
-          onClick={() => onChange(value === item ? "" : item)}
-          className={cx(
-            "rounded-xl border px-3 py-2 text-xs font-bold transition",
-            value === item ? "border-[#d4af37] bg-[#d4af37] text-black" : "border-neutral-200 hover:border-[#d4af37] dark:border-white/10"
-          )}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
-  );
+function FilterPanel({ activeFilterCount, clearFilters, categories, sizes, colors, priceRanges, occasions, styles, sustainability, filters, updateFilter, setPriceRange }: any) {
+  return <div className="rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950"><div className="flex items-center justify-between px-1 py-2"><h2 className="font-black">Filter products</h2>{activeFilterCount?<button type="button" onClick={clearFilters} className="text-xs font-bold text-rose-600 dark:text-rose-400">Clear all</button>:null}</div><div className="mt-2 space-y-2">
+    <FilterGroup title="Category" defaultOpen><OptionList items={categories} value={filters.category} label={(item:any)=>item.name} optionValue={(item:any)=>item.slug} onChange={(value)=>updateFilter("category",value)}/></FilterGroup>
+    <FilterGroup title="Size"><ChipGrid items={sizes} value={filters.size} onChange={(value)=>updateFilter("size",value)}/></FilterGroup>
+    <FilterGroup title="Color"><ChipGrid items={colors} value={filters.color} onChange={(value)=>updateFilter("color",value)}/></FilterGroup>
+    <FilterGroup title="Price"><OptionList items={priceRanges} value={`${filters.priceMin}-${filters.priceMax}`} label={(item:any)=>item.label} optionValue={(item:any)=>`${item.min??""}-${item.max??""}`} onChange={(_,item)=>setPriceRange(item)}/></FilterGroup>
+    <FilterGroup title="Occasion"><ChipGrid items={occasions} value={filters.occasion} onChange={(value)=>updateFilter("occasion",value)}/></FilterGroup>
+    <FilterGroup title="Style"><ChipGrid items={styles} value={filters.style} onChange={(value)=>updateFilter("style",value)}/></FilterGroup>
+    <FilterGroup title="Sustainability"><ChipGrid items={sustainability} value={filters.sustainability} onChange={(value)=>updateFilter("sustainability",value)}/></FilterGroup>
+  </div></div>;
 }
 
-function CatalogSection({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
-  return (
-    <section className="mt-12 rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm sm:p-6 dark:border-white/10 dark:bg-white/5 transition-colors duration-200 motion-reduce:transition-none">
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4af37]">{subtitle}</p>
-      <h2 className="mt-2 text-2xl font-black">{title}</h2>
-      <div className="mt-6">{children}</div>
-    </section>
-  );
-}
-
-function EmptyMini({ text }: { text: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500 dark:border-white/10 transition-colors duration-200 motion-reduce:transition-none">
-      {text}
-    </div>
-  );
-}
+function FilterGroup({ title, children, defaultOpen=false }: { title:string; children:ReactNode; defaultOpen?:boolean }) { const [open,setOpen]=useState(defaultOpen); return <section className="border-b border-zinc-200 last:border-0 dark:border-white/10"><button type="button" onClick={()=>setOpen(!open)} aria-expanded={open} className="flex min-h-11 w-full items-center justify-between px-2 text-left text-sm font-bold"><span>{title}</span><ChevronDown size={16} className={cx("transition",open&&"rotate-180")}/></button>{open?<div className="px-2 pb-3">{children}</div>:null}</section>; }
+function OptionList({items,value,label,optionValue,onChange}:{items:any[];value:string;label:(item:any)=>string;optionValue:(item:any)=>string;onChange:(value:string,item:any)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No options available</p>; return <div className="grid gap-1">{items.map((item,index)=>{const next=optionValue(item);const active=value===next;return <button key={item.id||next||index} type="button" onClick={()=>onChange(active?"":next,item)} className={cx("min-h-10 rounded-md px-3 text-left text-sm",active?"bg-zinc-950 font-bold text-white dark:bg-white dark:text-black":"hover:bg-zinc-100 dark:hover:bg-white/10")}>{label(item)}</button>})}</div>; }
+function ChipGrid({items,value,onChange}:{items:string[];value:string;onChange:(value:string)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No options available</p>; return <div className="flex flex-wrap gap-2">{items.map((item)=><button key={item} type="button" onClick={()=>onChange(value===item?"":item)} className={cx("min-h-9 rounded-md border px-3 text-xs font-bold",value===item?"border-zinc-950 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-black":"border-zinc-300 dark:border-white/15")}>{item}</button>)}</div>; }
+function ProductSkeleton(){return <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4 2xl:grid-cols-5">{Array.from({length:10}).map((_,index)=><div key={index} className="overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-950"><div className="aspect-[4/5] animate-pulse bg-zinc-200 dark:bg-zinc-800"/><div className="space-y-2 p-3"><div className="h-3 w-1/2 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/><div className="h-4 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/><div className="h-10 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/></div></div>)}</div>}
+function CatalogSection({title,subtitle,children}:{title:string;subtitle:string;children:ReactNode}) { return <section className="mt-10 border-t border-zinc-200 pt-7 dark:border-white/10"><div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase text-rose-600 dark:text-rose-400">{subtitle}</p><h2 className="mt-1 text-xl font-black sm:text-2xl">{title}</h2></div><Sparkles size={20} className="text-zinc-400"/></div>{children}</section>; }

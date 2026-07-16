@@ -3240,3 +3240,8 @@ header[class*="header"].is-scrolled {
   }
 }
 
+
+@media (max-width: 767px) {
+  body { padding-bottom: calc(3.75rem + env(safe-area-inset-bottom)); }
+  button, a, input, select, textarea { touch-action: manipulation; }
+}

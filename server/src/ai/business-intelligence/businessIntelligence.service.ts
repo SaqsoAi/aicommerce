@@ -53,10 +53,27 @@ export const aiBusinessIntelligenceService = {
       actions=[{id:"sales-review",title:"Review sales funnel",description:"Compare product views, cart, wishlist, checkout, orders, inventory and active campaigns.",owner:"MANAGER",priority:"HIGH",dueInDays:3,approvalRequired:false}];
     }
 
-    await aiGateway.execute({feature:"business_ai_advisor",input:{message:input.message,intent,language,summary:{kpis:snapshot.kpis}},metadata:{tenantId:context.tenantId,storeId:context.storeId,evidenceBacked:true,noLiveMutation:true}}).catch(()=>null);
+    const providerResult = await aiGateway.execute<any>({
+      feature:"business_ai_advisor",
+      modelType:"chat",
+      input:{
+        instruction:input.message,
+        language,
+        intent,
+        verifiedEvidence:{kpis:snapshot.kpis,sales:sales.evidence,topProducts:products.slice(0,15),customers},
+        deterministicAnswer:{headline,directAnswer,actions,printablePlan},
+        rules:["Use only supplied evidence","Clearly label estimates","Do not invent product/customer values","Return actionable concise advice"]
+      },
+      actor:{userId:context.userId,tenantId:context.tenantId},
+      metadata:{tenantId:context.tenantId,storeId:context.storeId,evidenceBacked:true,noLiveMutation:true}
+    }).catch(()=>null);
+    const providerText = providerResult?.output && typeof providerResult.output==="object"
+      ? String((providerResult.output as any).text??"").trim()
+      : String(providerResult?.output??"").trim();
 
     return {
-      intent,language,headline,directAnswer,confidence:snapshot.context.tenantIsolationMode==="AUTH_CONTEXT"?0.86:0.62,
+      intent,language,headline,directAnswer:providerText||directAnswer,confidence:snapshot.context.tenantIsolationMode==="AUTH_CONTEXT"?0.86:0.62,
+      provider:providerResult?{name:providerResult.provider,model:providerResult.model,status:providerResult.status,auditId:providerResult.auditId}:undefined,
       evidence:sales.evidence,
       actions,
       risks:["Historical performance does not guarantee future results.","Verify inventory, contribution margin and operational capacity before execution."],

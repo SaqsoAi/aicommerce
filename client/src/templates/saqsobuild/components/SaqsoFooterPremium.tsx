@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Mail, MapPin, Phone, ShieldCheck, Truck, Globe, MessageCircle, Share2 } from "lucide-react";
 import { useBrand } from "@/providers/BrandProvider";
 
-const columns = [
+const defaultColumns: Array<{ title: string; links: Array<[string, string]> }> = [
   {
     title: "Shop",
     links: [
@@ -34,8 +35,24 @@ const columns = [
   },
 ];
 
+type FooterColumn = { title: string; links: [string, string][] };
+
+function parseFooterNavigation(value: string | undefined): FooterColumn[] {
+  if (!value) return defaultColumns;
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return defaultColumns;
+    const valid = parsed.filter((column): column is FooterColumn => Boolean(column && typeof column.title === "string" && Array.isArray(column.links))).map((column) => ({ ...column, links: column.links.filter((link) => Array.isArray(link) && typeof link[0] === "string" && typeof link[1] === "string" && link[1].startsWith("/")).slice(0, 8) })).filter((column) => column.links.length);
+    return valid.length ? valid.slice(0, 4) : defaultColumns;
+  } catch {
+    return defaultColumns;
+  }
+}
+
 export default function SaqsoFooterPremium() {
   const { brand } = useBrand();
+  const columns = useMemo(() => parseFooterNavigation(brand.raw.footerNavigation), [brand.raw.footerNavigation]);
+  const socialLinks = [{ href: brand.website, label: "Website", icon: Globe }, { href: brand.contactPhone ? `tel:${brand.contactPhone}` : "", label: "Call support", icon: MessageCircle }, { href: brand.socials.facebook || brand.socials.instagram, label: "Social profile", icon: Share2 }].filter((item) => item.href);
   const footerLogo = brand.footerLogoUrl || brand.logoUrl;
   const initials = (brand.shortName || brand.storeName || "SQ").slice(0, 2).toUpperCase();
   return (
@@ -52,15 +69,14 @@ export default function SaqsoFooterPremium() {
             </Link>
 
             <p className="mt-6 max-w-sm text-sm font-semibold leading-7 text-white/55">
-              Premium AI-powered commerce experience with smart search, recommendations, virtual try-on and responsive luxury design.
+              {brand.raw.footerText || brand.description || "Premium AI-powered commerce experience with smart search, recommendations and virtual try-on."}
             </p>
 
             <div className="mt-6 flex gap-3">
-              {[Globe, MessageCircle, Share2].map((Icon, i) => (
-                <a key={i} href="#" className="grid h-11 w-11 place-items-center rounded-md border border-white/10 bg-white/10 transition hover:-translate-y-1 hover:bg-white/20">
-                  <Icon size={18} />
-                </a>
-              ))}
+              {socialLinks.map((item) => {
+                const Icon = item.icon;
+                return <a key={item.label} href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noreferrer" : undefined} aria-label={item.label} className="grid h-11 w-11 place-items-center rounded-md border border-white/10 bg-white/10 transition hover:bg-white/20"><Icon size={18} /></a>;
+              })}
             </div>
           </div>
 
@@ -104,4 +120,6 @@ export default function SaqsoFooterPremium() {
     </footer>
   );
 }
+
+
 
