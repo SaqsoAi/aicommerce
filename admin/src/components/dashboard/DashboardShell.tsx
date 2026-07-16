@@ -108,6 +108,16 @@ function EmptyState({ label, icon: Icon = ChartNoAxesCombined }: { label: string
   );
 }
 
+function formatDashboardActivity(title: string, detail: string, time: string) {
+  const cleanTitle = String(title || "Activity").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  const normalizedTitle = cleanTitle.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const cleanDetail = String(detail || "Live dashboard activity").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  return {
+    title: normalizedTitle,
+    detail: cleanDetail,
+    time: String(time || ""),
+  };
+}
 function KpiCard({ metric, compact = false, onReport }: { metric: Metric; compact?: boolean; onReport: (metric: Metric) => void }) {
   const Icon = metric.icon;
   if (!compact && metric.label === "Project Health Score") {
@@ -380,7 +390,7 @@ function CommerceBody({ data, onAction, onMetricReport }: { data: DashboardModel
       <section className="ds-kpi-grid commerce">{data.metrics.map((m) => <KpiCard key={m.label} metric={m} onReport={onMetricReport} />)}</section>
       <section className="ds-commerce-content">
         <Panel title="Sales Overview" action={<button onClick={() => onAction("report")}>View Report</button>}>
-          <div className="ds-tabs"><b>Live</b><span>Trend API</span><span>Export</span></div>
+          <div className="ds-tabs ds-commerce-tabs"><b>This Week</b><span>This Month</span><span>This Year</span></div>
           {data.salesTrend.length ? <SalesChart points={data.salesTrend} /> : <EmptyState label="Sales time-series endpoint returned no rows." source="/api/dashboard/summary" />}
         </Panel>
         <Panel title="Top Selling Products" action={<button onClick={() => onAction("products")}>View All</button>}>
@@ -394,7 +404,7 @@ function CommerceBody({ data, onAction, onMetricReport }: { data: DashboardModel
         {data.role === "ADMIN" ? <Panel title="Top Customers" action={<button onClick={() => onAction("customers")}>View All</button>}>{data.customers.length ? <div className="ds-products">{data.customers.map(([name, orders, total]) => <article key={name}><i><UserRound size={18} /></i><div><b>{name}</b><span>{orders}</span></div><strong>{total}</strong></article>)}</div> : <EmptyState label="No customer ranking rows were returned." source="/api/dashboard/summary" icon={UserRound} />}</Panel> : null}
       </section>
       <Panel title="Recent Activity">
-        {data.activities.length ? <div className="ds-activity-row">{data.activities.map(([a,b,c]) => <article key={a + b}><i><CalendarDays size={16} /></i><div><b>{a}</b><span>{b}</span></div><small>{c}</small></article>)}</div> : <EmptyState label="Recent activity endpoint is unavailable." source="/api/audit-logs" icon={CalendarDays} />}
+        {data.activities.length ? <div className="ds-activity-row">{data.activities.map(([a,b,c]) => { const activity = formatDashboardActivity(a, b, c); return <article key={a + b}><i><CalendarDays size={16} /></i><div><b>{activity.title}</b><span>{activity.detail}</span></div><small>{activity.time}</small></article>; })}</div> : <EmptyState label="Recent activity endpoint is unavailable." source="/api/audit-logs" icon={CalendarDays} />}
       </Panel>
     </>
   );
@@ -489,6 +499,7 @@ export default function DashboardShell({ data }: { data: DashboardModel }) {
       <main className="ds-main">
         {data.mode !== "super" && storeContext ? (
           <section
+            className="ds-store-context"
             style={{
               margin: "0 0 12px",
               padding: "10px 14px",
@@ -508,7 +519,7 @@ export default function DashboardShell({ data }: { data: DashboardModel }) {
                 {storeContext.tenant?.name ?? "Tenant not assigned"}
               </span>
             </div>
-            <div style={{ display: "flex", gap: 10, opacity: .82 }}>
+            <div className="ds-store-context-meta" style={{ display: "flex", gap: 10, opacity: .82 }}>
               <span>{storeContext.user.role}</span>
               <span>{Array.isArray(storeContext.user.permissions) ? storeContext.user.permissions.length : 0} permissions</span>
               <span>{storeContext.store?.activeTemplate?.name ?? "No active template"}</span>

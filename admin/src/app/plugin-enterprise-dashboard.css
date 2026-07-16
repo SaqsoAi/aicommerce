@@ -6418,3 +6418,244 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Dashboard Commerce Red Mark Fix 2026-07-16
+   Scoped polish for marked admin/manager dashboard areas only. */
+.dashboard-system.admin .ds-store-context,
+.dashboard-system.manager .ds-store-context,
+.dashboard-system.store-admin .ds-store-context {
+  margin: 0 0 14px !important;
+  min-height: 38px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-store-context > div:first-child,
+.dashboard-system.manager .ds-store-context > div:first-child,
+.dashboard-system.store-admin .ds-store-context > div:first-child {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-store-context > div:first-child b,
+.dashboard-system.manager .ds-store-context > div:first-child b,
+.dashboard-system.store-admin .ds-store-context > div:first-child b,
+.dashboard-system.admin .ds-store-context > div:first-child span,
+.dashboard-system.manager .ds-store-context > div:first-child span,
+.dashboard-system.store-admin .ds-store-context > div:first-child span {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.admin .ds-store-context-meta,
+.dashboard-system.manager .ds-store-context-meta,
+.dashboard-system.store-admin .ds-store-context-meta {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  max-width: 48% !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-store-context-meta span,
+.dashboard-system.manager .ds-store-context-meta span,
+.dashboard-system.store-admin .ds-store-context-meta span {
+  display: inline-flex !important;
+  min-width: 0 !important;
+  max-width: 170px !important;
+  align-items: center !important;
+  height: 24px !important;
+  padding: 0 9px !important;
+  border: 1px solid rgba(148, 163, 184, .16) !important;
+  border-radius: 999px !important;
+  background: rgba(15, 23, 42, .52) !important;
+  color: #dbeafe !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.admin .ds-commerce-tabs,
+.dashboard-system.manager .ds-commerce-tabs,
+.dashboard-system.store-admin .ds-commerce-tabs {
+  min-height: 46px !important;
+  gap: 12px !important;
+}
+
+.dashboard-system.admin .ds-commerce-tabs b,
+.dashboard-system.manager .ds-commerce-tabs b,
+.dashboard-system.store-admin .ds-commerce-tabs b,
+.dashboard-system.admin .ds-commerce-tabs span,
+.dashboard-system.manager .ds-commerce-tabs span,
+.dashboard-system.store-admin .ds-commerce-tabs span {
+  display: inline-flex !important;
+  min-width: 76px !important;
+  min-height: 30px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 14px !important;
+  border-radius: 9px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.dashboard-system.admin .ds-commerce-tabs b,
+.dashboard-system.manager .ds-commerce-tabs b,
+.dashboard-system.store-admin .ds-commerce-tabs b {
+  color: #fff !important;
+}
+
+.dashboard-system.admin .ds-commerce-tabs span,
+.dashboard-system.manager .ds-commerce-tabs span,
+.dashboard-system.store-admin .ds-commerce-tabs span {
+  color: #93a4b9 !important;
+  background: transparent !important;
+}
+
+.dashboard-system.admin .ds-donut,
+.dashboard-system.manager .ds-donut,
+.dashboard-system.store-admin .ds-donut {
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.dashboard-system.admin .ds-donut > div,
+.dashboard-system.manager .ds-donut > div,
+.dashboard-system.store-admin .ds-donut > div {
+  display: grid !important;
+  place-items: center !important;
+  gap: 1px !important;
+  text-align: center !important;
+  transform: translateY(0) !important;
+}
+
+.dashboard-system.admin .ds-donut strong,
+.dashboard-system.manager .ds-donut strong,
+.dashboard-system.store-admin .ds-donut strong {
+  display: block !important;
+  font-size: 28px !important;
+  line-height: .95 !important;
+}
+
+.dashboard-system.admin .ds-donut span,
+.dashboard-system.manager .ds-donut span,
+.dashboard-system.store-admin .ds-donut span {
+  display: block !important;
+  max-width: 82px !important;
+  color: #cbd5e1 !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+
+.dashboard-system.admin > .ds-main > .ds-panel:has(.ds-activity-row),
+.dashboard-system.manager > .ds-main > .ds-panel:has(.ds-activity-row),
+.dashboard-system.store-admin > .ds-main > .ds-panel:has(.ds-activity-row) {
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-activity-row,
+.dashboard-system.manager .ds-activity-row,
+.dashboard-system.store-admin .ds-activity-row {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  padding: 12px !important;
+  min-height: 76px !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-activity-row article,
+.dashboard-system.manager .ds-activity-row article,
+.dashboard-system.store-admin .ds-activity-row article {
+  min-width: 0 !important;
+  min-height: 58px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border: 1px solid rgba(15, 74, 112, .3) !important;
+  border-radius: 10px !important;
+  background: rgba(8, 21, 38, .58) !important;
+}
+
+.dashboard-system.admin .ds-activity-row article i,
+.dashboard-system.manager .ds-activity-row article i,
+.dashboard-system.store-admin .ds-activity-row article i {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 999px !important;
+}
+
+.dashboard-system.admin .ds-activity-row article div,
+.dashboard-system.manager .ds-activity-row article div,
+.dashboard-system.store-admin .ds-activity-row article div {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.dashboard-system.admin .ds-activity-row article b,
+.dashboard-system.manager .ds-activity-row article b,
+.dashboard-system.store-admin .ds-activity-row article b {
+  display: block !important;
+  overflow: hidden !important;
+  color: #f8fafc !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.admin .ds-activity-row article span,
+.dashboard-system.manager .ds-activity-row article span,
+.dashboard-system.store-admin .ds-activity-row article span {
+  display: block !important;
+  margin-top: 3px !important;
+  overflow: hidden !important;
+  color: #9fb0c5 !important;
+  font-size: 10.5px !important;
+  line-height: 1.15 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dashboard-system.admin .ds-activity-row article small,
+.dashboard-system.manager .ds-activity-row article small,
+.dashboard-system.store-admin .ds-activity-row article small {
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1280px) {
+  .dashboard-system.admin .ds-activity-row,
+  .dashboard-system.manager .ds-activity-row,
+  .dashboard-system.store-admin .ds-activity-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-system.admin .ds-store-context-meta,
+  .dashboard-system.manager .ds-store-context-meta,
+  .dashboard-system.store-admin .ds-store-context-meta {
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+}

@@ -1,0 +1,1 @@
+export const isolationContract={platformBypassRole:"SUPER_ADMIN",tenantFields:["tenantId","storeId"],rules:["Never trust tenantId/storeId from request body","Resolve ownership from authenticated context","Apply filters in every tenant-owned query","Test cross-tenant reads and writes"]} as const;
