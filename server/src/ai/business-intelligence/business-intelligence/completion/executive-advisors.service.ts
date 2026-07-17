@@ -1,1 +1,0 @@
-export function executiveAdvisors(s:any){return {ceo:{focus:"growth and risk",kpis:s.kpis},cfo:{focus:"revenue, cost and cash",warning:"Net profit requires verified expenses"},coo:{focus:"inventory and fulfillment"},cmo:{focus:"demand and conversion"}};}

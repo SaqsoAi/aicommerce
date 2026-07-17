@@ -1,1 +1,0 @@
-export function certifyAction(input:any){return {actionId:String(input.actionId??"draft"),checks:["tenant ownership","approval status","permission","idempotency","audit"],passed:false,executionMode:"ADAPTER_REQUIRED"};}
