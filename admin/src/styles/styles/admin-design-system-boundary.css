@@ -1,0 +1,28 @@
+:root {
+  --saqso-admin-sidebar-expanded: 214px;
+  --saqso-admin-sidebar-collapsed: 78px;
+  --saqso-admin-topbar-height: 68px;
+  --saqso-admin-content-padding-desktop: 24px;
+  --saqso-admin-content-padding-tablet: 18px;
+  --saqso-admin-content-padding-mobile: 12px;
+  --saqso-admin-card-radius: 10px;
+  --saqso-admin-control-radius: 8px;
+  --saqso-admin-focus-ring: 0 0 0 3px color-mix(in srgb, var(--role-accent, #22d3ee) 32%, transparent);
+}
+.ds-shell { --sidebar-width: var(--saqso-admin-sidebar-expanded); }
+.ds-shell.collapsed { --sidebar-width: var(--saqso-admin-sidebar-collapsed); }
+.ds-content { min-width: 0; overflow-x: clip; }
+.ds-page { width: 100%; max-width: 1920px; margin-inline: auto; padding: var(--saqso-admin-content-padding-desktop); }
+.ds-panel, .ds-card { border-radius: var(--saqso-admin-card-radius); }
+:where(button,a,input,select,textarea):focus-visible { outline: none; box-shadow: var(--saqso-admin-focus-ring); }
+[data-role="SUPER_ADMIN"] { --role-accent: #22d3ee; }
+[data-role="ADMIN"] { --role-accent: #f97316; }
+[data-role="MANAGER"] { --role-accent: #22c55e; }
+[data-role="INVENTORY"] { --role-accent: #6366f1; }
+[data-role="WAREHOUSE_MANAGER"] { --role-accent: #f59e0b; }
+[data-role="MARKETING"] { --role-accent: #d946ef; }
+[data-role="FINANCE_MANAGER"] { --role-accent: #10b981; }
+[data-role="SUPPORT"] { --role-accent: #38bdf8; }
+[data-role="DELIVERY_MANAGER"] { --role-accent: #14b8a6; }
+@media (max-width: 1024px) { .ds-page { padding: var(--saqso-admin-content-padding-tablet); } }
+@media (max-width: 640px) { .ds-page { padding: var(--saqso-admin-content-padding-mobile); } }

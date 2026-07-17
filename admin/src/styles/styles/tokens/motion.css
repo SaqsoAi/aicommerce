@@ -1,0 +1,2 @@
+﻿:root { --motion-fast: 140ms ease; --motion-normal: 220ms ease; --motion-slow: 360ms ease; --z-topbar: 50; --z-sidebar: 60; --z-modal: 100; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

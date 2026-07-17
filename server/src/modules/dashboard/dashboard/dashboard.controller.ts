@@ -1,0 +1,2 @@
+import type {Request,Response} from "express";import {getRoleDashboard} from "./dashboard.service";
+export async function getDashboard(req:Request,res:Response){try{const auth=(req as Request & {user?:{role?:string}}).user;const data=await getRoleDashboard(auth?.role);return res.json({success:true,data})}catch(error){console.error("role dashboard failed",error);return res.status(500).json({success:false,message:"Dashboard data unavailable"})}}

@@ -1,0 +1,1 @@
+export const architectureCertification={requiredBuilds:["server","admin","client"],requiredChecks:["role-authority","navigation-registry","dashboard-registry","authorization-contract","tenant-context","admin-design-boundary","storefront-design-boundary"],databaseViaPowerShellOnly:true,sourceViaPluginTransactionOnly:true} as const;

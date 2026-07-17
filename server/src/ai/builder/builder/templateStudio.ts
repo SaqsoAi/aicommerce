@@ -1,0 +1,3 @@
+export function ecommerceTemplateBlueprint(prompt:string){
+ return{title:"Modern Tenant-aware Ecommerce Template",prompt,architecture:["Domain tenant resolver","Theme and design-token resolver","CMS homepage resolver","Catalog/search/product detail","Wishlist/cart/checkout","Customer account/orders/rewards"],pages:["Home","Category","Search","Product","Wishlist","Cart","Checkout","Account","Orders","Returns"],quality:["Real API data only","TenantId and StoreId isolation","Mobile-first 320-1920px","SEO metadata and structured data","Accessible keyboard/focus states","Bangla and English content-ready"],delivery:["Client source plugin ZIP","Optional CMS seed PS1","Build and responsive certification"],autoApply:false};
+}

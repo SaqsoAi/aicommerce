@@ -1,0 +1,1 @@
+export function generateTestPlan(input:any){return {target:String(input.target??"module"),tests:["unit","authorization","tenant isolation","API contract","build regression"],framework:String(input.framework??"project-default"),autoWrite:false};}

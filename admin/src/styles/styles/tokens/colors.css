@@ -1,0 +1,24 @@
+﻿:root {
+  --admin-bg: #020711;
+  --admin-bg-2: #07111f;
+  --admin-text: #f7fbff;
+  --admin-muted: #9caec4;
+  --admin-border: rgba(125, 165, 220, .18);
+  --admin-border-strong: rgba(125, 165, 220, .32);
+  --admin-card: rgba(9, 20, 35, .78);
+  --admin-card-strong: rgba(12, 27, 47, .92);
+  --admin-glass: linear-gradient(145deg, rgba(14, 31, 55, .82), rgba(4, 10, 20, .72));
+  --admin-sidebar: rgba(4, 11, 22, .94);
+  --admin-topbar: rgba(5, 12, 23, .92);
+  --admin-input: rgba(4, 12, 24, .75);
+  --admin-table: rgba(4, 13, 26, .62);
+  --admin-modal: rgba(5, 11, 22, .96);
+  --admin-success: #27f28a;
+  --admin-warning: #ffb238;
+  --admin-danger: #ff4f63;
+  --admin-info: #38bdf8;
+  --admin-disabled: rgba(156, 174, 196, .38);
+  --admin-chart-1: var(--role-primary);
+  --admin-chart-2: var(--role-secondary);
+  --admin-chart-3: var(--role-accent);
+}

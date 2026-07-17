@@ -1,0 +1,1 @@
+"use client";export default function Page(){return <main className="ds-page"><h1>SAQSO AI Builder — Voice, multilingual conversation and memory recovery</h1><p>Repository-aware, approval-governed and multilingual.</p></main>}

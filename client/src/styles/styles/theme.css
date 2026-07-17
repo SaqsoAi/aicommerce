@@ -1,0 +1,15 @@
+:root {
+  --primary: #2563eb;
+
+  --background: #ffffff;
+  --surface: #f8fafc;
+
+  --text: #111827;
+}
+
+[data-theme="dark"] {
+  --background: #0f172a;
+  --surface: #1e293b;
+
+  --text: #ffffff;
+}

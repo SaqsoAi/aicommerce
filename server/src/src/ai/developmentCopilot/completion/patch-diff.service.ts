@@ -1,0 +1,1 @@
+import fs from "fs";export function createDiff(file:string,next:string){const before=fs.readFileSync(file,"utf8");return {file,beforeHash:Buffer.from(before).toString("base64").slice(0,32),changed:before!==next,preview:{before:before.slice(0,4000),after:next.slice(0,4000)},approvalRequired:true};}
