@@ -1,2 +1,0 @@
-﻿:root { --client-bg: #ffffff; --client-surface: #f8fafc; --client-text: #0f172a; --client-muted: #64748b; --client-border: #e2e8f0; --client-primary: #111827; --client-accent: #f97316; --client-success: #16a34a; --client-warning: #f59e0b; --client-danger: #dc2626; }
-.dark { --client-bg: #020711; --client-surface: rgba(9,20,35,.78); --client-text: #f8fafc; --client-muted: #9ca3af; --client-border: rgba(148,163,184,.22); --client-primary: #f8fafc; --client-accent: #fb923c; }

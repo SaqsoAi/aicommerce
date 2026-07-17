@@ -1,8 +1,0 @@
-﻿.client-theme { background: var(--client-bg); color: var(--client-text); font-family: var(--client-font); }
-.client-header, .client-footer, .client-card, .client-product-card, .client-modal { background: var(--client-surface); border: 1px solid var(--client-border); border-radius: var(--client-radius-lg); box-shadow: var(--client-shadow-card); }
-.client-button { min-height: 44px; border-radius: var(--client-radius-sm); padding: .75rem 1rem; display: inline-flex; align-items:center; justify-content:center; gap:.5rem; }
-.client-button-primary { background: var(--client-primary); color: var(--client-bg); }
-.client-button-accent { background: var(--client-accent); color: #fff; }
-.client-input, .client-select, .client-textarea { min-height: 44px; border: 1px solid var(--client-border); border-radius: var(--client-radius-sm); padding: .75rem .9rem; background: var(--client-bg); color: var(--client-text); }
-.client-input:focus, .client-select:focus, .client-textarea:focus, .client-button:focus-visible { outline: 2px solid var(--client-accent); outline-offset: 2px; }
-@media (max-width: 768px) { .client-button { width: 100%; } .client-card, .client-product-card { border-radius: var(--client-radius-md); } }
