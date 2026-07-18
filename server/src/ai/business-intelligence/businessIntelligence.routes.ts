@@ -48,7 +48,7 @@ function context(req: AuthRequest) {
 }
 
 router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-business-ai-advisor", version: "3.0.0", completionLevel: 10, tenantIsolation: true, multilingual: true, liveMutation: false }));
-router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "business-ai-advisor", completionLevel: 5, tenantIsolation: true } }));
+router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "business-ai-advisor", version: "4.1.0", completionLevel: 10, realInterface: true, tenantIsolation: true, liveMutation: false } }));
 router.get("/snapshot", async (req, res, next) => { try { res.json({ success: true, data: await aiBusinessIntelligenceService.snapshot(context(req), Number(req.query.days ?? 30)) }); } catch (error) { next(error); } });
 router.post("/chat", async (req, res, next) => { try { res.json({ success: true, data: await aiBusinessIntelligenceService.chat(context(req), req.body ?? {}) }); } catch (error) { next(error); } });
 router.get("/ceo-report", async (req, res, next) => { try { res.json({ success: true, data: await aiBusinessIntelligenceService.ceoReport(context(req), Number(req.query.days ?? 30)) }); } catch (error) { next(error); } });

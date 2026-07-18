@@ -1,4 +1,21 @@
 import prisma from "../../config/prisma";
+import { existsSync } from "fs";
+import { resolve } from "path";
+
+const SECRET_ENV_NAMES = ["OPENAI_API_KEY", "GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "FAL_KEY", "PINECONE_API_KEY"] as const;
+const SOURCE_ENV_CANDIDATES = ["server/.env", "server/.env.local", "server/.env.production", "server/.env.bak", "admin/.env.local", "client/.env.local"] as const;
+
+export function getAiSecretGovernance() {
+  const projectRoot = resolve(process.cwd(), "..");
+  const credentials = SECRET_ENV_NAMES.map((name) => ({ name, configured: Boolean(process.env[name]?.trim()), publiclyExposed: name.startsWith("NEXT_PUBLIC_") }));
+  const sourceFiles = SOURCE_ENV_CANDIDATES.map((relativePath) => ({ relativePath, present: existsSync(resolve(projectRoot, relativePath)), allowedInSource: relativePath.endsWith(".example") })).filter((item) => item.present);
+  const publicSecretNames = Object.keys(process.env).filter((name) => name.startsWith("NEXT_PUBLIC_") && /(KEY|SECRET|TOKEN|PASSWORD|CREDENTIAL)/i.test(name));
+  const findings = [
+    ...sourceFiles.filter((item) => !item.allowedInSource).map((item) => ({ code: "SECRET_SOURCE_FILE", severity: "CRITICAL", target: item.relativePath, message: "Runtime environment file is present inside the project source tree." })),
+    ...publicSecretNames.map((name) => ({ code: "PUBLIC_SECRET_ENV", severity: "CRITICAL", target: name, message: "Secret-like environment variable uses a browser-public prefix." })),
+  ];
+  return { status: findings.length ? "ACTION_REQUIRED" : "PASS", policyVersion: "AI-G0-1.0", credentials, sourceFiles, findings, controls: { valuesReturned: false, browserSecretPrefixBlocked: true, rotationRequiresProviderConsole: true, sourceScrubRequiresPowerShellApproval: true } };
+}
 
 const defaultFeatures = [
   {
@@ -36,6 +53,10 @@ const defaultFeatures = [
     enabled: true,
     placement: ["product_page", "virtual_tryon_page"],
   },
+  { key: "size_recommendation", label: "AI Size Recommendation", description: "Evidence-based size and fit guidance.", enabled: true, placement: ["product_page", "size_fit_center"] },
+  { key: "business_ai_advisor", label: "SAQSO Business AI Advisor", description: "Tenant-scoped business intelligence and governed actions.", enabled: true, placement: ["tenant_admin"] },
+  { key: "ai_builder", label: "SAQSO AI Builder", description: "Platform-admin architecture, review, generation and certification tools.", enabled: true, placement: ["platform_admin"] },
+  { key: "platform_migrator", label: "SAQSO AI Platform Migrator", description: "Governed source discovery, conversion, installation and certification.", enabled: true, placement: ["platform_admin"] },
 ];
 
 const defaultProviders = [
@@ -126,12 +147,25 @@ export async function getAiControlDashboard() {
     },
   });
 
+  const providerReadiness = providers.map((provider) => ({
+    key: provider.key,
+    configured: provider.apiKeyEnv ? Boolean(process.env[provider.apiKeyEnv]) : true,
+    enabled: provider.enabled,
+    model: provider.model,
+  }));
+
   return {
     features,
     providers,
     recentUsage,
     overrides,
     usageSummary,
+    providerReadiness,
+    governance: {
+      secretsExposed: false,
+      effectiveHierarchy: ["GLOBAL", "PLAN", "TENANT", "STORE", "USER"],
+      publicEndpoint: "/api/ai-control/public/availability",
+    },
   };
 }
 
@@ -202,10 +236,13 @@ export async function createAiOverride(payload: any) {
   });
 }
 
-export async function getPublicAiAvailability() {
+type AvailabilityScope = { tenantId?: string; storeId?: string; userId?: string };
+
+export async function getPublicAiAvailability(scope: AvailabilityScope = {}) {
   await seedAiControlDefaults();
 
-  const features = await prisma.aiFeatureSetting.findMany({
+  const [features, overrides] = await Promise.all([
+    prisma.aiFeatureSetting.findMany({
     where: { enabled: true },
     select: {
       key: true,
@@ -216,7 +253,33 @@ export async function getPublicAiAvailability() {
       config: true,
     },
     orderBy: { key: "asc" },
-  });
+    }),
+    prisma.aiOverride.findMany({
+      where: {
+        active: true,
+        OR: [
+          ...(scope.tenantId ? [{ targetType: "TENANT", targetId: scope.tenantId }] : []),
+          ...(scope.storeId ? [{ targetType: "STORE", targetId: scope.storeId }] : []),
+          ...(scope.userId ? [{ targetType: "USER", targetId: scope.userId }] : []),
+        ],
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
 
-  return { features };
+  const rank: Record<string, number> = { GLOBAL: 0, PLAN: 1, TENANT: 2, STORE: 3, USER: 4 };
+  const effective = features.map((feature) => {
+    const matches = overrides
+      .filter((override) => override.featureKey === feature.key)
+      .sort((a, b) => (rank[a.targetType.toUpperCase()] ?? -1) - (rank[b.targetType.toUpperCase()] ?? -1));
+    const value = matches.reduce<Record<string, unknown>>((state, override) => ({ ...state, ...(override.value as Record<string, unknown>) }), {});
+    return {
+      ...feature,
+      enabled: typeof value.enabled === "boolean" ? value.enabled : feature.enabled,
+      config: { ...((feature.config as Record<string, unknown>) ?? {}), ...((value.config as Record<string, unknown>) ?? {}) },
+      effectiveScope: matches.length ? matches[matches.length - 1].targetType : "GLOBAL",
+    };
+  }).filter((feature) => feature.enabled);
+
+  return { features: effective, scope: { tenantId: scope.tenantId ?? null, storeId: scope.storeId ?? null } };
 }

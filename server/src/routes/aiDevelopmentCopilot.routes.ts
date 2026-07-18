@@ -27,6 +27,7 @@ import { interactivePreview } from "../ai/developmentCopilot/completion/interact
 import { dryRunExecution } from "../ai/developmentCopilot/completion/dry-run-execution.service";
 import { autoCodeCertification } from "../ai/developmentCopilot/completion/auto-code-certification.service";
 import { specialistReview, specialistCouncil } from "../ai/developmentCopilot/completion/specialist-ai.service";
+import { resolveInsideRoot } from "../ai/developmentCopilot/path-sandbox";
 
 const router = Router();
 router.use(protect);
@@ -34,7 +35,7 @@ router.use(...(requirePlatformAdmin as any));
 const root = path.resolve(process.env.PROJECT_ROOT ?? path.join(process.cwd(), ".."));
 
 router.get("/health", (_req, res) => res.json({ success: true, module: "saqso-ai-builder", version: "3.0.0", completionLevel: 10, voice: true, multilingual: true, liveMutation: false, approvalRequired: true }));
-router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "saqso-ai-builder", completionLevel: 6, liveMutation: false, approvalRequired: true } }));
+router.get("/completion-health", (_req, res) => res.json({ success: true, data: { module: "saqso-ai-builder", version: "4.1.0", completionLevel: 10, realInterface: true, liveMutation: false, approvalRequired: true } }));
 router.get("/project-index", (_req, res) => res.json({ success: true, data: buildProjectIndexSummary(process.cwd()) }));
 router.get("/repository", (_req, res) => res.json({ success: true, data: inspectLegacyRepository(process.cwd()) }));
 router.get("/knowledge-graph", (_req, res) => { const repo = inspectLegacyRepository(process.cwd()); res.json({ success: true, data: buildKnowledgeGraph(repo) }); });
@@ -45,10 +46,10 @@ router.get("/workspaces", async (req: AuthRequest, res, next) => { try { res.jso
 router.post("/workspaces", async (req: AuthRequest, res, next) => { try { res.json({ success: true, data: await createWorkspace({ userId: String(req.user?.id ?? req.user?.userId) }, req.body ?? {}) }); } catch (error) { next(error); } });
 router.get("/repository-intelligence", (_req, res, next) => { try { res.json({ success: true, data: inspectRepository(root) }); } catch (error) { next(error); } });
 
-router.post("/review", (req, res, next) => { try { res.json({ success: true, data: reviewSource(path.resolve(root, String(req.body?.file ?? ""))) }); } catch (error) { next(error); } });
+router.post("/review", (req, res, next) => { try { res.json({ success: true, data: reviewSource(resolveInsideRoot(root, req.body?.file)) }); } catch (error) { next(error); } });
 router.post("/debug", (req, res) => res.json({ success: true, data: debugLog(String(req.body?.log ?? "")) }));
 
-router.post("/visual-audit", (req, res, next) => { try { res.json({ success: true, data: auditUiFile(path.resolve(root, String(req.body?.file ?? ""))) }); } catch (error) { next(error); } });
+router.post("/visual-audit", (req, res, next) => { try { res.json({ success: true, data: auditUiFile(resolveInsideRoot(root, req.body?.file)) }); } catch (error) { next(error); } });
 router.post("/template-blueprint", (req, res) => res.json({ success: true, data: templateBlueprint(req.body ?? {}) }));
 
 router.post("/artifacts", (req, res) => res.json({ success: true, data: createArtifact(root, req.body ?? {}) }));
@@ -60,7 +61,7 @@ router.post("/build", (req, res) => res.json({ success: true, data: runBuild(roo
 router.post("/voice-session",(req,res)=>res.json({success:true,data:voiceSession(req.body??{})}));
 router.get("/memory-policy",(_q,res)=>res.json({success:true,data:memoryPolicy()}));
 
-router.post("/patch-diff",(req,res,next)=>{try{res.json({success:true,data:createDiff(path.resolve(root,String(req.body?.file??"")),String(req.body?.next??""))});}catch(e){next(e);}});
+router.post("/patch-diff",(req,res,next)=>{try{res.json({success:true,data:createDiff(resolveInsideRoot(root,req.body?.file),String(req.body?.next??""))});}catch(e){next(e);}});
 
 router.post("/test-plan",(req,res)=>res.json({success:true,data:generateTestPlan(req.body??{})}));
 
