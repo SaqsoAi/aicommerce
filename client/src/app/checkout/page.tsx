@@ -53,10 +53,12 @@ export default function CheckoutPage() {
   const [selectedRewardRuleId, setSelectedRewardRuleId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [showVerificationGate, setShowVerificationGate] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { items, clearCart } = useCartStore();
 
   const handleOrder = async (customer: any) => {
+    if (submitting) return;
     try {
       if (!authUserId) {
         toast.error("Please login first");
@@ -85,12 +87,23 @@ export default function CheckoutPage() {
         return;
       }
 
+      if (!items.length) {
+        toast.error("Your cart is empty");
+        return;
+      }
+
+      if (!customer?.name?.trim() || !customerPhone.trim() || !customer?.address?.trim()) {
+        toast.error("Name, phone and delivery address are required");
+        return;
+      }
+
+      setSubmitting(true);
       await createOrder({
-        userId: String(authUserId || user?.id || user?._id || user?.userId || user?.customerId || "guest-checkout-user"),
+        userId: String(authUserId),
         customer: {
-          name: customer?.name || user?.name || "Customer",
-          phone: String(customerPhone || customer?.phone || customer?.mobile || customer?.contactPhone || user?.phone || user?.mobile || "01700000000"),
-          address: customer?.address || user?.addressLine1 || user?.address || "Address not provided",
+          name: customer.name.trim(),
+          phone: String(customerPhone).trim(),
+          address: customer.address.trim(),
           email: customer?.email || user?.email || "",
         },
 
@@ -109,10 +122,12 @@ export default function CheckoutPage() {
 
       toast.success("Order placed successfully");
 
-      router.push("/dashboard");
+      router.push("/orders");
     } catch (error) {
       console.error(error);
       toast.error(getCheckoutErrorMessage(error));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -151,7 +166,7 @@ export default function CheckoutPage() {
                 </h2>
 
                 <div className="mt-5 sm:mt-6">
-                  <CheckoutForm onSubmit={handleOrder} />
+                  <CheckoutForm onSubmit={handleOrder} submitting={submitting} />
                 </div>
               </div>
 

@@ -5,5 +5,15 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#111111",
-  "icons": []
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "/saqso-app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Shop", "url": "/shop" },
+    { "name": "Cart", "url": "/cart" },
+    { "name": "AI Try-On", "url": "/virtual-tryon" }
+  ]
 }

@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useCartStore } from "@/store/cart.store";
-import { normalizeImageUrl } from "@/lib/normalizeImageUrl";
 import { getProductImage } from "@/lib/product-image";
 
 export default function CartItem({ item }: any) {
@@ -15,6 +14,7 @@ export default function CartItem({ item }: any) {
       <img
         src={getProductImage(item) || "/placeholder-product.svg"}
         alt={item.name || "Cart item"}
+        onError={(event) => { event.currentTarget.src = "/placeholder-product.svg"; }}
         className="h-32 w-full rounded-2xl bg-zinc-100 object-contain p-2 dark:bg-zinc-900 sm:w-32"
       />
 

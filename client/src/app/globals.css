@@ -247,8 +247,7 @@ select[aria-invalid="true"] {
 
 @media (max-width: 767px) {
   body { overflow-x: hidden; }
-  .responsive-grid,
-  .grid {
+  .responsive-grid {
     grid-template-columns: 1fr !important;
   }
   .responsive-stack {
@@ -315,7 +314,6 @@ select[aria-invalid="true"] {
 }
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: 1fr !important; }
   .responsive-stack { flex-direction: column !important; align-items: stretch !important; }
   .responsive-container { width: 100%; padding-left: 16px; padding-right: 16px; }
 }
@@ -368,7 +366,6 @@ select[aria-invalid="true"] {
 }
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: 1fr !important; }
   .responsive-stack { flex-direction: column !important; align-items: stretch !important; }
   .responsive-container { width: 100%; padding-left: 16px; padding-right: 16px; }
 }
@@ -450,7 +447,6 @@ select[aria-invalid="true"] {
 }
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: 1fr !important; }
   .responsive-stack { flex-direction: column !important; align-items: stretch !important; }
   .responsive-container { width: 100%; padding-left: 16px; padding-right: 16px; }
   table { min-width: 720px; }
@@ -3244,4 +3240,68 @@ header[class*="header"].is-scrolled {
 @media (max-width: 767px) {
   body { padding-bottom: calc(3.75rem + env(safe-area-inset-bottom)); }
   button, a, input, select, textarea { touch-action: manipulation; }
+}
+
+/* 2026.39: remove the legacy global white-button foreground leak. */
+button { color: inherit; }
+
+@media (max-width: 1023px) {
+  .account-shell { padding-top: calc(var(--ai-header-h-mobile) + 1rem) !important; }
+  .account-sidebar nav { display:flex !important; gap:.5rem; overflow-x:auto; padding-bottom:.25rem; scrollbar-width:none; }
+  .account-sidebar nav::-webkit-scrollbar { display:none; }
+  .account-sidebar-link { min-width:max-content; padding:.7rem .85rem !important; }
+  .account-sidebar-bottom { margin-top:1rem; }
+}
+@media (max-width: 640px) {
+  .account-shell { padding-left:.5rem !important; padding-right:.5rem !important; }
+  .account-hero-widget, .account-widget-panel { border-radius:1.25rem !important; padding:1rem !important; }
+  .account-action-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+}
+
+/* SF-1 certified foreground mapping. */
+button[class*="bg-white"], a[class*="bg-white"] { color:#09090b !important; }
+button[class*="bg-zinc-950"], button[class*="bg-black"], a[class*="bg-zinc-950"], a[class*="bg-black"] { color:#fff !important; }
+button[class*="bg-rose"], button[class*="bg-orange"], button[class*="bg-amber"] { color:#fff !important; }
+.dark button[class*="dark:bg-white"], .dark a[class*="dark:bg-white"] { color:#09090b !important; }
+
+@media (max-width: 767px) {
+  header[class*="header"] aside a { color:#fff !important; }
+  header[class*="header"] aside a[class*="bg-white"] { color:#09090b !important; }
+}
+
+/* 2026.39.5 storefront regression containment. */
+html { background:#000; color-scheme:dark; }
+html.dark, html.dark body { background:#000 !important; color:#fff; color-scheme:dark; }
+
+header[class*="header"] nav a,
+header[class*="header"] button,
+header[class*="header"] a[aria-label] { color:#fff !important; }
+header[class*="header"] a[class*="bg-white"] { color:#09090b !important; }
+header[class*="header"] svg { color:currentColor !important; stroke:currentColor !important; }
+
+[data-saqso-catalog-filter],
+[data-saqso-filter-group],
+[data-saqso-filter-options],
+[data-saqso-filter-options] > div {
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  align-content:start !important;
+  align-items:start !important;
+}
+[data-saqso-filter-options] button {
+  position:static !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:40px !important;
+  margin:0 !important;
+}
+
+@media (max-width:767px) {
+  main { padding-top:var(--ai-header-h-mobile) !important; }
+  header[class*="header"] { padding-left:0 !important; padding-right:0 !important; }
+  header[class*="header"] aside a,
+  header[class*="header"] aside a span { color:#fff !important; }
+  header[class*="header"] aside a[class*="bg-white"],
+  header[class*="header"] aside a[class*="bg-white"] span { color:#09090b !important; }
 }

@@ -11,11 +11,7 @@ function sanitizeOrderPayload(payload: any) {
     } catch {}
   }
 
-  const userId =
-    payload?.userId ||
-    storedUser?.id ||
-    storedUser?._id ||
-    "guest-checkout-user";
+  const userId = payload?.userId || storedUser?.id || storedUser?._id;
 
   const customer = payload?.customer || {};
   const phone =
@@ -24,8 +20,10 @@ function sanitizeOrderPayload(payload: any) {
     payload?.mobile ||
     payload?.contactPhone ||
     storedUser?.phone ||
-    storedUser?.mobile ||
-    "01700000000";
+    storedUser?.mobile;
+
+  if (!userId) throw new Error("Authenticated customer is required");
+  if (!phone) throw new Error("A valid phone number is required");
 
   return {
     ...payload,

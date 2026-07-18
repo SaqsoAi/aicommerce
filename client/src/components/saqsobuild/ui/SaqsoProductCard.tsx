@@ -49,7 +49,7 @@ export function SaqsoProductCard({ product, onAddToCart, onWishlist, className =
         </div>
         <div className="saqso-product-card__actions">
           {onAddToCart ? <SaqsoButton type="button" size="sm" fullWidth onClick={() => onAddToCart(product)}>Add to cart</SaqsoButton> : null}
-          {onWishlist ? <button type="button" className="saqso-product-card__wish" onClick={() => onWishlist(product)} aria-label={`Add ${product.name} to wishlist`}>â™¡</button> : null}
+          {onWishlist ? <button type="button" className="saqso-product-card__wish" onClick={() => onWishlist(product)} aria-label={`Add ${product.name} to wishlist`}>♡</button> : null}
         </div>
       </div>
     </article>

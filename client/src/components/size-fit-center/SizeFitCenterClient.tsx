@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { MessageCircle, Phone, Ruler, Video } from "lucide-react";
 import {
   getPublicSizeFitReviews,
   getSizeFitCenterSettings,
@@ -73,10 +74,10 @@ const defaultHero: HeroConfig = {
 };
 
 const defaultStats: StatItem[] = [
-  { label: "Size Charts", value: "50+", icon: "â–¥" },
-  { label: "Fit Reviews", value: "12.5K+", icon: "â–¢" },
-  { label: "Perfect Fits", value: "94%", icon: "â—Ž" },
-  { label: "AR Items", value: "200+", icon: "â–¯" },
+  { label: "Size Charts", value: "50+", icon: "▦" },
+  { label: "Fit Reviews", value: "12.5K+", icon: "◇" },
+  { label: "Perfect Fits", value: "94%", icon: "◎" },
+  { label: "AR Items", value: "200+", icon: "▱" },
 ];
 
 const defaultMenu: MenuItem[] = [
@@ -399,7 +400,7 @@ function FitGuidePanel({ settings }: { settings: SizeFitCenterSettings | null })
 
             <ul className="mt-4 space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
               {["Balanced proportions", "Comfortable ease through body", "Versatile for most body types", "Timeless, classic appearance"].map((item) => (
-                <li key={item}>âœ“ {item}</li>
+                <li key={item}>✓ {item}</li>
               ))}
             </ul>
           </div>
@@ -421,9 +422,9 @@ function FitGuidePanel({ settings }: { settings: SizeFitCenterSettings | null })
               <h3 className="font-bold">{shape}</h3>
               <p className="mt-1 text-sm text-neutral-500">Personalized styling tips.</p>
               <ul className="mt-3 space-y-1 text-sm">
-                <li>âœ§ Choose balanced silhouettes</li>
-                <li>âœ§ Highlight your best features</li>
-                <li>âœ§ Try comfortable structured fits</li>
+                <li>✓ Choose balanced silhouettes</li>
+                <li>✓ Highlight your best features</li>
+                <li>✓ Try comfortable structured fits</li>
               </ul>
             </div>
           ))}
@@ -551,7 +552,7 @@ function GuaranteePanel({ settings }: { settings: SizeFitCenterSettings | null }
         <div>
           <h2 className="text-2xl font-bold">{guarantee.title || "Fit Guarantee Program"}</h2>
           <p className="mt-1 text-neutral-600 dark:text-neutral-400">
-            {guarantee.subtitle || "Shop with confidence â€” we guarantee the perfect fit."}
+            {guarantee.subtitle || "Shop with confidence — we guarantee the perfect fit."}
           </p>
         </div>
         <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold dark:bg-neutral-900">
@@ -565,7 +566,7 @@ function GuaranteePanel({ settings }: { settings: SizeFitCenterSettings | null }
             <h3 className="font-bold">{title}</h3>
             <ul className="mt-4 space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
               {points.slice(0, 4).map((point) => (
-                <li key={point}>âœ“ {point}</li>
+                <li key={point}>✓ {point}</li>
               ))}
             </ul>
           </div>
@@ -701,13 +702,13 @@ function HelpSection({ settings }: { settings: SizeFitCenterSettings | null }) {
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {cards.map((card) => (
+          {cards.map((card, index) => (
             <div
               key={card.title}
               className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-neutral-900"
             >
-              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 text-xl dark:border-neutral-700">
-                â—¯
+              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 text-xl dark:border-neutral-700" aria-hidden="true">
+                {index === 0 ? <MessageCircle size={20} /> : index === 1 ? <Video size={20} /> : <Phone size={20} />}
               </div>
               <h3 className="font-bold">{card.title}</h3>
               <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">{card.text}</p>
@@ -756,7 +757,7 @@ function Footer() {
         </div>
 
         <div className="mt-10 border-t border-neutral-800 pt-6 text-sm text-neutral-400">
-          Â© 2026 StyleHub Commerce. All rights reserved.
+          © 2026 StyleHub Commerce. All rights reserved.
         </div>
       </div>
     </footer>
@@ -828,7 +829,7 @@ export default function SizeFitCenterClient() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="mx-auto max-w-4xl text-center">
             <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm dark:bg-neutral-900">
-              ðŸ“
+              <Ruler size={22} aria-hidden="true" />
             </div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">
               {hero.badge || defaultHero.badge}
@@ -851,7 +852,7 @@ export default function SizeFitCenterClient() {
                 key={`${stat.label}-${stat.value}`}
                 className="rounded-2xl border border-neutral-200 bg-white/80 p-5 text-center shadow-sm backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/70"
               >
-                <div className="text-xl text-neutral-500">{stat.icon || "â—Ž"}</div>
+                <div className="text-xl text-neutral-500" aria-hidden="true">{stat.icon && !/[\u00e2\u00c3\u00f0\ufffd]/.test(stat.icon) ? stat.icon : "◎"}</div>
                 <div className="mt-2 text-3xl font-extrabold">{stat.value}</div>
                 <div className="text-sm text-neutral-500">{stat.label}</div>
               </div>

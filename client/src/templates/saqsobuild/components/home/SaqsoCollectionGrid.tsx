@@ -23,20 +23,21 @@ const collections = [
   },
 ];
 
-export default function SaqsoCollectionGrid() {
+export default function SaqsoCollectionGrid({ settings = {} }: { settings?: Record<string, unknown> }) {
+  const configured = Array.isArray(settings.items) ? settings.items as typeof collections : collections;
   return (
     <section className="mx-auto max-w-7xl px-6 py-16">
       <div className="mb-10">
         <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-          Fresh Drops
+          {String(settings.eyebrow || "Fresh Drops")}
         </p>
         <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-black text-zinc-950 dark:text-white md:text-3xl sm:text-2xl sm:text-3xl lg:text-4xl lg:text-5xl">
-          New Arrivals
+          {String(settings.title || "New Arrivals")}
         </h2>
       </div>
 
       <div className="grid gap-5 md:grid-cols-1 sm:grid-cols-2">
-        {collections.map((item, index) => (
+        {configured.map((item, index) => (
           <Link
             key={item.title}
             href={item.href}

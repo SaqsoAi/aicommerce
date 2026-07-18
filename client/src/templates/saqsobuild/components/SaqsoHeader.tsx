@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Heart,
   Home,
@@ -15,6 +16,7 @@ import {
 import SaqsoThemeToggle from "./SaqsoThemeToggle";
 import styles from "./SaqsoHeader.module.css";
 import { useBrand } from "@/providers/BrandProvider";
+import { useCartStore } from "@/store/cart.store";
 
 const defaultNav = [
   { label: "Home", href: "/", desc: "Premium homepage" },
@@ -91,6 +93,8 @@ function HeaderLogo() {
 
 export default function SaqsoHeader() {
   const { brand } = useBrand();
+  const pathname = usePathname();
+  const cartCount = useCartStore((state) => state.items.reduce((total, item) => total + item.quantity, 0));
   const nav = useMemo(() => parseNavigation(brand.raw.headerNavigation), [brand.raw.headerNavigation]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -148,8 +152,9 @@ export default function SaqsoHeader() {
               <UserRound size={19} />
             </Link>
 
-            <Link href="/cart" className="grid h-10 w-10 place-items-center rounded-full bg-white text-black shadow-xl transition hover:-translate-y-0.5 sm:h-11 sm:w-11" aria-label="Cart">
+            <Link href="/cart" className="relative grid h-10 w-10 place-items-center rounded-full bg-white text-black shadow-xl transition hover:-translate-y-0.5 sm:h-11 sm:w-11" aria-label={`Cart with ${cartCount} items`}>
               <ShoppingBag size={18} />
+              {cartCount ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}
             </Link>
 
             <span className="hidden sm:inline-flex">
@@ -210,9 +215,10 @@ export default function SaqsoHeader() {
       </aside>
 
       <nav aria-label="Mobile navigation" className={`${styles.mobileBottomNav} fixed inset-x-0 bottom-0 z-[70] grid grid-cols-5 border-t border-black/10 bg-white/95 px-1 pb-[max(.35rem,env(safe-area-inset-bottom))] pt-1 text-zinc-700 shadow-[0_-8px_30px_rgba(0,0,0,.12)] backdrop-blur-xl dark:border-white/10 dark:bg-black/92 dark:text-zinc-200 md:hidden`}>
-        {[{ label: "Home", href: "/", icon: Home }, { label: "Shop", href: "/shop", icon: Search }, { label: "Try", href: "/virtual-tryon", icon: Sparkles }, { label: "Cart", href: "/cart", icon: ShoppingBag }, { label: "Account", href: "/account", icon: UserRound }].map((item) => {
+        {[{ label: "Home", href: "/", icon: Home }, { label: "Shop", href: "/shop", icon: Search }, { label: "AI Try", href: "/virtual-tryon", icon: Sparkles }, { label: "Cart", href: "/cart", icon: ShoppingBag }, { label: "Account", href: "/account", icon: UserRound }].map((item) => {
           const Icon = item.icon;
-          return <Link key={item.href} href={item.href} className={`${styles.mobileBottomLink} flex min-h-14 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-bold`}><Icon size={20} aria-hidden="true" /><span>{item.label}</span></Link>;
+          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`${styles.mobileBottomLink} relative flex min-h-14 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-bold transition-colors ${active ? "text-rose-600 dark:text-amber-300" : "hover:text-zinc-950 dark:hover:text-white"}`}><Icon size={20} aria-hidden="true" /><span>{item.label}</span>{item.href === "/cart" && cartCount ? <span className="absolute right-[23%] top-1 grid h-4 min-w-4 place-items-center rounded-full bg-rose-600 px-1 text-[8px] font-black text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}</Link>;
         })}
       </nav>
     </>

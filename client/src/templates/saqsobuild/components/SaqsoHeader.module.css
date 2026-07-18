@@ -1,5 +1,16 @@
-.header { padding-top: env(safe-area-inset-top); }
-.headerInner { min-width: 0; }
+.header {
+  height: var(--ai-header-h-mobile) !important;
+  min-height: var(--ai-header-h-mobile) !important;
+  padding: env(safe-area-inset-top) 0 0 !important;
+}
+.headerInner { min-width: 0; width: 100%; height: 100% !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+@media (min-width: 640px) { .header { height: var(--ai-header-h-tablet) !important; min-height: var(--ai-header-h-tablet) !important; } }
+@media (min-width: 1024px) { .header { height: var(--ai-header-h-desktop) !important; min-height: var(--ai-header-h-desktop) !important; } }
+@media (max-width: 639px) {
+  .headerInner { padding-left: 14px !important; padding-right: 14px !important; gap: 8px !important; }
+  .headerInner > :first-child { flex: 1 1 auto; min-width: 0; }
+  .headerInner > :last-child { flex: 0 0 auto; }
+}
 .mobileBottomNav {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;

@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { Toaster } from "react-hot-toast";
 import SaqsoHeader from "@/templates/saqsobuild/components/SaqsoHeader";
+import PwaLifecycle from "@/components/pwa/PwaLifecycle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -128,6 +129,7 @@ export default function RootLayout({
               <Toaster position="top-right" reverseOrder={false} />
 
               <SaqsoHeader />
+              <PwaLifecycle />
 
               <main className="min-h-[100dvh] overflow-x-hidden pb-[calc(4.25rem+env(safe-area-inset-bottom))] pt-[56px] sm:pt-[64px] md:pb-0 lg:pt-[72px]">
                 {children}

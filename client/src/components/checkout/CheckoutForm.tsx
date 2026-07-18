@@ -5,9 +5,10 @@ import { getProfile } from "@/services/account.service";
 
 type Props = {
   onSubmit: (data: any) => void;
+  submitting?: boolean;
 };
 
-export default function CheckoutForm({ onSubmit }: Props) {
+export default function CheckoutForm({ onSubmit, submitting = false }: Props) {
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
@@ -40,7 +41,7 @@ export default function CheckoutForm({ onSubmit }: Props) {
   }, []);
 
   const inputClass =
-    "w-full rounded-2xl border border-zinc-200 bg-white px-4 py-4 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-black dark:border-zinc-800 dark:bg-zinc-950 dark:text-slate-950 dark:text-white dark:focus:border-white";
+    "w-full rounded-2xl border border-zinc-200 bg-white px-4 py-4 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-white dark:focus:ring-white/15";
 
   if (loading) {
     return (
@@ -96,10 +97,11 @@ export default function CheckoutForm({ onSubmit }: Props) {
 
         <button
           type="button"
+          disabled={submitting || !form.name.trim() || !form.phone.trim() || !form.address.trim()}
           onClick={() => onSubmit(form)}
-          className="w-full rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-500 text-white dark:bg-[#050505] text-white dark:bg-white text-slate-950 dark:bg-black dark:text-white dark:text-white dark:text-slate-950 dark:text-white px-6 py-4 text-sm sm:text-[15px] font-black text-slate-950 dark:text-white transition hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+          className="w-full rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-500 px-6 py-4 text-sm font-black text-white shadow-lg shadow-rose-950/20 transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 disabled:cursor-not-allowed disabled:opacity-50 sm:text-[15px]"
         >
-          Place Order
+          {submitting ? "Placing order..." : "Place Order"}
         </button>
       </div>
     </div>

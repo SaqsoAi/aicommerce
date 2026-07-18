@@ -134,9 +134,9 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
     "h-[46px] rounded-full border text-sm font-black transition";
 
   return (
-    <section className="w-full max-w-md rounded-[30px] border border-white/12 bg-[#181818]/95 p-6 text-white shadow-2xl backdrop-blur-2xl transition-colors duration-200 motion-reduce:transition-none">
+    <section className="w-full max-w-md rounded-[24px] border border-white/12 bg-[#181818]/95 p-4 text-white shadow-2xl backdrop-blur-2xl transition-colors duration-200 motion-reduce:transition-none sm:rounded-[30px] sm:p-6">
       <div className="text-center">
-        <h1 className="text-[30px] font-semibold tracking-[-0.04em] text-white">
+        <h1 className="text-2xl font-semibold tracking-[-0.04em] text-white sm:text-[30px]">
           {mode === "register"
             ? "Create an account"
             : mode === "phone"
@@ -146,7 +146,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
               : "Log in or sign up"}
         </h1>
 
-        <p className="mx-auto mt-4 max-w-[310px] text-sm font-semibold leading-6 text-white/75">
+        <p className="mx-auto mt-3 max-w-[310px] text-sm font-semibold leading-6 text-white/75 sm:mt-4">
           {mode === "phone"
             ? "Get a one-time verification code by phone or WhatsApp."
             : "Use your account for faster checkout, order tracking, rewards, and saved looks."}
@@ -271,6 +271,8 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
             className={inputClass}
           />
 
+          {mode === "login" && <div className="-mt-1 text-right"><a href="/forgot-password" className="text-xs font-bold text-white/70 underline underline-offset-4 hover:text-white">Forgot password?</a></div>}
+
           <button
             type="button"
             onClick={mode === "register" ? handleRegister : handleEmailLogin}
@@ -298,7 +300,8 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
         )}
       </div>
 
-      <div className="mt-7 flex justify-center gap-4 text-xs font-semibold text-white/50">
+      <p className="mt-5 text-center text-[11px] leading-5 text-white/45">Secure sign-in · Your password and OTP are never shown to store staff.</p>
+      <div className="mt-4 flex justify-center gap-4 text-xs font-semibold text-white/50 sm:mt-7">
         <a href="/terms" className="underline underline-offset-4 hover:text-white">Terms of Use</a>
         <span>|</span>
         <a href="/privacy" className="underline underline-offset-4 hover:text-white">Privacy Policy</a>

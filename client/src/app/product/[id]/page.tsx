@@ -12,6 +12,7 @@ import RecommendedProducts from "../RecommendedProducts";
 import SizePredictor from "@/components/ai/SizePredictor";
 import ReviewSummary from "@/components/ai/ReviewSummary";
 import TryOnButton from "@/components/ai/TryOnButton";
+import { getProductImage } from "@/lib/product-image";
 
 type Props = {
   params: Promise<{
@@ -130,7 +131,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <ProductVariantSelector
             productId={product.id}
             productName={product.name}
-            productImage={product.thumbnail}
+            productImage={getProductImage(product)}
             variants={product.variants || []}
             basePrice={product.discountPrice || product.price}
           />

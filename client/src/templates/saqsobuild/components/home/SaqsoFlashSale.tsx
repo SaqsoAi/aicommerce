@@ -18,7 +18,8 @@ const deals = [
   },
 ];
 
-export default function SaqsoFlashSale() {
+export default function SaqsoFlashSale({ settings = {} }: { settings?: Record<string, unknown> }) {
+  if (settings.enabled === false) return null;
   return (
     <section className="mx-auto max-w-7xl px-6 py-16">
       <div className="relative overflow-hidden rounded-[2.5rem] bg-red-600 p-8 text-white md:p-12">
@@ -27,11 +28,11 @@ export default function SaqsoFlashSale() {
         <div className="relative z-10 grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-red-100">
-              Flash Sale
+              {String(settings.eyebrow || "Flash Sale")}
             </p>
 
             <h2 className="mt-3 text-4xl font-black md:text-6xl">
-              Limited Time Premium Deals
+              {String(settings.title || "Limited Time Premium Deals")}
             </h2>
 
             <p className="mt-4 max-w-xl text-red-100">
@@ -47,10 +48,10 @@ export default function SaqsoFlashSale() {
             </div>
 
             <Link
-              href="/shop?flash=sale"
+              href={String(settings.href || "/shop?flash=sale")}
               className="mt-8 inline-flex rounded-full bg-white px-7 py-4 font-bold text-red-600"
             >
-              Shop Flash Sale
+              {String(settings.ctaLabel || "Shop Flash Sale")}
             </Link>
           </div>
 

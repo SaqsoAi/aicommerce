@@ -136,7 +136,7 @@ const toCategoryCard = (category: ApiCategory): CategoryCard => {
   };
 };
 
-export default function SaqsoFeaturedCategories() {
+export default function SaqsoFeaturedCategories({ settings = {} }: { settings?: Record<string, unknown> }) {
   const [adminCategories, setAdminCategories] = useState<CategoryCard[]>([]);
 
   useEffect(() => {
@@ -163,19 +163,21 @@ export default function SaqsoFeaturedCategories() {
   }, []);
 
   const categories = useMemo(
-    () => (adminCategories.length ? adminCategories : fallbackCategories),
-    [adminCategories]
+    () => adminCategories.slice(0, Math.max(1, Math.min(12, Number(settings.limit || 8)))),
+    [adminCategories, settings.limit]
   );
+
+  if (!categories.length) return null;
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-4 sm:px-6 lg:px-10">
       <div className="mb-8 flex flex-col justify-between gap-3 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.35em] text-zinc-500">
-            Shop By Category
+            {String(settings.eyebrow || "Shop By Category")}
           </p>
           <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-black text-zinc-950 dark:text-white md:text-3xl sm:text-2xl sm:text-3xl lg:text-4xl lg:text-5xl">
-            Explore collections
+            {String(settings.title || "Explore collections")}
           </h2>
         </div>
 

@@ -106,7 +106,7 @@ export default function SaqsoHeroPro() {
   if (!hero) return null;
 
   return (
-    <section className="relative overflow-hidden bg-black text-white h-[100svh] sm:h-[100svh] lg:h-screen">
+    <section className="relative h-[calc(100svh-var(--ai-header-h-mobile)-3.75rem-env(safe-area-inset-bottom))] overflow-hidden bg-black text-white sm:h-[calc(100svh-var(--ai-header-h-tablet))] lg:h-[calc(100svh-var(--ai-header-h-desktop))]">
       {image ? (
         <img
           src={image}
@@ -121,7 +121,7 @@ export default function SaqsoHeroPro() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/45" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/38 via-black/8 to-transparent" />
 
-      <div className="relative z-10 flex h-full min-h-full items-center px-5 py-0 sm:px-8 lg:px-12">
+      <div className="relative z-10 flex h-full min-h-full items-end px-5 pb-20 pt-12 sm:items-center sm:px-8 sm:py-12 lg:px-12">
         <div className="w-full max-w-[min(92vw,640px)] md:max-w-2xl">
           <h1 className="max-w-3xl text-[36px] font-black leading-[0.98] tracking-[-0.04em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.42)] sm:text-5xl md:text-6xl lg:text-7xl">
             {hero.headline || `${brand.storeName} Essentials Are Here`}
@@ -152,7 +152,7 @@ export default function SaqsoHeroPro() {
       </div>
 
       {heroes.length > 1 ? (
-        <div className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3">
+        <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 sm:bottom-8">
           {heroes.map((item, index) => (
             <button
               key={item.id || index}

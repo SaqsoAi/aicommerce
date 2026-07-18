@@ -56,7 +56,7 @@ export default async function StoreFooter() {
 
       <div className='mx-auto mt-10 max-w-7xl border-t border-zinc-800 pt-6 text-sm text-zinc-500'>
         {settings?.footerText ||
-          'Â© AI Commerce. All rights reserved.'}
+          '© AI Commerce. All rights reserved.'}
       </div>
     </footer>
   );

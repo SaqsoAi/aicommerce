@@ -56,14 +56,14 @@ export default function SaqsoFooterPremium() {
   const footerLogo = brand.footerLogoUrl || brand.logoUrl;
   const initials = (brand.shortName || brand.storeName || "SQ").slice(0, 2).toUpperCase();
   return (
-    <footer className="border-t border-slate-200 bg-slate-950 text-white dark:border-white/10 dark:bg-black">
-      <div className="mx-auto max-w-[1680px] w-full px-4 py-14 sm:px-6 lg:px-4 sm:px-6 lg:px-10 lg:py-12 sm:py-16 lg:py-20">
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
-          <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <span className="grid h-10 w-auto min-w-0 place-items-center overflow-hidden rounded-xl bg-transparent text-sm font-black text-white shadow-2xl">{footerLogo ? <img src={footerLogo} alt={`${brand.storeName} logo`} className="h-[78%] w-[78%] object-contain" /> : initials}</span>
-              <span>
-                <span className="block text-3xl font-black tracking-[-.08em]">{brand.storeName}</span>
+    <footer className="overflow-hidden border-t border-slate-200 bg-slate-950 pb-[calc(5.25rem+env(safe-area-inset-bottom))] text-white dark:border-white/10 dark:bg-black md:pb-0">
+      <div className="mx-auto w-full max-w-[1680px] px-5 py-10 sm:px-6 sm:py-14 lg:px-10 lg:py-20">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+          <div className="col-span-2 min-w-0 lg:col-span-1">
+            <Link href="/" className="inline-flex max-w-full items-center gap-3">
+              <span className="grid h-12 w-24 shrink-0 place-items-center overflow-hidden bg-transparent text-sm font-black text-white">{footerLogo ? <img src={footerLogo} alt={`${brand.storeName} logo`} className="max-h-10 max-w-24 object-contain" /> : initials}</span>
+              <span className="min-w-0">
+                <span className="block truncate text-xl font-black tracking-[-.05em] sm:text-3xl">{brand.storeName}</span>
                 <span className="block text-[10px] font-black uppercase tracking-[.3em] text-white/40">AI Commerce</span>
               </span>
             </Link>
@@ -81,7 +81,7 @@ export default function SaqsoFooterPremium() {
           </div>
 
           {columns.map((col) => (
-            <div key={col.title}>
+            <div key={col.title} className="min-w-0">
               <h3 className="text-xs font-black uppercase tracking-[.3em] text-amber-300">{col.title}</h3>
               <div className="mt-5 grid gap-3">
                 {col.links.map(([label, href]) => (
@@ -94,7 +94,7 @@ export default function SaqsoFooterPremium() {
           ))}
         </div>
 
-        <div className="mt-12 grid gap-4 border-t border-white/10 pt-8 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-3 border-t border-white/10 pt-6 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3 lg:gap-4 lg:pt-8">
           <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 p-4">
             <Truck size={22} className="text-amber-300" />
             <span className="text-xs font-black uppercase tracking-[.16em] text-white/70">Fast Delivery</span>

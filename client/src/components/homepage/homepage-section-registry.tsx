@@ -13,12 +13,12 @@ type RegisteredRendererProps = { section: HomepageSectionInstance };
 type RegisteredRenderer = ComponentType<RegisteredRendererProps>;
 type Definition = HomepageSectionContract & { renderer: RegisteredRenderer | null };
 
-const ProductRail: RegisteredRenderer = () => <RecommendationEngine />;
-const FeaturedCategories: RegisteredRenderer = () => <SaqsoFeaturedCategories />;
-const Campaign: RegisteredRenderer = () => <SaqsoFlashSale />;
-const Collection: RegisteredRenderer = () => <SaqsoCollectionGrid />;
+const ProductRail: RegisteredRenderer = ({ section }) => <RecommendationEngine data={section.data} />;
+const FeaturedCategories: RegisteredRenderer = ({ section }) => <SaqsoFeaturedCategories settings={section.data} />;
+const Campaign: RegisteredRenderer = ({ section }) => <SaqsoFlashSale settings={section.data} />;
+const Collection: RegisteredRenderer = ({ section }) => <SaqsoCollectionGrid settings={section.data} />;
 const SocialFeed: RegisteredRenderer = ({ section }) => <SaqsoSocialFeeds settings={section.data} />;
-const Newsletter: RegisteredRenderer = () => <SaqsoNewsletter />;
+const Newsletter: RegisteredRenderer = ({ section }) => <SaqsoNewsletter settings={section.data} />;
 const Membership: RegisteredRenderer = () => <SaqsoAIMembershipBanner />;
 
 function definition(key: HomepageSectionKey, label: string, category: string, aliases: readonly string[], renderer: RegisteredRenderer | null, runtimeDataMode: Definition["runtimeDataMode"]): Definition {

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getAccountDashboard } from "@/api/account.api";
 import { AccountGlyph, AccountPageShell } from "./_components/AccountClientUi";
 import LocalStorageAvatar from "./_components/LocalStorageAvatar";
+import SafeProductImage from "@/components/products/SafeProductImage";
+import { getProductImage } from "@/lib/product-image";
 
 type AnyRecord = Record<string, any>;
 
@@ -9,13 +11,6 @@ function currency(value: unknown) {
   const amount = Number(value || 0);
   if (!Number.isFinite(amount)) return "Tk 0";
   return `Tk ${amount.toLocaleString("en-BD")}`;
-}
-
-function normalizeUploadUrl(url: unknown) {
-  if (!url || typeof url !== "string") return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/uploads")) return `http://localhost:5000${url}`;
-  return url;
 }
 
 function getDisplayName(profile: AnyRecord) {
@@ -92,19 +87,7 @@ function productPrice(item: AnyRecord) {
 }
 
 function productImage(item: AnyRecord) {
-  return normalizeUploadUrl(
-    item?.thumbnail ||
-      item?.image ||
-      item?.imageUrl ||
-      item?.url ||
-      item?.images?.[0]?.url ||
-      item?.product?.thumbnail ||
-      item?.product?.image ||
-      item?.product?.imageUrl ||
-      item?.product?.url ||
-      item?.product?.images?.[0]?.url ||
-      item?.product?.media?.[0]?.url
-  );
+  return getProductImage(item);
 }
 
 
@@ -127,7 +110,7 @@ export default async function AccountOverviewPage() {
   const recentOrders = Array.isArray(dashboard?.recentOrders) ? dashboard.recentOrders : [];
   const wishlist = Array.isArray(dashboard?.wishlist) ? dashboard.wishlist : [];
   const recommendations = Array.isArray(dashboard?.recommendations) ? dashboard.recommendations : [];
-  const avatarUrl = normalizeUploadUrl(profile?.avatarUrl || profile?.avatar);
+  const avatarUrl = getProductImage({ image: profile?.avatarUrl || profile?.avatar });
 
   const quickActions = [
     { title: "Track Orders", subtitle: "View order status", href: "/account/orders", icon: "box", tone: "blue" },
@@ -227,7 +210,7 @@ export default async function AccountOverviewPage() {
               <Link href="/account/wishlist" key={item?.id || index} className="account-wishlist-card">
                 {productImage(item) && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img className="account-wishlist-thumb" src={productImage(item)} alt={wishlistTitle(item, index)} />
+                  <SafeProductImage source={item} className="account-wishlist-thumb" alt={wishlistTitle(item, index)} />
                 )}
                 <span className="account-wishlist-heart"><AccountGlyph icon="heart" /></span>
                 <strong>{wishlistTitle(item, index)}</strong>
@@ -260,7 +243,7 @@ export default async function AccountOverviewPage() {
                   <div className="account-reco-image">
                     {image ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={image} alt={productTitle(item)} />
+                      <SafeProductImage source={item} alt={productTitle(item)} />
                     ) : null}
                   </div>
                   <strong>{productTitle(item)}</strong>

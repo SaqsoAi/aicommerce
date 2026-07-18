@@ -10,10 +10,12 @@ type GalleryImage = {
   isThumbnail?: boolean;
 };
 
+type GalleryEntry = GalleryImage | string | null | undefined;
+
 type Props = {
   thumbnail?: string | null;
-  images?: GalleryImage[];
-  gallery?: GalleryImage[];
+  images?: GalleryEntry[];
+  gallery?: GalleryEntry[];
   alt?: string;
 };
 
@@ -26,8 +28,8 @@ export default function ProductGallery({
   const allImages = useMemo(() => {
     const urls = [
       thumbnail,
-      ...images.map((item) => item.url),
-      ...gallery.map((item) => item.url),
+      ...images.map((item) => typeof item === "string" ? item : item?.url),
+      ...gallery.map((item) => typeof item === "string" ? item : item?.url),
     ]
       .filter(Boolean)
       .map((url) => normalizeImageUrl(String(url)));
@@ -88,6 +90,7 @@ export default function ProductGallery({
           <img
             src={activeImage}
             alt={alt}
+            onError={(event) => { event.currentTarget.src = "/placeholder-product.svg"; }}
             className={`h-full w-full object-contain transition duration-500 ${
               hoverZoom ? "scale-105" : "scale-100"
             }`}
@@ -112,6 +115,7 @@ export default function ProductGallery({
               <img
                 src={image}
                 alt={`${alt} ${index + 1}`}
+                onError={(event) => { event.currentTarget.src = "/placeholder-product.svg"; }}
                 className="h-full w-full rounded-lg object-contain"
               />
             </button>
@@ -141,6 +145,7 @@ export default function ProductGallery({
             <img
               src={activeImage}
               alt={alt}
+              onError={(event) => { event.currentTarget.src = "/placeholder-product.svg"; }}
               style={{
                 transform: `scale(${zoomLevel})`,
               }}

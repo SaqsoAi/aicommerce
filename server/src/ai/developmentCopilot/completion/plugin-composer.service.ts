@@ -1,1 +1,0 @@
-export function composePlugin(input:any){return {schemaVersion:"1.0",pluginKey:String(input.pluginKey??"saqso.generated"),version:String(input.version??"1.0.0"),files:input.files??[],databaseChanges:{hasChanges:false},rules:["declare all files","sha256 index","DB via PS1"],status:"DRAFT"};}

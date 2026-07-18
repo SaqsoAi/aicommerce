@@ -3,7 +3,7 @@
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { normalizeImageUrl } from "@/lib/normalizeImageUrl";
+import { getProductImage } from "@/lib/product-image";
 import { useCartStore } from "@/store/cart.store";
 import TryOnButton from "@/components/ai/TryOnButton";
 import WishlistButton from "./WishlistButton";
@@ -18,7 +18,7 @@ export default function ProductCard({ product }: Props) {
   const visible = (product.approvalStatus ?? "APPROVED") === "APPROVED" && (product.status ?? "ACTIVE") === "ACTIVE" && (product.visibility ?? "PUBLIC") === "PUBLIC" && (!publishAt || publishAt <= now) && (!unpublishAt || unpublishAt > now);
   if (!visible) return null;
 
-  const image = normalizeImageUrl(product.thumbnail || product.images?.[0]?.url || product.gallery?.[0]?.url || null);
+  const image = getProductImage(product);
   const firstVariant = product.variants?.[0];
   const totalStock = product.variants?.length ? product.variants.reduce((sum: number, variant: any) => sum + Number(variant.availableStock ?? variant.stock ?? 0), 0) : Number(product.stock ?? product.availableStock ?? 0);
   const regularPrice = Number(product.price ?? firstVariant?.price ?? 0);
@@ -26,6 +26,7 @@ export default function ProductCard({ product }: Props) {
   const hasDiscount = salePrice > 0 && regularPrice > salePrice;
   const discount = hasDiscount ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0;
   const productHref = `/product/${product.id}`;
+  const visibleSizes = Array.from(new Set((product.variants || []).map((variant: any) => String(variant.size || "").trim()).filter(Boolean))).slice(0, 5) as string[];
 
   function addItem() {
     if (totalStock <= 0) { toast.error("Out of stock"); return; }
@@ -36,7 +37,7 @@ export default function ProductCard({ product }: Props) {
   return <article className="group flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition hover:border-zinc-300 hover:shadow-md dark:border-white/10 dark:bg-zinc-950 dark:hover:border-white/20">
     <div className="relative aspect-[4/5] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
       <Link href={productHref} aria-label={`View ${product.name}`} className="block h-full w-full">
-        <img loading="lazy" decoding="async" src={image} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+        <img loading="lazy" decoding="async" src={image} alt={product.name} onError={(event) => { event.currentTarget.src = "/placeholder-product.svg"; }} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
       </Link>
       <div className="absolute left-2 top-2 flex flex-col items-start gap-1.5">
         {hasDiscount ? <span className="rounded bg-rose-600 px-2 py-1 text-[10px] font-bold text-white">-{discount}%</span> : null}
@@ -56,6 +57,7 @@ export default function ProductCard({ product }: Props) {
       <p className="mt-1 text-[11px] text-zinc-500">{totalStock > 0 ? `${totalStock} available` : "Currently unavailable"}</p>
 
       <div className="mt-auto space-y-2 pt-3">
+        {visibleSizes.length ? <div className="flex flex-wrap gap-1" aria-label="Available sizes">{visibleSizes.map((size) => <span key={size} className="rounded border border-zinc-300 bg-white px-1.5 py-0.5 text-[9px] font-black text-black dark:border-white/20 dark:bg-zinc-900 dark:text-white">{size}</span>)}</div> : null}
         <TryOnButton productId={product.id} variant="compact" />
         <button type="button" onClick={addItem} disabled={totalStock <= 0} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-zinc-950 px-3 text-xs font-bold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-white dark:text-black dark:hover:bg-zinc-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500">
           <ShoppingBag size={16} aria-hidden="true" /> {totalStock > 0 ? "Add to cart" : "Unavailable"}

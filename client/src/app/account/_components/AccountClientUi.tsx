@@ -43,7 +43,7 @@ export function AccountPageShell({
         )}
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-          <aside className="account-sidebar rounded-[28px] border border-white/10 bg-white/[0.04] p-4 lg:sticky lg:top-24 lg:self-start">
+          <aside className="account-sidebar order-2 rounded-[28px] border border-white/10 bg-white/[0.04] p-3 lg:order-none lg:sticky lg:top-24 lg:self-start lg:p-4">
             <nav className="space-y-2">
               {accountNavItems.map((item) => {
                 const isActive = active === item.label;
@@ -101,7 +101,7 @@ export function AccountPageShell({
             </div>
           </aside>
 
-          <section className="space-y-6">{children}</section>
+          <section className="order-1 space-y-4 lg:order-none lg:space-y-6">{children}</section>
         </div>
       </section>
     </main>

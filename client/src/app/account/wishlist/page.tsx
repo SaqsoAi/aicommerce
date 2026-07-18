@@ -1,25 +1,10 @@
 import { getAccountWishlist } from "@/api/account.api";
 import { AccountCard, AccountGlyph, AccountNotice, AccountPageShell } from "../_components/AccountClientUi";
-
-function normalizeUploadUrl(url: unknown) {
-  if (!url || typeof url !== "string") return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/uploads")) return `http://localhost:5000${url}`;
-  return url;
-}
+import SafeProductImage from "@/components/products/SafeProductImage";
+import { getProductImage } from "@/lib/product-image";
 
 function wishlistImage(item: any) {
-  return normalizeUploadUrl(
-    item?.thumbnail ||
-      item?.image ||
-      item?.imageUrl ||
-      item?.url ||
-      item?.product?.thumbnail ||
-      item?.product?.image ||
-      item?.product?.imageUrl ||
-      item?.product?.images?.[0]?.url ||
-      item?.product?.media?.[0]?.url
-  );
+  return getProductImage(item);
 }
 
 function wishlistName(item: any, index: number) {
@@ -52,7 +37,7 @@ export default async function AccountWishlistPage() {
                 <div className="account-wishlist-product-image">
                   {wishlistImage(item) ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={wishlistImage(item)} alt={wishlistName(item, index)} />
+                    <SafeProductImage source={item} alt={wishlistName(item, index)} />
                   ) : (
                     <AccountGlyph icon="heart" />
                   )}

@@ -14,6 +14,9 @@ type Variant = {
   price?: number | null;
   sku?: string;
   barcode?: string;
+  image?: string | null;
+  imageUrl?: string | null;
+  images?: Array<{ url?: string | null } | string>;
 };
 
 type Props = {
@@ -83,39 +86,43 @@ export default function ProductVariantSelector({
   const handleAddToCart = () => {
     if (!selectedVariant) {
       toast.error("Please select variant");
-      return;
+      return false;
     }
 
     if (colors.length && !selectedColor) {
       toast.error("Please select color");
-      return;
+      return false;
     }
 
     if (sizes.length && !selectedSize) {
       toast.error("Please select size");
-      return;
+      return false;
     }
 
     if (stock <= 0) {
       toast.error("Out of stock");
-      return;
+      return false;
     }
 
+    const variantKey = selectedVariant.id || selectedVariant.sku || `${selectedColor || "default"}-${selectedSize || "default"}`;
+    const variantImage = selectedVariant.imageUrl || selectedVariant.image || (typeof selectedVariant.images?.[0] === "string" ? selectedVariant.images[0] : selectedVariant.images?.[0]?.url) || productImage;
+
     addToCart({
-      id: productId,
+      id: `${productId}:${variantKey}`,
       productId: productId,
       name: productName,
-      image: productImage,
+      image: variantImage || productImage,
       variantLabel: `${selectedColor || ""} ${selectedSize || ""}`.trim(),
       price: Number(price),
       quantity: 1,
     });
 
     toast.success("Added to cart");
+    return true;
   };
 
   const handleBuyNow = () => {
-    handleAddToCart();
+    if (!handleAddToCart()) return;
 
     setTimeout(() => {
       router.push("/checkout");

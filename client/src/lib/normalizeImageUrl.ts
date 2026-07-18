@@ -5,13 +5,21 @@ const SERVER_URL =
 export function normalizeImageUrl(value?: string | null) {
   if (!value) return "/placeholder-product.svg";
 
-  if (value.startsWith("http://") || value.startsWith("https://")) {
-    return value;
+  const raw = String(value).trim().replaceAll("\\\\", "/");
+  if (!raw) return "/placeholder-product.svg";
+
+  if (/^(https?:|data:|blob:)/i.test(raw)) {
+    return raw;
   }
 
-  if (value.startsWith("/uploads/")) {
-    return `${SERVER_URL}${value}`;
+  if (raw.startsWith("//")) {
+    return `https:${raw}`;
   }
 
-  return value;
+  const normalized = raw.startsWith("/") ? raw : `/${raw}`;
+  if (/^\/(uploads|media|storage|public\/uploads)\//i.test(normalized)) {
+    return `${SERVER_URL.replace(/\/$/, "")}${normalized.replace(/^\/public/, "")}`;
+  }
+
+  return normalized;
 }

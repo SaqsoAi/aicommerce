@@ -12,8 +12,11 @@ export type PublicAiFeature = {
   config?: Record<string, unknown>;
 };
 
-export async function getPublicAiAvailability(): Promise<{ features: PublicAiFeature[] }> {
-  const response = await fetch(`${API_BASE}/ai-control/public/availability`, {
+export async function getPublicAiAvailability(scope?: { tenantId?: string; storeId?: string }): Promise<{ features: PublicAiFeature[] }> {
+  const query = new URLSearchParams();
+  if (scope?.tenantId) query.set("tenantId", scope.tenantId);
+  if (scope?.storeId) query.set("storeId", scope.storeId);
+  const response = await fetch(`${API_BASE}/ai-control/public/availability${query.size ? `?${query}` : ""}`, {
     cache: "no-store",
   });
 
