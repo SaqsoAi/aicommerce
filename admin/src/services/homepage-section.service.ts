@@ -31,9 +31,20 @@ async function readJson(res: Response) {
   return data;
 }
 
+function authHeaders(json = false): HeadersInit {
+  const token = typeof window !== "undefined"
+    ? localStorage.getItem("token") || localStorage.getItem("admin-token")
+    : null;
+  return {
+    ...(json ? { "Content-Type": "application/json" } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export async function getHomepageSections(): Promise<HomepageSection[]> {
   const res = await fetch(`${API}/homepage-sections`, {
     cache: "no-store",
+    headers: authHeaders(),
   });
 
   const data = await readJson(res);
@@ -44,9 +55,7 @@ export async function getHomepageSections(): Promise<HomepageSection[]> {
 export async function createHomepageSection(payload: Partial<HomepageSection>) {
   const res = await fetch(`${API}/homepage-sections`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: authHeaders(true),
     body: JSON.stringify(payload),
   });
 
@@ -56,16 +65,28 @@ export async function createHomepageSection(payload: Partial<HomepageSection>) {
 export async function deleteHomepageSection(id: string) {
   const res = await fetch(`${API}/homepage-sections/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
   return readJson(res);
 }
 
-export async function toggleHomepageSection(id: string) {
+export async function toggleHomepageSection(id: string, enabled: boolean) {
   const res = await fetch(`${API}/homepage-sections/${id}/toggle`, {
     method: "PATCH",
+    headers: authHeaders(true),
+    body: JSON.stringify({ enabled }),
   });
 
+  return readJson(res);
+}
+
+export async function updateHomepageSection(id: string, payload: Partial<HomepageSection>) {
+  const res = await fetch(`${API}/homepage-sections/${id}`, {
+    method: "PUT",
+    headers: authHeaders(true),
+    body: JSON.stringify(payload),
+  });
   return readJson(res);
 }
 
@@ -88,9 +109,7 @@ export async function reorderHomepageSections(sections: HomepageSection[]) {
     try {
       const res = await fetch(`${API}/homepage-sections/reorder`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: authHeaders(true),
         body: JSON.stringify(body),
       });
 

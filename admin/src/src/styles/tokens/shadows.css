@@ -1,5 +1,0 @@
-﻿:root {
-  --shadow-card: 0 18px 70px rgba(0,0,0,.38);
-  --shadow-glow: 0 0 0 1px var(--admin-border), 0 0 35px var(--role-glow);
-  --shadow-soft: 0 10px 36px rgba(0,0,0,.28);
-}

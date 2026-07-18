@@ -1,1 +1,0 @@
-"use client";export default function Page(){return <main className="ds-page"><h1>SAQSO AI Builder — Test generator and regression planning</h1><p>Repository-aware, approval-governed and multilingual.</p></main>}

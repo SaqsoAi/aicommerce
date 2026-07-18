@@ -37,6 +37,8 @@ export default function HomepageSectionForm({
   const [jsonData, setJsonData] = useState('{}');
 
   const [saving, setSaving] = useState(false);
+  const data = (() => { try { return JSON.parse(jsonData || '{}') as Record<string, any>; } catch { return {}; } })();
+  const updateData = (key: string, value: string) => setJsonData(JSON.stringify({ ...data, [key]: value }, null, 2));
 
   const updateField = (
     key: keyof HomepageSectionPayload,
@@ -143,12 +145,27 @@ export default function HomepageSectionForm({
         Enabled
       </label>
 
-      <textarea
+      <div className='mt-5 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700'>
+        <div className='mb-3'>
+          <h3 className='font-bold'>Customer-facing content</h3>
+          <p className='text-sm text-zinc-500'>These fields update the storefront without editing JSON.</p>
+        </div>
+        <div className='grid gap-4 md:grid-cols-2'>
+          <label className='grid gap-1 text-sm font-medium'>Headline<input value={String(data.headline || '')} onChange={(e)=>updateData('headline',e.target.value)} className='min-h-11 rounded-xl border border-zinc-200 bg-transparent px-3 dark:border-zinc-700' placeholder='Section headline'/></label>
+          <label className='grid gap-1 text-sm font-medium'>Eyebrow<input value={String(data.eyebrow || '')} onChange={(e)=>updateData('eyebrow',e.target.value)} className='min-h-11 rounded-xl border border-zinc-200 bg-transparent px-3 dark:border-zinc-700' placeholder='Small label'/></label>
+          <label className='grid gap-1 text-sm font-medium md:col-span-2'>Description<textarea value={String(data.description || '')} onChange={(e)=>updateData('description',e.target.value)} className='min-h-24 rounded-xl border border-zinc-200 bg-transparent p-3 dark:border-zinc-700' placeholder='Customer-facing description'/></label>
+          <label className='grid gap-1 text-sm font-medium'>Button text<input value={String(data.ctaLabel || '')} onChange={(e)=>updateData('ctaLabel',e.target.value)} className='min-h-11 rounded-xl border border-zinc-200 bg-transparent px-3 dark:border-zinc-700' placeholder='Shop now'/></label>
+          <label className='grid gap-1 text-sm font-medium'>Button link<input value={String(data.ctaHref || '')} onChange={(e)=>updateData('ctaHref',e.target.value)} className='min-h-11 rounded-xl border border-zinc-200 bg-transparent px-3 dark:border-zinc-700' placeholder='/shop'/></label>
+          <label className='grid gap-1 text-sm font-medium md:col-span-2'>Image URL<input value={String(data.imageUrl || '')} onChange={(e)=>updateData('imageUrl',e.target.value)} className='min-h-11 rounded-xl border border-zinc-200 bg-transparent px-3 dark:border-zinc-700' placeholder='/uploads/homepage/...'/></label>
+        </div>
+      </div>
+
+      <details className='mt-4 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700'><summary className='cursor-pointer font-bold'>Advanced JSON</summary><textarea
         value={jsonData}
         onChange={(e) => setJsonData(e.target.value)}
         placeholder='Section JSON data'
-        className='mt-4 h-36 w-full rounded-xl border border-zinc-200 bg-transparent p-3 font-mono text-sm dark:border-zinc-700'
-      />
+        className='mt-3 h-36 w-full rounded-xl border border-zinc-200 bg-transparent p-3 font-mono text-sm dark:border-zinc-700'
+      /></details>
 
       <button
         onClick={handleSubmit}

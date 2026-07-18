@@ -1,1 +1,0 @@
-"use client";export default function Page(){return <main className="ds-page"><h1>License & Operations Center</h1><p>Platform license, API access, runtime, database, queue and backup visibility.</p></main>}

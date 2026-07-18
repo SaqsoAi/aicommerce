@@ -1,6 +1,0 @@
-﻿:root {
-  --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem;
-  --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
-  --admin-safe-bottom: max(env(safe-area-inset-bottom), 12px);
-  --admin-safe-top: max(env(safe-area-inset-top), 10px);
-}

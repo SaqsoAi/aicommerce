@@ -9,6 +9,7 @@ import {
   getHomepageSections,
   reorderHomepageSections,
   toggleHomepageSection,
+  updateHomepageSection,
   type HomepageSection,
 } from "@/services/homepage-section.service";
 
@@ -38,6 +39,8 @@ export default function HomepageBuilderPage() {
   const [type, setType] = useState(SECTION_TYPES[0]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [configText, setConfigText] = useState("{}");
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   const orderedSections = useMemo(() => {
     return [...sections].sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999));
@@ -129,11 +132,12 @@ export default function HomepageBuilderPage() {
         type,
         enabled: true,
         sortOrder: orderedSections.length + 1,
-        data: {},
+        data: JSON.parse(configText || "{}"),
       });
 
       setTitle("");
       setType(SECTION_TYPES[0]);
+      setConfigText("{}");
       await loadSections();
     } catch (error) {
       console.error(error);
@@ -143,10 +147,23 @@ export default function HomepageBuilderPage() {
     }
   };
 
-  const toggleSection = async (id: string) => {
+  const saveConfig = async (section: HomepageSection) => {
     try {
       setSaving(true);
-      await toggleHomepageSection(id);
+      const data = JSON.parse(drafts[section.id] ?? JSON.stringify(section.data ?? {}, null, 2));
+      await updateHomepageSection(section.id, { data });
+      await loadSections();
+    } catch (error) {
+      alert(error instanceof SyntaxError ? "Section configuration must be valid JSON" : "Section configuration save failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleSection = async (id: string, enabled: boolean) => {
+    try {
+      setSaving(true);
+      await toggleHomepageSection(id, enabled);
       await loadSections();
     } catch (error) {
       console.error(error);
@@ -216,6 +233,16 @@ export default function HomepageBuilderPage() {
                     </option>
                   ))}
                 </select>
+
+                <textarea
+                  value={configText}
+                  onChange={(event) => setConfigText(event.target.value)}
+                  rows={8}
+                  spellCheck={false}
+                  aria-label="Section configuration JSON"
+                  className="w-full rounded-xl border border-white/10 bg-black p-3 font-mono text-xs text-white"
+                  placeholder='{"title":"Featured products","limit":8}'
+                />
 
                 <button
                   onClick={createSection}
@@ -290,6 +317,19 @@ export default function HomepageBuilderPage() {
                               Skipped in section renderer. Hero comes from Homepage Hero Builder.
                             </p>
                           ) : null}
+                          {!isHeroType ? (
+                            <div className="mt-3 max-w-2xl">
+                              <label className="text-xs font-bold uppercase tracking-[.18em] text-zinc-400">Runtime configuration</label>
+                              <textarea
+                                value={drafts[section.id] ?? JSON.stringify(section.data ?? {}, null, 2)}
+                                onChange={(event) => setDrafts((current) => ({ ...current, [section.id]: event.target.value }))}
+                                rows={6}
+                                spellCheck={false}
+                                className="mt-2 w-full rounded-xl border border-white/10 bg-zinc-950 p-3 font-mono text-xs text-white"
+                              />
+                              <button onClick={() => saveConfig(section)} disabled={saving} className="mt-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-black text-black disabled:opacity-50">Save configuration</button>
+                            </div>
+                          ) : null}
                         </div>
 
                         <div className="flex flex-wrap gap-2">
@@ -308,7 +348,7 @@ export default function HomepageBuilderPage() {
                           </button>
 
                           <button
-                            onClick={() => toggleSection(section.id)}
+                            onClick={() => toggleSection(section.id, !section.enabled)}
                             className={`rounded-lg px-3 py-2 text-sm font-bold ${
                               section.enabled
                                 ? "bg-green-500 text-black"

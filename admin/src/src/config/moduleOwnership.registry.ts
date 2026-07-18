@@ -1,1 +1,0 @@
-export const moduleOwnership={platform:["SUPER_ADMIN"],commerce:["ADMIN","MANAGER"],inventory:["ADMIN","MANAGER","INVENTORY","WAREHOUSE_MANAGER"],marketing:["ADMIN","MARKETING"],finance:["ADMIN","FINANCE_MANAGER"],support:["ADMIN","SUPPORT"],delivery:["ADMIN","DELIVERY_MANAGER"],aiBuilder:["SUPER_ADMIN"],businessAi:["SUPER_ADMIN","ADMIN","MANAGER"]} as const;

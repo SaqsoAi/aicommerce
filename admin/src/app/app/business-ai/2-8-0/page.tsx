@@ -1,1 +1,0 @@
-"use client";export default function Page(){return <main className="ds-page"><h1>SAQSO Business AI — CEO, CFO, COO and CMO advisors</h1><p>Evidence-backed, tenant-scoped and approval-controlled.</p></main>}

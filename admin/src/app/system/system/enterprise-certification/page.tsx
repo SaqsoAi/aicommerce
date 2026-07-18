@@ -1,1 +1,0 @@
-"use client";export default function Page(){return <main className="ds-page"><h1>Enterprise Architecture Certification</h1><p>Run the included certification PS1 after all packs and database scripts pass.</p></main>}

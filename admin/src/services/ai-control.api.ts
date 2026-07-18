@@ -37,6 +37,16 @@ export function getAiDashboard() {
   return request("/ai-control/dashboard");
 }
 
+export function getAiSecretGovernance() {
+  return request("/ai-control/security-governance");
+}
+
+export function getAiPlatformRegistry() { return request("/ai-control/platform-registry"); }
+export function saveAiPrompt(payload: unknown) { return request("/ai-control/platform-registry/prompts", { method: "POST", body: JSON.stringify(payload) }); }
+export function saveAiModel(payload: unknown) { return request("/ai-control/platform-registry/models", { method: "POST", body: JSON.stringify(payload) }); }
+export function saveAiPolicy(key: string, payload: unknown) { return request(`/ai-control/platform-registry/policies/${encodeURIComponent(key)}`, { method: "PUT", body: JSON.stringify(payload) }); }
+export function saveAiEnterpriseSetting(key: string, payload: unknown) { return request(`/ai-control/platform-registry/settings/${encodeURIComponent(key)}`, { method: "PUT", body: JSON.stringify(payload) }); }
+
 export function updateAiFeature(key: string, payload: unknown) {
   return request(`/ai-control/features/${key}`, {
     method: "PUT",
