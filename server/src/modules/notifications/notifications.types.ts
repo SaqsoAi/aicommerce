@@ -1,0 +1,13 @@
+export enum NotificationType {
+  LOW_STOCK = "LOW_STOCK",
+
+  NEW_ORDER = "NEW_ORDER",
+
+  NEW_CUSTOMER = "NEW_CUSTOMER",
+
+  PAYMENT_SUCCESS =
+    "PAYMENT_SUCCESS",
+
+  SUPPLIER_ALERT =
+    "SUPPLIER_ALERT",
+}

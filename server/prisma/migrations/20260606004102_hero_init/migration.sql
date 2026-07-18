@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Hero" ALTER COLUMN "type" DROP DEFAULT;
