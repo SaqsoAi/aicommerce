@@ -51,12 +51,24 @@ export default function ProductCatalogClient() {
   function clearFilters() { apply(initialFilters); }
   function setPriceRange(range: any) { apply({ ...filters, priceMin: String(range.min ?? ""), priceMax: range.max == null ? "" : String(range.max) }); }
 
-  const derivedCategories = Array.from(new Map(products.map((product:any)=>[product.category?.slug,product.category]).filter(([key])=>key)).values());
+  type CatalogCategory = { id: string; name: string; slug: string };
+  const derivedCategoryMap = products.reduce<Map<string, CatalogCategory>>((categoryMap, product:any) => {
+    const raw = product.category ?? product.categoryName ?? product.categorySlug;
+    const name = typeof raw === "string" ? raw : raw?.name;
+    const slug = typeof raw === "string"
+      ? (product.categorySlug || raw.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-"))
+      : raw?.slug;
+    if (slug && name && !categoryMap.has(slug)) {
+      categoryMap.set(slug, { id: String(raw?.id || slug), name: String(name), slug: String(slug) });
+    }
+    return categoryMap;
+  }, new Map<string, CatalogCategory>());
+  const derivedCategories: CatalogCategory[] = Array.from(derivedCategoryMap.values());
   const derivedSizes = Array.from(new Set(products.flatMap((product:any)=>(product.variants||[]).map((variant:any)=>variant.size)).filter(Boolean)));
   const derivedColors = Array.from(new Set(products.flatMap((product:any)=>(product.variants||[]).map((variant:any)=>variant.color).filter(Boolean))));
   const filterProps = { filters, activeFilterCount, clearFilters, updateFilter: update, setPriceRange, categories: filtersData.categories?.length ? filtersData.categories : derivedCategories, sizes: filtersData.sizes?.length ? filtersData.sizes : derivedSizes, colors: filtersData.colors?.length ? filtersData.colors : derivedColors, priceRanges: filtersData.priceRanges || [], occasions: filtersData.occasions || [], styles: filtersData.styles || [], sustainability: filtersData.sustainability || [] };
 
-  return <main className="min-h-screen overflow-x-hidden bg-zinc-50 pt-[var(--ai-header-h-mobile)] text-zinc-950 dark:bg-black dark:text-white sm:pt-[var(--ai-header-h-tablet)] lg:pt-[var(--ai-header-h-desktop)]">
+  return <main className="min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-950 dark:bg-black dark:text-white">
     <header className="border-b border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-950">
       <div className="mx-auto max-w-[1500px] px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
