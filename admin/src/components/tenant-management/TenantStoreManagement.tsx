@@ -323,6 +323,7 @@ export default function TenantStoreManagement(): React.ReactElement {
               <option>ACTIVE</option>
               <option>INACTIVE</option>
               <option>SUSPENDED</option>
+              <option>ARCHIVED</option>
             </select>
             <label>
               <input
@@ -410,6 +411,7 @@ export default function TenantStoreManagement(): React.ReactElement {
               <option>ACTIVE</option>
               <option>INACTIVE</option>
               <option>SUSPENDED</option>
+              <option>ARCHIVED</option>
             </select>
             <label>
               <input
@@ -473,9 +475,28 @@ export default function TenantStoreManagement(): React.ReactElement {
                     {tenant.slug} · {tenant.status}
                   </div>
                 </div>
-                <button className={styles.headerAction} style={action} onClick={() => setEditTenant(tenant)}>
-                  Edit Tenant
-                </button>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                  <button className={styles.headerAction} style={action} onClick={() => setEditTenant(tenant)}>
+                    Edit Tenant
+                  </button>
+                  {tenant.status === "ARCHIVED" ? (
+                    <button className={styles.headerAction} style={action} disabled={busy} onClick={() => void run(
+                      () => request(`/platform-tenancy/tenants/${tenant.id}/restore`, { method: "POST" }),
+                      "Tenant restored.",
+                    )}>Restore</button>
+                  ) : (
+                    <button className={styles.headerAction} style={{ ...action, borderColor: "#f59e0b" }} disabled={busy} onClick={() => void run(
+                      () => request(`/platform-tenancy/tenants/${tenant.id}/archive`, { method: "POST" }),
+                      "Tenant archived.",
+                    )}>Archive</button>
+                  )}
+                  {!tenant.stores.length ? (
+                    <button className={styles.headerAction} style={{ ...action, borderColor: "#ef4444", color: "#fecaca" }} disabled={busy} onClick={() => {
+                      if (!window.confirm(`Permanently delete empty tenant ${tenant.name}?`)) return;
+                      void run(() => request(`/platform-tenancy/tenants/${tenant.id}`, { method: "DELETE" }), "Tenant permanently deleted.");
+                    }}>Delete</button>
+                  ) : null}
+                </div>
               </div>
               {tenant.stores.map((store) => (
                 <div
@@ -493,14 +514,42 @@ export default function TenantStoreManagement(): React.ReactElement {
                         {store.primaryDomain || "No domain"} · {store.status}
                       </div>
                     </div>
-                    <button
-                      className={styles.headerAction} style={action}
-                      onClick={() =>
-                        setEditStore({ ...store, tenantId: tenant.id })
-                      }
-                    >
-                      Edit Store
-                    </button>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                      <button
+                        className={styles.headerAction} style={action}
+                        onClick={() => setEditStore({ ...store, tenantId: tenant.id })}
+                      >
+                        Edit Store
+                      </button>
+                      {store.status === "ARCHIVED" ? (
+                        <button className={styles.headerAction} style={action} disabled={busy} onClick={() => void run(
+                          () => request(`/platform-tenancy/stores/${store.id}/restore`, { method: "POST" }),
+                          "Store restored.",
+                        )}>Restore</button>
+                      ) : (
+                        <button className={styles.headerAction} style={{ ...action, borderColor: "#f59e0b" }} disabled={busy} onClick={() => void run(
+                          () => request(`/platform-tenancy/stores/${store.id}/archive`, { method: "POST" }),
+                          "Store archived.",
+                        )}>Archive</button>
+                      )}
+                      <button className={styles.headerAction} style={{ ...action, borderColor: "#ef4444", color: "#fecaca" }} disabled={busy} onClick={async () => {
+                        try {
+                          const preflight = await request<any>(`/platform-tenancy/stores/${store.id}/delete-preflight`);
+                          if (!preflight.deletable) {
+                            setError(`Permanent delete blocked. Dependencies: ${JSON.stringify(preflight.dependencies)}`);
+                            return;
+                          }
+                          const confirmation = window.prompt(`Type DELETE ${store.name} to permanently delete this empty store.`);
+                          if (!confirmation) return;
+                          await run(() => request(`/platform-tenancy/stores/${store.id}`, {
+                            method: "DELETE",
+                            body: JSON.stringify({ confirmation }),
+                          }), "Store permanently deleted.");
+                        } catch (reason) {
+                          setError(reason instanceof Error ? reason.message : String(reason));
+                        }
+                      }}>Delete</button>
+                    </div>
                   </div>
                   <div style={{ fontSize: 12, marginTop: 6 }}>
                     {store.templates.length

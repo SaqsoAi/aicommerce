@@ -1,0 +1,14 @@
+export const HOMEPAGE_SECTION_DEFINITIONS = [
+  { type: "FEATURED_CATEGORIES", label: "Featured Categories", category: "Catalog", defaults: { title: "Shop by category", subtitle: "Curated for every style", limit: 6, columns: 3 } },
+  { type: "PRODUCT_RAIL", label: "Product Recommendation Rail", category: "Catalog", defaults: { title: "Recommended for you", subtitle: "Fresh picks based on your style", limit: 8, source: "recommended" } },
+  { type: "CAMPAIGN", label: "Campaign / Flash Sale", category: "Marketing", defaults: { title: "Limited-time edit", subtitle: "Exclusive offers while they last", ctaLabel: "Shop now", ctaHref: "/shop" } },
+  { type: "COLLECTION", label: "Trending Collections", category: "Merchandising", defaults: { title: "Trending collections", subtitle: "Explore the season's most wanted looks", limit: 6 } },
+  { type: "PERSONALIZATION_BANNER", label: "Personalization Banner", category: "AI & Personalization", defaults: { eyebrow: "Made for you", title: "Your style, intelligently curated", description: "Sign in for recommendations tailored to your taste.", ctaLabel: "Personalize my feed", ctaHref: "/login" } },
+  { type: "STYLE_DISCOVERY", label: "Style Discovery", category: "Editorial", defaults: { title: "Discover your signature style", subtitle: "Explore edits built around every mood and moment", cards: [] } },
+  { type: "SOCIAL_PROOF", label: "Social Proof / UGC", category: "Engagement", defaults: { title: "Styled by our community", subtitle: "Real people. Real looks. Daily inspiration.", items: [] } },
+  { type: "SUSTAINABILITY", label: "Sustainability Commitment", category: "Brand Story", defaults: { eyebrow: "Our responsibility", title: "Better choices, beautifully made", description: "Thoughtful materials, responsible partners and timeless design.", ctaLabel: "Our commitment", ctaHref: "/about" } },
+  { type: "TRUST_FEATURES", label: "Trust Features", category: "Brand Story", defaults: { title: "Shop with confidence", items: [{ title: "Easy exchange", description: "Simple size exchange support" }, { title: "Secure checkout", description: "Protected payments and privacy" }, { title: "Nationwide delivery", description: "Reliable delivery across Bangladesh" }] } },
+  { type: "SOCIAL_FEED", label: "Social Feed", category: "Engagement", defaults: { title: "Follow our style", subtitle: "Daily stories from the community", platforms: ["facebook", "instagram", "tiktok"], posts: [] } },
+  { type: "NEWSLETTER", label: "Newsletter", category: "Engagement", defaults: { title: "Stay in the know", subtitle: "New drops, private offers and style stories." } },
+  { type: "MEMBERSHIP", label: "Membership & Rewards", category: "Loyalty", defaults: { title: "More style. More rewards.", subtitle: "Join the membership experience." } },
+] as const;

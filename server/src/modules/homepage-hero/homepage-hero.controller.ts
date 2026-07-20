@@ -10,10 +10,13 @@ import {
   updateHeroService,
   deleteHeroService,
 } from "./homepage-hero.service";
+import { homepageHeroSchema, homepageHeroUpdateSchema } from "./homepage-hero.validation";
 
-export const getHeroesController = async (_req: Request, res: Response) => {
+function heroScope(req: Request) { const tenantId = String(req.user?.tenantId || "").trim(); const storeId = String(req.user?.storeId || "").trim(); return tenantId && storeId ? { tenantId, storeId } : undefined; }
+
+export const getHeroesController = async (req: Request, res: Response) => {
   try {
-    const data = await getHeroesService();
+    const data = await getHeroesService(heroScope(req));
 
     return res.json({
       success: true,
@@ -29,7 +32,8 @@ export const getHeroesController = async (_req: Request, res: Response) => {
 
 export const createHeroController = async (req: Request, res: Response) => {
   try {
-    const data = await createHeroService(req.body);
+    const scope = heroScope(req); if (!scope) return res.status(403).json({ success: false, message: "Tenant and store context required" });
+    const data = await createHeroService(scope, homepageHeroSchema.parse(req.body));
 
     return res.status(201).json({
       success: true,
@@ -54,7 +58,8 @@ export const updateHeroController = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await updateHeroService(id, req.body);
+    const scope = heroScope(req); if (!scope) return res.status(403).json({ success: false, message: "Tenant and store context required" });
+    const data = await updateHeroService(scope, id, homepageHeroUpdateSchema.parse(req.body));
 
     return res.json({
       success: true,
@@ -79,7 +84,8 @@ export const deleteHeroController = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await deleteHeroService(id);
+    const scope = heroScope(req); if (!scope) return res.status(403).json({ success: false, message: "Tenant and store context required" });
+    const data = await deleteHeroService(scope, id);
 
     return res.json({
       success: true,

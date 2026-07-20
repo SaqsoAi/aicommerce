@@ -9,9 +9,12 @@ import {
   deleteHomepageSection,
   reorderHomepageSectionsController,
   toggleHomepageSectionController,
+  getHomepageSectionDefinitions,
 } from "./homepage-section.controller";
 
 const router = Router();
+
+router.get("/definitions", protect, permission(PERMISSIONS.CONTENT_MANAGE), getHomepageSectionDefinitions);
 
 router.get(
   "/",
@@ -39,6 +42,7 @@ router.patch(
   protect,
   permission(PERMISSIONS.CONTENT_MANAGE),
   toggleHomepageSectionController,
+  getHomepageSectionDefinitions,
 );
 
 router.put(

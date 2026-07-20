@@ -62,8 +62,70 @@ export function requirePermission(...required: string[]) {
     (req: AuthorizationRequest, res: Response, next: NextFunction) => {
       const context = req.authContext!;
       if (context.platformAccess || context.permissions.includes("*")) return next();
-      const missing = required.filter((permission) => !context.permissions.includes(permission));
-      return missing.length ? forbidden(res, "PERMISSION_REQUIRED", { missing }) : next();
+      const permissionSet = new Set(context.permissions);
+      const aliases: Record<string, string[]> = {
+        "product.create": ["products.manage", "catalog.manage"],
+        "product.update": ["products.manage", "catalog.manage"],
+        "product.delete": ["products.manage", "catalog.manage"],
+        "product.read": ["products.manage", "catalog.read", "catalog.manage"],
+        "media.upload": ["products.manage", "media.manage"],
+        "media.read": ["products.manage", "media.manage"],
+      };
+
+      const commerceRoleFallback: Record<string, Set<string>> = {
+        ADMIN: new Set([
+          "product.read",
+          "product.create",
+          "product.update",
+          "product.delete",
+          "media.read",
+          "media.upload",
+          "media.manage",
+        ]),
+        TENANT_ADMIN: new Set([
+          "product.read",
+          "product.create",
+          "product.update",
+          "product.delete",
+          "media.read",
+          "media.upload",
+          "media.manage",
+        ]),
+        MANAGER: new Set([
+          "product.read",
+          "product.create",
+          "product.update",
+          "media.read",
+          "media.upload",
+        ]),
+      };
+
+      const roleFallback = commerceRoleFallback[context.role];
+
+      const missing = required.filter((permission) => {
+        if (permissionSet.has(permission)) return false;
+        if (
+          (aliases[permission] || []).some((alias) =>
+            permissionSet.has(alias),
+          )
+        ) {
+          return false;
+        }
+
+        // Focused 2026.43.3 recovery:
+        // existing Admin/Tenant Admin/Manager commerce roles may create products
+        // while the legacy permission records are being normalized.
+        if (roleFallback?.has(permission)) return false;
+
+        return true;
+      });
+
+      return missing.length
+        ? forbidden(res, "PERMISSION_REQUIRED", {
+            missing,
+            role: context.role,
+          })
+        : next();
     },
   ];
 }

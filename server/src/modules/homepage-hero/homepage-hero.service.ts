@@ -1,6 +1,18 @@
 import prisma from "../../config/prisma";
 
-export const getHeroesService = async () => {
+export type HeroScope = {
+  tenantId: string;
+  storeId: string;
+};
+
+/**
+ * Compatibility hotfix:
+ * HomepageHeroContent does not currently contain tenantId/storeId fields.
+ * Keep the scoped service signatures required by the controller, but do not
+ * issue invalid Prisma filters or writes until the schema change is applied
+ * through the approved database PowerShell package.
+ */
+export const getHeroesService = async (_scope?: HeroScope) => {
   return prisma.homepageHeroContent.findMany({
     orderBy: {
       sortOrder: "asc",
@@ -8,7 +20,10 @@ export const getHeroesService = async () => {
   });
 };
 
-export const createHeroService = async (data: any) => {
+export const createHeroService = async (
+  _scope: HeroScope,
+  data: any
+) => {
   return prisma.homepageHeroContent.create({
     data: {
       type: data.type || "image",
@@ -33,6 +48,7 @@ export const createHeroService = async (data: any) => {
 };
 
 export const updateHeroService = async (
+  _scope: HeroScope,
   id: string,
   data: any
 ) => {
@@ -55,12 +71,18 @@ export const updateHeroService = async (
       tabletSrc: data.tabletSrc,
       mobileSrc: data.mobileSrc,
       active: data.active,
-      sortOrder: Number(data.sortOrder ?? 0),
+      sortOrder:
+        data.sortOrder === undefined
+          ? undefined
+          : Number(data.sortOrder),
     },
   });
 };
 
-export const deleteHeroService = async (id: string) => {
+export const deleteHeroService = async (
+  _scope: HeroScope,
+  id: string
+) => {
   return prisma.homepageHeroContent.delete({
     where: { id },
   });

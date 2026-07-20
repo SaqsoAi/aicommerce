@@ -8,7 +8,8 @@ import {
   updateHomepageSectionService,
   type HomepageOwnershipScope,
 } from "./homepage-section.service";
-import { homepageSectionSchema } from "./homepage-section.validation";
+import { homepageSectionReorderSchema, homepageSectionSchema, homepageSectionToggleSchema, homepageSectionUpdateSchema } from "./homepage-section.validation";
+import { HOMEPAGE_SECTION_DEFINITIONS } from "./homepage-section.definitions";
 
 function scopeFromRequest(req: Request): HomepageOwnershipScope {
   const tenantId = String(req.user?.tenantId || "").trim();
@@ -64,7 +65,7 @@ export async function updateHomepageSection(req: Request, res: Response) {
       data: await updateHomepageSectionService(
         scopeFromRequest(req),
         String(req.params.id),
-        req.body,
+        homepageSectionUpdateSchema.parse(req.body),
       ),
     });
   } catch (error) {
@@ -90,14 +91,7 @@ export async function reorderHomepageSectionsController(
   res: Response,
 ) {
   try {
-    const items = Array.isArray(req.body.items) ? req.body.items : [];
-
-    if (!items.length) {
-      return res.status(400).json({
-        success: false,
-        message: "items array is required",
-      });
-    }
+    const { items } = homepageSectionReorderSchema.parse(req.body);
 
     return res.json({
       success: true,
@@ -130,10 +124,14 @@ export async function toggleHomepageSectionController(
       data: await toggleHomepageSectionService(
         scopeFromRequest(req),
         id,
-        Boolean(req.body.enabled),
+        homepageSectionToggleSchema.parse(req.body).enabled,
       ),
     });
   } catch (error) {
     return fail(res, error, 500);
   }
+}
+
+export async function getHomepageSectionDefinitions(_req: Request, res: Response) {
+  return res.json({ success: true, data: HOMEPAGE_SECTION_DEFINITIONS });
 }
