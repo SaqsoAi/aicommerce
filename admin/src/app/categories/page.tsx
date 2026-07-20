@@ -92,6 +92,9 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [deletingId, setDeletingId] = useState("");
+  const [notice, setNotice] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [search, setSearch] = useState("");
 
   const [editingId, setEditingId] = useState("");
@@ -218,6 +221,40 @@ export default function CategoriesPage() {
     };
 
     source.src = rawImage;
+  }
+
+  async function handleDeleteCategory(item: Category) {
+    const confirmed = window.confirm(
+      `Delete category "${item.name}"?\n\nA category linked to products or subcategories cannot be deleted until those dependencies are moved or removed.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingId(item.id);
+    setNotice("");
+    setErrorMessage("");
+
+    try {
+      await deleteCategory(item.id);
+      setNotice(`Category "${item.name}" deleted successfully.`);
+      if (editingId === item.id) resetForm();
+      await loadData();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Category delete failed.";
+
+      const normalized =
+        /foreign key|constraint|related record|relation/i.test(message)
+          ? `Cannot delete "${item.name}" because it is used by products or subcategories. Move or delete those records first.`
+          : message;
+
+      setErrorMessage(normalized);
+      console.error("Category delete failed", error);
+    } finally {
+      setDeletingId("");
+    }
   }
 
   async function submitCategory() {
@@ -428,6 +465,18 @@ export default function CategoriesPage() {
           className="w-full rounded-2xl border border-zinc-200 bg-transparent p-4 outline-none dark:border-zinc-800"
         />
 
+        {errorMessage ? (
+          <div className="rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-700 dark:text-red-300">
+            {errorMessage}
+          </div>
+        ) : null}
+
+        {notice ? (
+          <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+            {notice}
+          </div>
+        ) : null}
+
         <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[780px] text-left text-sm">
@@ -475,13 +524,11 @@ export default function CategoriesPage() {
 
                           <button
                             type="button"
-                            onClick={async () => {
-                              await deleteCategory(item.id);
-                              await loadData();
-                            }}
-                            className="rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white"
+                            disabled={deletingId === item.id}
+                            onClick={() => void handleDeleteCategory(item)}
+                            className="rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            Delete
+                            {deletingId === item.id ? "Deleting..." : "Delete"}
                           </button>
                         </div>
                       </td>

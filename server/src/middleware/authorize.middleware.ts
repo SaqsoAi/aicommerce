@@ -70,10 +70,16 @@ export function requirePermission(...required: string[]) {
         "product.read": ["products.manage", "catalog.read", "catalog.manage"],
         "media.upload": ["products.manage", "media.manage"],
         "media.read": ["products.manage", "media.manage"],
+        "catalog.manage": ["categories.manage", "products.manage"],
+        "categories.manage": ["catalog.manage"],
+        "categories.read": ["catalog.read", "catalog.manage", "categories.manage"],
       };
 
       const commerceRoleFallback: Record<string, Set<string>> = {
         ADMIN: new Set([
+          "catalog.manage",
+          "categories.manage",
+          "categories.read",
           "product.read",
           "product.create",
           "product.update",
@@ -83,6 +89,9 @@ export function requirePermission(...required: string[]) {
           "media.manage",
         ]),
         TENANT_ADMIN: new Set([
+          "catalog.manage",
+          "categories.manage",
+          "categories.read",
           "product.read",
           "product.create",
           "product.update",
@@ -92,6 +101,9 @@ export function requirePermission(...required: string[]) {
           "media.manage",
         ]),
         MANAGER: new Set([
+          "catalog.manage",
+          "categories.manage",
+          "categories.read",
           "product.read",
           "product.create",
           "product.update",

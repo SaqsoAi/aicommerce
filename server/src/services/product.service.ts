@@ -1,4 +1,5 @@
-﻿import prisma from "../config/prisma";
+import prisma from "../config/prisma";
+import { cleanupRemovedProductMedia } from "./product-media-lifecycle.service";
 
 const createSlug = (text: string) => {
   return text
@@ -189,6 +190,10 @@ export const getProductByIdService = async (id: string) => {
 };
 
 export const updateProductService = async (id: string, data: any) => {
+  const previousProduct = await prisma.product.findUnique({
+    where: { id },
+    select: { thumbnail: true, gallery: true, images: { select: { url: true } } },
+  });
   const slug = data.name ? `${createSlug(data.name)}-${Date.now()}` : undefined;
   const autoThumbnail = createThumbnailFromGallery(data.gallery);
 
@@ -279,7 +284,7 @@ export const updateProductService = async (id: string, data: any) => {
     };
   }
 
-  return prisma.product.update({
+  const updatedProduct = await prisma.product.update({
     where: { id },
     data: updateData,
     include: {
@@ -290,6 +295,9 @@ export const updateProductService = async (id: string, data: any) => {
       images: true,
     },
   });
+
+  await cleanupRemovedProductMedia(previousProduct, updatedProduct);
+  return updatedProduct;
 };
 
 export const updateProductStatusService = async (id: string, data: any) => {
@@ -408,11 +416,16 @@ export const updateProductGalleryService = async (
   id: string,
   gallery: any[],
 ) => {
+  const previousProduct = await prisma.product.findUnique({
+    where: { id },
+    select: { thumbnail: true, gallery: true, images: { select: { url: true } } },
+  });
+
   await prisma.productImage.deleteMany({
     where: { productId: id },
   });
 
-  return prisma.product.update({
+  const updatedProduct = await prisma.product.update({
     where: { id },
     data: {
       gallery,
@@ -425,6 +438,9 @@ export const updateProductGalleryService = async (
       images: true,
     },
   });
+
+  await cleanupRemovedProductMedia(previousProduct, updatedProduct);
+  return updatedProduct;
 };
 
 export const updateProductSpecificationsService = async (

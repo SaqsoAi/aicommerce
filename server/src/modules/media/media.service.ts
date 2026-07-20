@@ -1,4 +1,5 @@
 import prisma from "../../prisma/prisma";
+import { deleteProductMediaIfOrphaned } from "../../services/product-media-lifecycle.service";
 
 export const getAllMedia = async () => {
   return prisma.media.findMany({
@@ -109,13 +110,35 @@ export const reorderImages =
     return true;
   };
 
-export const deleteProductImage =
-  async (
-    imageId: string
-  ) => {
-    return prisma.productImage.delete({
-      where: {
-        id: imageId,
+export const deleteProductImage = async (imageId: string) => {
+  const image = await prisma.productImage.findUnique({
+    where: { id: imageId },
+  });
+  if (!image) throw new Error("Image not found");
+
+  const product = await prisma.product.findUnique({
+    where: { id: image.productId },
+    select: { thumbnail: true, gallery: true },
+  });
+
+  const gallery = Array.isArray(product?.gallery)
+    ? (product?.gallery as any[]).filter((item: any) => {
+        const url = typeof item === "string" ? item : item?.url;
+        return String(url || "") !== image.url;
+      })
+    : product?.gallery;
+
+  await prisma.$transaction([
+    prisma.productImage.delete({ where: { id: imageId } }),
+    prisma.product.update({
+      where: { id: image.productId },
+      data: {
+        ...(Array.isArray(gallery) ? { gallery } : {}),
+        ...(product?.thumbnail === image.url ? { thumbnail: null } : {}),
       },
-    });
-  };
+    }),
+  ]);
+
+  await deleteProductMediaIfOrphaned([image.url]);
+  return image;
+};

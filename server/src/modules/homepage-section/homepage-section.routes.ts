@@ -42,7 +42,6 @@ router.patch(
   protect,
   permission(PERMISSIONS.CONTENT_MANAGE),
   toggleHomepageSectionController,
-  getHomepageSectionDefinitions,
 );
 
 router.put(

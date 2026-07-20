@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import prisma from "../config/prisma";
+import { collectProductMediaUrls, deleteProductMediaIfOrphaned } from "../services/product-media-lifecycle.service";
 
 import { createEmbedding } from "../ai/vector/embedding";
 
@@ -211,11 +212,18 @@ export const deleteProduct = async (req: Request, res: Response) => {
       });
     }
 
+    const productMedia = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { thumbnail: true, gallery: true, images: { select: { url: true } } },
+    });
+
     await prisma.product.delete({
       where: {
         id: productId,
       },
     });
+
+    await deleteProductMediaIfOrphaned(collectProductMediaUrls(productMedia));
 
     return res.status(200).json({
       success: true,
