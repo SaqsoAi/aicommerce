@@ -17,6 +17,7 @@ import SaqsoThemeToggle from "./SaqsoThemeToggle";
 import styles from "./SaqsoHeader.module.css";
 import { useBrand } from "@/providers/BrandProvider";
 import { useCartStore } from "@/store/cart.store";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 const defaultNav = [
   { label: "Home", href: "/", desc: "Premium homepage" },
@@ -106,16 +107,45 @@ export default function SaqsoHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useScrollLock(mobileOpen, "saqsobuild-mobile-navigation");
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+
+    const closeAtDesktop = () => {
+      if (window.matchMedia("(min-width: 1024px)").matches) {
+        setMobileOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("resize", closeAtDesktop, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("resize", closeAtDesktop);
+    };
+  }, []);
+
   return (
     <>
       <header
+        data-saqso-header="true"
         className={[
           "fixed inset-x-0 top-0 z-50 border-b border-white/10 transition-all duration-300",
           styles.header,
           scrolled ? "bg-[#030303]/82 shadow-none backdrop-blur-2xl" : "bg-[#030303]/48 shadow-none backdrop-blur-xl",
         ].join(" ")}
       >
-        <div className={`${styles.headerInner} mx-auto flex h-[var(--ai-header-h-mobile)] max-w-[1680px] items-center justify-between gap-2 px-3 sm:h-[var(--ai-header-h-tablet)] sm:px-5 lg:h-[var(--ai-header-h-desktop)] lg:px-14`}>
+        <div className={`${styles.headerInner} mx-auto flex items-center justify-between gap-2`}>
           <Link href="/" onClick={() => setMobileOpen(false)} className="min-w-0 shrink-0">
             <HeaderLogo />
           </Link>
@@ -127,7 +157,7 @@ export default function SaqsoHeader() {
                 href={item.href}
                 className={[
                   "rounded-full px-6 py-3 transition hover:bg-white hover:text-black",
-                  index === 0 ? "text-amber-300" : "",
+                  pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "bg-white/10 text-amber-300" : "",
                 ].join(" ")}
               >
                 {item.label}
@@ -140,7 +170,7 @@ export default function SaqsoHeader() {
               <Sparkles size={16} /> Shop
             </Link>
 
-            <Link href="/shop" className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black sm:h-11 sm:w-11" aria-label="Search">
+            <Link href="/shop" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg transition hover:bg-white hover:text-black" aria-label="Search">
               <Search size={18} />
             </Link>
 
@@ -152,7 +182,7 @@ export default function SaqsoHeader() {
               <UserRound size={19} />
             </Link>
 
-            <Link href="/cart" className="relative grid h-10 w-10 place-items-center rounded-full bg-white text-black shadow-xl transition hover:-translate-y-0.5 sm:h-11 sm:w-11" aria-label={`Cart with ${cartCount} items`}>
+            <Link href="/cart" className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-black shadow-xl transition hover:-translate-y-0.5" aria-label={`Cart with ${cartCount} items`}>
               <ShoppingBag size={18} />
               {cartCount ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white">{cartCount > 99 ? "99+" : cartCount}</span> : null}
             </Link>
@@ -164,8 +194,10 @@ export default function SaqsoHeader() {
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg lg:hidden"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-white shadow-lg lg:hidden"
               aria-label="Open menu"
+              aria-expanded={mobileOpen}
+              aria-controls="saqso-mobile-menu"
             >
               <Menu size={20} />
             </button>
@@ -182,8 +214,13 @@ export default function SaqsoHeader() {
       />
 
       <aside
+        id="saqso-mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Store navigation"
+        aria-hidden={!mobileOpen}
         className={[
-          "fixed bottom-0 right-0 top-0 z-[90] w-[86vw] max-w-[380px] border-l border-white/10 bg-black/72 p-5 text-white shadow-[0_24px_90px_rgba(0,0,0,.65)] backdrop-blur-2xl transition-transform duration-300 lg:hidden",
+          "fixed bottom-0 right-0 top-0 z-[90] w-[86vw] max-w-[380px] overflow-y-auto border-l border-white/10 bg-black/88 px-5 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] text-white shadow-[0_24px_90px_rgba(0,0,0,.65)] backdrop-blur-2xl transition-transform duration-300 lg:hidden",
           mobileOpen ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
       >
@@ -197,7 +234,7 @@ export default function SaqsoHeader() {
 
         <div className="mt-7 grid gap-3.5">
           {nav.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className="rounded-[1.35rem] border border-white/12 bg-white/[0.075] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_14px_34px_rgba(0,0,0,.28)] backdrop-blur-xl transition hover:bg-white/[0.11]">
+            <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className="rounded-[1.35rem] border border-white/12 bg-white/[0.075] p-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_14px_34px_rgba(0,0,0,.28)] backdrop-blur-xl transition hover:bg-white/[0.11]">
               <span className="block text-lg font-black">{item.label}</span>
               <span className="mt-1 block text-xs font-bold text-white/50">{item.desc}</span>
             </Link>
@@ -208,7 +245,7 @@ export default function SaqsoHeader() {
           <Link href="/wishlist" onClick={() => setMobileOpen(false)} className="rounded-full bg-white/95 px-4 py-4 shadow-[0_12px_32px_rgba(255,255,255,.12)] text-center text-xs font-black uppercase tracking-[.16em] text-black">
             Wishlist
           </Link>
-          <Link href="/account" onClick={() => setMobileOpen(false)} className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-4 backdrop-blur-xl text-center text-xs font-black uppercase tracking-[.16em]">
+          <Link href="/account" onClick={() => setMobileOpen(false)} className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-4 text-center text-xs font-black uppercase tracking-[.16em] text-white backdrop-blur-xl">
             Account
           </Link>
         </div>
@@ -224,4 +261,5 @@ export default function SaqsoHeader() {
     </>
   );
 }
+
 

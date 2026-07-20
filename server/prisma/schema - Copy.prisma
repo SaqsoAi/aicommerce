@@ -3564,300 +3564,73 @@ model BusinessAiDecision {
   @@index([tenantId, storeId, status, createdAt])
 }
 
-model AiPromptRegistryEntry {
-  id          String   @id
-  registryKey String   @map("registry_key")
-  version     Int      @default(1)
-  category    String   @default("core")
-  title       String
-  template    String
-  variables   Json     @default("[]")
-  approved    Boolean  @default(false)
-  createdBy   String?  @map("created_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([registryKey, version], map: "ai_prompt_registry_key_version_key")
-  @@index([registryKey], map: "idx_ai_prompt_registry_key")
-  @@index([approved], map: "idx_ai_prompt_registry_approved")
-  @@map("ai_prompt_registry")
-}
-
-model AiModelRegistryEntry {
-  id          String   @id
-  registryKey String   @unique(map: "ai_model_registry_registry_key_key") @map("registry_key")
-  providerKey String   @map("provider_key")
-  modelId     String   @map("model_id")
-  modelType   String   @default("chat") @map("model_type")
-  displayName String   @map("display_name")
-  enabled     Boolean  @default(false)
-  priority    Int      @default(100)
-  config      Json     @default("{}")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([enabled, priority], map: "idx_ai_model_registry_enabled_priority")
-  @@index([providerKey], map: "idx_ai_model_registry_provider_key")
-  @@map("ai_model_registry")
-}
-
-model AiPolicyRegistryEntry {
-  id          String   @id
-  policyKey   String   @unique(map: "ai_policy_registry_policy_key_key") @map("policy_key")
-  title       String
-  description String   @default("")
-  enabled     Boolean  @default(false)
-  policy      Json     @default("{}")
-  updatedBy   String?  @map("updated_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([enabled], map: "idx_ai_policy_registry_enabled")
-  @@map("ai_policy_registry")
-}
-
-model AiEnterpriseSetting {
-  id          String   @id
-  settingKey  String   @unique(map: "ai_enterprise_settings_setting_key_key") @map("setting_key")
-  label       String
-  description String   @default("")
-  value       Json     @default("{}")
-  updatedBy   String?  @map("updated_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@map("ai_enterprise_settings")
-}
-
-// ================= ENTERPRISE MIGRATION PIPELINE =================
-model MigrationPipelineRun {
-  id           String   @id
-  tenantId     String?  @map("tenant_id")
-  storeId      String?  @map("store_id")
-  templateKey  String   @map("template_key")
-  sourceName   String   @map("source_name")
-  framework    String   @default("UNKNOWN")
-  status       String   @default("DRAFT")
-  currentStage String   @default("UPLOAD") @map("current_stage")
-  createdBy    String?  @map("created_by")
-  metadata     Json     @default("{}")
-  publishReady Boolean  @default(false) @map("publish_ready")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([tenantId, storeId], map: "idx_migration_pipeline_run_scope")
-  @@index([status, createdAt(sort: Desc)], map: "idx_migration_pipeline_run_status_created")
-  @@index([createdBy], map: "idx_migration_pipeline_run_created_by")
-  @@map("migration_pipeline_runs")
-}
-
-model MigrationPipelineEvent {
-  id        String   @id
-  runId     String   @map("run_id")
-  stage     String
-  status    String
-  actorId   String?  @map("actor_id")
-  details   Json     @default("{}")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_pipeline_event_run_created")
-  @@index([stage, status], map: "idx_migration_pipeline_event_stage_status")
-  @@map("migration_pipeline_events")
-}
-
-model MigrationArtifact {
-  id           String   @id
-  runId        String   @map("run_id")
-  artifactType String   @map("artifact_type")
-  path         String
-  contentType  String   @map("content_type")
-  metadata     Json     @default("{}")
-  status       String   @default("GENERATED")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_artifact_run_created")
-  @@index([artifactType, status], map: "idx_migration_artifact_type_status")
-  @@map("migration_artifacts")
-}
-
-model MigrationApiMapping {
-  id             String   @id
-  runId          String   @map("run_id")
-  sourceMethod   String   @map("source_method")
-  sourcePath     String   @map("source_path")
-  platformMethod String   @map("platform_method")
-  platformPath   String   @map("platform_path")
-  action         String
-  duplicateKey   String   @map("duplicate_key")
-  fieldMap       Json     @default("{}") @map("field_map")
-  authAdapter    Json     @default("{}") @map("auth_adapter")
-  status         String   @default("PLANNED")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([runId, duplicateKey], map: "migration_api_mappings_run_duplicate_key")
-  @@index([runId, createdAt], map: "idx_migration_api_mapping_run_created")
-  @@index([status], map: "idx_migration_api_mapping_status")
-  @@map("migration_api_mappings")
-}
-
-model MigrationEntityPlan {
-  id            String   @id
-  runId         String   @map("run_id")
-  entityKey     String   @map("entity_key")
-  sourceModel   String?  @map("source_model")
-  platformModel String?  @map("platform_model")
-  action        String
-  fields        Json     @default("[]")
-  permissionKey String?  @map("permission_key")
-  menuPath      String?  @map("menu_path")
-  formStatus    String   @default("DRAFT") @map("form_status")
-  gateResults   Json     @default("{}") @map("gate_results")
-  status        String   @default("PLANNED")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([runId, entityKey], map: "migration_entity_plans_run_entity_key")
-  @@index([runId, createdAt], map: "idx_migration_entity_plan_run_created")
-  @@index([status, formStatus], map: "idx_migration_entity_plan_status_form")
-  @@map("migration_entity_plans")
-}
-
-model MigrationVisualResult {
-  id                 String   @id
-  runId              String   @map("run_id")
-  routePath          String   @map("route_path")
-  viewport           String
-  screenshotScore    Float    @default(0) @map("screenshot_score")
-  domScore           Float    @default(0) @map("dom_score")
-  computedStyleScore Float    @default(0) @map("computed_style_score")
-  geometryScore      Float    @default(0) @map("geometry_score")
-  overflow           Boolean  @default(false)
-  diffArtifact       String?  @map("diff_artifact")
-  status             String   @default("BLOCKED")
-  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_visual_result_run_created")
-  @@index([routePath, viewport], map: "idx_migration_visual_result_route_viewport")
-  @@index([status], map: "idx_migration_visual_result_status")
-  @@map("migration_visual_results")
-}
-
-model MigrationSecurityFinding {
-  id        String   @id
-  runId     String   @map("run_id")
-  severity  String
-  code      String
-  path      String
-  details   Json     @default("{}")
-  status    String   @default("OPEN")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_security_finding_run_created")
-  @@index([severity, status], map: "idx_migration_security_finding_severity_status")
-  @@map("migration_security_findings")
-}
-
-model MigrationCertificate {
-  id           String   @id
-  runId        String   @map("run_id")
-  status       String
-  score        Int
-  gates        Json     @default("{}")
-  failedGates  Json     @default("[]") @map("failed_gates")
-  publishReady Boolean  @default(false) @map("publish_ready")
-  report       Json     @default("{}")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt(sort: Desc)], map: "idx_migration_certificate_run_created")
-  @@index([status, publishReady], map: "idx_migration_certificate_status_publish")
-  @@map("migration_certificates")
-}
-
-model MigrationInstallationPlan {
-  id             String   @id
-  runId          String   @map("run_id")
-  status         String
-  checks         Json     @default("{}")
-  rollbackPlan   Json     @default("{}") @map("rollback_plan")
-  idempotencyKey String   @unique(map: "migration_installation_plans_idempotency_key_key") @map("idempotency_key")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_installation_plan_run_created")
-  @@index([status], map: "idx_migration_installation_plan_status")
-  @@map("migration_installation_plans")
-}
-
 model TemplateRegistryEntry {
-  id           String    @id @default(cuid())
-  templateId   String?   @map("template_id")
-  slug         String    @unique
-  registryKey  String    @unique @map("registry_key")
-  name         String
-  sourceType   String    @default("BUILT_IN") @map("source_type")
-  version      String    @default("1.0.0")
-  vendor       String    @default("saqso.platform")
-  engine       String    @default("NEXT_APP_ROUTER")
-  codePath     String?   @map("code_path")
-  manifest     Json      @default("{}")
-  health       String    @default("DISCOVERED")
-  status       String    @default("REGISTERED")
-  lastSyncedAt DateTime? @map("last_synced_at") @db.Timestamptz(6)
-  lastHealthAt DateTime? @map("last_health_at") @db.Timestamptz(6)
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id             String   @id
+  templateId     String   @map("template_id")
+  slug           String   @unique(map: "template_registry_entries_slug_key")
+  registryKey    String   @map("registry_key")
+  name           String
+  sourceType     String   @default("IMPORTED") @map("source_type")
+  version        String   @default("1.0.0")
+  vendor         String?
+  engine         String   @default("NEXT_APP_ROUTER")
+  codePath       String?  @map("code_path")
+  previewUrl     String?  @map("preview_url")
+  description    String?
+  manifest       Json     @default("{}")
+  health         String   @default("DISCOVERED")
+  status         String   @default("REGISTERED")
+  lastSyncedAt   DateTime? @db.Timestamptz(6) @map("last_synced_at")
+  lastHealthAt   DateTime? @db.Timestamptz(6) @map("last_health_at")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime @default(now()) @db.Timestamptz(6) @map("updated_at")
 
-  @@index([status, health], map: "template_registry_status_idx")
+  @@index([templateId], map: "idx_template_registry_template_id")
+  @@index([registryKey], map: "idx_template_registry_registry_key")
+  @@index([status], map: "idx_template_registry_status")
+  @@index([health], map: "idx_template_registry_health")
   @@map("template_registry_entries")
 }
 
 model TemplateLifecycleEvent {
-  id           String   @id @default(cuid())
-  templateId   String?  @map("template_id")
-  storeId      String?  @map("store_id")
-  assignmentId String?  @map("assignment_id")
-  action       String
-  status       String
-  actorId      String?  @map("actor_id")
-  reason       String?
-  metadata     Json     @default("{}")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id        String   @id
+  action    String
+  status    String
+  actorId   String?  @map("actor_id")
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
 
-  @@index([storeId, templateId, createdAt(sort: Desc)], map: "template_lifecycle_event_scope_idx")
+  @@index([action], map: "idx_template_lifecycle_action")
+  @@index([status], map: "idx_template_lifecycle_status")
+  @@index([actorId], map: "idx_template_lifecycle_actor")
+  @@index([createdAt(sort: Desc)], map: "idx_template_lifecycle_created")
   @@map("template_lifecycle_events")
 }
 
 model TemplateActivationSnapshot {
-  id                   String    @id @default(cuid())
-  storeId              String    @map("store_id")
-  previousAssignmentId String?   @map("previous_assignment_id")
-  nextAssignmentId     String?   @map("next_assignment_id")
-  previousTemplateSlug String?   @map("previous_template_slug")
-  nextTemplateSlug     String?   @map("next_template_slug")
-  status               String    @default("READY")
-  metadata             Json      @default("{}")
-  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  restoredAt           DateTime? @map("restored_at") @db.Timestamptz(6)
+  id                       String    @id
+  storeId                  String    @map("store_id")
+  previousAssignmentId     String?   @map("previous_assignment_id")
+  nextAssignmentId         String    @map("next_assignment_id")
+  previousTemplateSlug     String?   @map("previous_template_slug")
+  nextTemplateSlug         String    @map("next_template_slug")
+  status                   String    @default("READY")
+  createdAt                DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  restoredAt               DateTime? @db.Timestamptz(6) @map("restored_at")
 
-  @@index([storeId, createdAt(sort: Desc)], map: "template_activation_snapshot_store_idx")
+  @@index([storeId], map: "idx_template_snapshot_store")
+  @@index([status], map: "idx_template_snapshot_status")
+  @@index(
+    [storeId, status, createdAt(sort: Desc)],
+    map: "idx_template_snapshot_store_ready"
+  )
+  @@index(
+    [previousAssignmentId],
+    map: "idx_template_snapshot_previous_assignment"
+  )
+  @@index(
+    [nextAssignmentId],
+    map: "idx_template_snapshot_next_assignment"
+  )
   @@map("template_activation_snapshots")
-}
-
-model TemplateCertification {
-  id           String   @id @default(cuid())
-  templateId   String?  @map("template_id")
-  templateSlug String   @map("template_slug")
-  storeId      String?  @map("store_id")
-  status       String
-  score        Int      @default(0)
-  gates        Json     @default("{}")
-  report       Json     @default("{}")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([templateSlug, createdAt(sort: Desc)], map: "template_certification_slug_idx")
-  @@index([storeId, templateSlug, createdAt(sort: Desc)], map: "template_certification_store_idx")
-  @@map("template_certifications")
 }

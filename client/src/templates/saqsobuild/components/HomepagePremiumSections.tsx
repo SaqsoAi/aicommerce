@@ -194,13 +194,15 @@ function ProductTile({ product, index }: { product: Product; index: number }) {
         <div className="mt-4 enterprise-responsive-guard grid grid-cols-2 gap-2 enterprise-mobile-stack">
           <Link
             href="/virtual-tryon"
+            data-saqso-product-action="secondary"
             className="rounded-full border border-slate-200 px-3 py-2 text-center text-xs font-black text-slate-700 transition hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none"
           >
             Try-On
           </Link>
           <Link
             href={href}
-            className="rounded-full bg-slate-950 px-3 py-2 text-center text-xs font-black text-white transition hover:bg-amber-600 dark:bg-white dark:text-slate-950"
+            data-saqso-product-action="primary"
+            className="rounded-full px-3 py-2 text-center text-xs font-black transition hover:bg-amber-600 hover:text-white"
           >
             View
           </Link>

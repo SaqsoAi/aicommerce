@@ -54,7 +54,9 @@ async function fetchAdminDefaultTheme(): Promise<ThemeMode> {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light"
+  );
 
   useEffect(() => {
     let alive = true;
@@ -75,7 +77,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     boot();
 
     const listener = () => {
-      setResolvedTheme(applyTheme(theme));
+      const stored = localStorage.getItem(THEME_KEY) || localStorage.getItem("theme") || "system";
+      const mode: ThemeMode = stored === "light" || stored === "dark" ? stored : "system";
+      if (mode === "system") setResolvedTheme(applyTheme(mode));
     };
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", listener);

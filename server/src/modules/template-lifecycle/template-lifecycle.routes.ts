@@ -1,17 +1,569 @@
-import {randomUUID} from "crypto";
-import {Router} from "express";
+import { randomUUID } from "crypto";
+import { existsSync } from "fs";
+import path from "path";
+import { Router, type NextFunction, type Response } from "express";
 import prisma from "../../config/prisma";
-import {protect,type AuthRequest} from "../auth/auth.middleware";
-const router=Router();const BUILT_INS=[{"registryKey":"fashion","slug":"fashion","name":"Fashion","codePath":"client/src/templates/fashion"},{"registryKey":"luxury","slug":"luxury","name":"Luxury","codePath":"client/src/templates/luxury"},{"registryKey":"modern","slug":"modern","name":"Modern","codePath":"client/src/templates/modern"},{"registryKey":"saqsobuild","slug":"saqsobuild","name":"SaqsoBuild","codePath":"client/src/templates/saqsobuild"}] as const;
-const clean=(v:unknown)=>String(v||"").trim();const param=(v:string|string[])=>Array.isArray(v)?v[0]||"":clean(v);
-function superAdmin(req:AuthRequest,res:any,next:any){if(String(req.user?.role||"").toUpperCase()!=="SUPER_ADMIN")return res.status(403).json({success:false,message:"Super Admin required"});next()}
-async function event(req:AuthRequest,action:string,status:string,metadata:any){await prisma.$executeRawUnsafe(`INSERT INTO template_lifecycle_events(id,action,status,actor_id,metadata) VALUES($1,$2,$3,$4,$5::jsonb)`,randomUUID(),action,status,req.user?.id||null,JSON.stringify(metadata||{}))}
-router.get("/registry",protect,superAdmin,async(_q,res)=>{const [templates,registry,stores]=await Promise.all([prisma.template.findMany({orderBy:{name:"asc"},include:{stores:true}}),prisma.$queryRawUnsafe<any[]>(`SELECT * FROM template_registry_entries ORDER BY name ASC`),prisma.store.findMany({orderBy:{name:"asc"},include:{tenant:true,templates:{include:{template:true}},domains:true}})]);res.json({success:true,data:{templates,registry,stores,builtIns:BUILT_INS}})});
-router.post("/sync",protect,superAdmin,async(req,res)=>{for(const i of BUILT_INS){const t=await prisma.template.upsert({where:{slug:i.slug},create:{name:i.name,slug:i.slug,description:`${i.name} built-in template`,isActive:true},update:{name:i.name,isActive:true}});await prisma.$executeRawUnsafe(`INSERT INTO template_registry_entries(id,template_id,slug,registry_key,name,source_type,version,vendor,engine,code_path,manifest,health,status,last_synced_at,updated_at) VALUES($1,$2,$3,$4,$5,'BUILT_IN','1.0.0','saqso.platform','NEXT_APP_ROUTER',$6,$7::jsonb,'DISCOVERED','REGISTERED',NOW(),NOW()) ON CONFLICT(slug) DO UPDATE SET template_id=EXCLUDED.template_id,registry_key=EXCLUDED.registry_key,name=EXCLUDED.name,code_path=EXCLUDED.code_path,manifest=EXCLUDED.manifest,last_synced_at=NOW(),updated_at=NOW()`,randomUUID(),t.id,i.slug,i.registryKey,i.name,i.codePath,JSON.stringify(i))}const all=await prisma.template.findMany();for(const t of all){if(BUILT_INS.some(i=>i.slug===t.slug))continue;await prisma.$executeRawUnsafe(`INSERT INTO template_registry_entries(id,template_id,slug,registry_key,name,source_type,version,vendor,engine,manifest,health,status,last_synced_at,updated_at) VALUES($1,$2,$3,$4,$5,'IMPORTED','1.0.0','migration-studio','NEXT_APP_ROUTER',$6::jsonb,'DISCOVERED','REGISTERED',NOW(),NOW()) ON CONFLICT(slug) DO UPDATE SET template_id=EXCLUDED.template_id,name=EXCLUDED.name,source_type='IMPORTED',last_synced_at=NOW(),updated_at=NOW()`,randomUUID(),t.id,t.slug,t.slug,t.name,JSON.stringify({slug:t.slug,name:t.name}))}await event(req,"REGISTRY_SYNC","PASS",{count:all.length});res.json({success:true,data:{builtIns:BUILT_INS.length,total:all.length}})});
-router.post("/health/:slug",protect,superAdmin,async(req,res)=>{const slug=param(req.params.slug);const t=await prisma.template.findUnique({where:{slug}});const r=await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM template_registry_entries WHERE slug=$1 LIMIT 1`,slug);const checks={databaseTemplate:Boolean(t),registryEntry:Boolean(r[0]),codePath:Boolean(r[0]?.code_path),catalogActive:Boolean(t?.isActive)};const score=Math.round(Object.values(checks).filter(Boolean).length/Object.keys(checks).length*100);const health=score===100?"HEALTHY":score>=50?"WARNING":"BROKEN";await prisma.$executeRawUnsafe(`UPDATE template_registry_entries SET health=$1,last_health_at=NOW(),updated_at=NOW() WHERE slug=$2`,health,slug);await event(req,"HEALTH_CHECK",health,{slug,score,checks});res.json({success:true,data:{slug,health,score,checks}})});
-router.get("/events",protect,superAdmin,async(_q,res)=>res.json({success:true,data:await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM template_lifecycle_events ORDER BY created_at DESC LIMIT 200`)}));
+import {
+  protect,
+  type AuthRequest,
+} from "../auth/auth.middleware";
+import {
+  certifyTemplate,
+  latestCertification,
+  listCertifications,
+  revokeCertification,
+} from "./template-lifecycle.controller";
+import {
+  evaluateTemplateActivation,
+} from "./template-lifecycle.service";
 
-router.post("/activate/:id",protect,superAdmin,async(req,res)=>{const id=param(req.params.id);const target=await prisma.storeTemplate.findUnique({where:{id},include:{template:true,store:true}});if(!target)return res.status(404).json({success:false,message:"Assignment not found"});const h=await prisma.$queryRawUnsafe<any[]>(`SELECT health FROM template_registry_entries WHERE slug=$1 LIMIT 1`,target.template.slug);if(h[0]?.health!=="HEALTHY")return res.status(409).json({success:false,message:"Health PASS required"});const prev=await prisma.storeTemplate.findFirst({where:{storeId:target.storeId,isActive:true},include:{template:true}});const sid=randomUUID();await prisma.$transaction(async tx=>{await tx.storeTemplate.updateMany({where:{storeId:target.storeId},data:{isActive:false}});await tx.storeTemplate.update({where:{id},data:{isActive:true}});await tx.storeSetting.updateMany({where:{singletonKey:`store:${target.storeId}`},data:{activeTemplate:target.template.slug}})});await prisma.$executeRawUnsafe(`INSERT INTO template_activation_snapshots(id,store_id,previous_assignment_id,next_assignment_id,previous_template_slug,next_template_slug,status) VALUES($1,$2,$3,$4,$5,$6,'READY')`,sid,target.storeId,prev?.id||null,id,prev?.template?.slug||null,target.template.slug);await event(req,"ACTIVATE","PASS",{storeId:target.storeId,slug:target.template.slug,snapshotId:sid});res.json({success:true,data:{activeTemplate:target.template.slug,previousTemplate:prev?.template?.slug||null,snapshotId:sid}})});
-router.post("/rollback/:storeId",protect,superAdmin,async(req,res)=>{const storeId=param(req.params.storeId);const s=await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM template_activation_snapshots WHERE store_id=$1 AND status='READY' ORDER BY created_at DESC LIMIT 1`,storeId);const snap=s[0];if(!snap?.previous_assignment_id)return res.status(404).json({success:false,message:"No rollback snapshot"});const prev=await prisma.storeTemplate.findUnique({where:{id:snap.previous_assignment_id},include:{template:true}});if(!prev)return res.status(409).json({success:false,message:"Previous assignment missing"});await prisma.$transaction(async tx=>{await tx.storeTemplate.updateMany({where:{storeId},data:{isActive:false}});await tx.storeTemplate.update({where:{id:prev.id},data:{isActive:true}});await tx.storeSetting.updateMany({where:{singletonKey:`store:${storeId}`},data:{activeTemplate:prev.template.slug}})});await prisma.$executeRawUnsafe(`UPDATE template_activation_snapshots SET status='RESTORED',restored_at=NOW() WHERE id=$1`,snap.id);await event(req,"ROLLBACK","PASS",{storeId,slug:prev.template.slug});res.json({success:true,data:{activeTemplate:prev.template.slug}})});
+const router = Router();
+
+const BUILT_INS = [
+  {
+    registryKey: "fashion",
+    slug: "fashion",
+    name: "Fashion",
+    codePath: "client/src/templates/fashion",
+  },
+  {
+    registryKey: "luxury",
+    slug: "luxury",
+    name: "Luxury",
+    codePath: "client/src/templates/luxury",
+  },
+  {
+    registryKey: "modern",
+    slug: "modern",
+    name: "Modern",
+    codePath: "client/src/templates/modern",
+  },
+  {
+    registryKey: "saqsobuild",
+    slug: "saqsobuild",
+    name: "SaqsoBuild",
+    codePath: "client/src/templates/saqsobuild",
+  },
+] as const;
+
+
+function templateSourceCandidates(codePath: string): string[] {
+  const normalized = codePath.replace(/\\/g, "/").replace(/^\/+/, "");
+  return [
+    path.resolve(process.cwd(), normalized),
+    path.resolve(process.cwd(), "..", normalized),
+    path.resolve(process.cwd(), "../..", normalized),
+  ];
+}
+
+function templateSourceExists(codePath: string | null | undefined): boolean {
+  if (!codePath) return false;
+  return templateSourceCandidates(codePath).some((candidate) =>
+    existsSync(candidate),
+  );
+}
+
+function inferredTemplateCodePath(slug: string): string {
+  return `client/src/templates/${slug}`;
+}
+
+function clean(value: unknown): string {
+  return String(value || "").trim();
+}
+
+function routeParam(value: string | string[]): string {
+  return Array.isArray(value) ? value[0] || "" : clean(value);
+}
+
+function requireSuperAdmin(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  if (String(req.user?.role || "").toUpperCase() !== "SUPER_ADMIN") {
+    return res.status(403).json({
+      success: false,
+      message: "Super Admin access is required.",
+    });
+  }
+  return next();
+}
+
+async function lifecycleEvent(
+  req: AuthRequest,
+  action: string,
+  status: string,
+  metadata: unknown,
+) {
+  await prisma.templateLifecycleEvent.create({
+    data: {
+      action,
+      status,
+      actorId: req.user?.id || null,
+      metadata: (metadata || {}) as any,
+    },
+  });
+}
+
+router.get(
+  "/registry",
+  protect,
+  requireSuperAdmin,
+  async (_req, res) => {
+    const [templates, registry, stores] = await Promise.all([
+      prisma.template.findMany({
+        orderBy: { name: "asc" },
+        include: { stores: true },
+      }),
+      prisma.templateRegistryEntry.findMany({
+        where: { status: { not: "STALE" } },
+        orderBy: { name: "asc" },
+      }),
+      prisma.store.findMany({
+        orderBy: { name: "asc" },
+        include: {
+          tenant: true,
+          templates: { include: { template: true } },
+          domains: true,
+        },
+      }),
+    ]);
+
+    return res.json({
+      success: true,
+      data: { templates, registry, stores, builtIns: BUILT_INS },
+    });
+  },
+);
+
+router.post(
+  "/sync",
+  protect,
+  requireSuperAdmin,
+  async (req, res) => {
+    for (const item of BUILT_INS) {
+      const template = await prisma.template.upsert({
+        where: { slug: item.slug },
+        create: {
+          name: item.name,
+          slug: item.slug,
+          description: `${item.name} built-in template`,
+          isActive: true,
+        },
+        update: { name: item.name, isActive: true },
+      });
+
+      await prisma.templateRegistryEntry.upsert({
+        where: { slug: item.slug },
+        create: {
+          templateId: template.id,
+          slug: item.slug,
+          registryKey: item.registryKey,
+          name: item.name,
+          sourceType: "BUILT_IN",
+          codePath: item.codePath,
+          manifest: item as any,
+          lastSyncedAt: new Date(),
+        },
+        update: {
+          templateId: template.id,
+          registryKey: item.registryKey,
+          name: item.name,
+          sourceType: "BUILT_IN",
+          codePath: item.codePath,
+          manifest: item as any,
+          lastSyncedAt: new Date(),
+        },
+      });
+    }
+
+    const all = await prisma.template.findMany({
+      include: { stores: true },
+    });
+    let pruned = 0;
+    let stale = 0;
+
+    for (const template of all) {
+      if (BUILT_INS.some((item) => item.slug === template.slug)) {
+        continue;
+      }
+
+      const existingRegistry =
+        await prisma.templateRegistryEntry.findUnique({
+          where: { slug: template.slug },
+        });
+      const codePath =
+        existingRegistry?.codePath ||
+        inferredTemplateCodePath(template.slug);
+      const sourcePresent = templateSourceExists(codePath);
+
+      if (!sourcePresent && template.stores.length === 0) {
+        await prisma.$transaction([
+          prisma.templateCertification.deleteMany({
+            where: { templateSlug: template.slug },
+          }),
+          prisma.templateRegistryEntry.deleteMany({
+            where: { slug: template.slug },
+          }),
+          prisma.template.delete({
+            where: { id: template.id },
+          }),
+        ]);
+        pruned += 1;
+        continue;
+      }
+
+      if (!sourcePresent) {
+        await prisma.templateRegistryEntry.upsert({
+          where: { slug: template.slug },
+          create: {
+            templateId: template.id,
+            slug: template.slug,
+            registryKey: template.slug,
+            name: template.name,
+            sourceType: "IMPORTED",
+            vendor: "migration-studio",
+            codePath,
+            health: "BROKEN",
+            status: "STALE",
+            manifest: {
+              slug: template.slug,
+              name: template.name,
+              previewUrl: template.previewUrl,
+              sourcePresent: false,
+            } as any,
+            lastSyncedAt: new Date(),
+          },
+          update: {
+            templateId: template.id,
+            name: template.name,
+            sourceType: "IMPORTED",
+            vendor: "migration-studio",
+            codePath,
+            health: "BROKEN",
+            status: "STALE",
+            lastSyncedAt: new Date(),
+          },
+        });
+        stale += 1;
+        continue;
+      }
+
+      await prisma.templateRegistryEntry.upsert({
+        where: { slug: template.slug },
+        create: {
+          templateId: template.id,
+          slug: template.slug,
+          registryKey: template.slug,
+          name: template.name,
+          sourceType: "IMPORTED",
+          vendor: "migration-studio",
+          codePath,
+          status: "REGISTERED",
+          manifest: {
+            slug: template.slug,
+            name: template.name,
+            previewUrl: template.previewUrl,
+            sourcePresent: true,
+          } as any,
+          lastSyncedAt: new Date(),
+        },
+        update: {
+          templateId: template.id,
+          name: template.name,
+          sourceType: "IMPORTED",
+          vendor: "migration-studio",
+          codePath,
+          status: "REGISTERED",
+          lastSyncedAt: new Date(),
+        },
+      });
+    }
+
+    await lifecycleEvent(req, "REGISTRY_SYNC", "PASS", {
+      builtIns: BUILT_INS.length,
+      total: all.length,
+      pruned,
+      stale,
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        builtIns: BUILT_INS.length,
+        total: all.length,
+        pruned,
+        stale,
+      },
+    });
+  },
+);
+
+router.post(
+  "/health/:slug",
+  protect,
+  requireSuperAdmin,
+  async (req, res) => {
+    const slug = routeParam(req.params.slug);
+    const [template, registry] = await Promise.all([
+      prisma.template.findUnique({ where: { slug } }),
+      prisma.templateRegistryEntry.findUnique({ where: { slug } }),
+    ]);
+
+    const checks = {
+      databaseTemplate: Boolean(template),
+      registryEntry: Boolean(registry),
+      codePath: templateSourceExists(registry?.codePath),
+      manifest: Boolean(registry?.manifest),
+      catalogActive: Boolean(template?.isActive),
+    };
+    const score = Math.round(
+      (Object.values(checks).filter(Boolean).length /
+        Object.keys(checks).length) *
+        100,
+    );
+    const health =
+      score === 100 ? "HEALTHY" : score >= 60 ? "WARNING" : "BROKEN";
+
+    if (registry) {
+      await prisma.templateRegistryEntry.update({
+        where: { id: registry.id },
+        data: {
+          health,
+          lastHealthAt: new Date(),
+        },
+      });
+    }
+
+    await lifecycleEvent(req, "HEALTH_CHECK", health, {
+      slug,
+      score,
+      checks,
+    });
+
+    return res.json({
+      success: true,
+      data: { slug, health, score, checks },
+    });
+  },
+);
+
+router.get(
+  "/events",
+  protect,
+  requireSuperAdmin,
+  async (_req, res) => {
+    return res.json({
+      success: true,
+      data: await prisma.templateLifecycleEvent.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
+    });
+  },
+);
+
+router.post(
+  "/templates/:slug/certify",
+  protect,
+  requireSuperAdmin,
+  certifyTemplate,
+);
+router.get(
+  "/templates/:slug/certifications",
+  protect,
+  requireSuperAdmin,
+  listCertifications,
+);
+router.get(
+  "/templates/:slug/certifications/latest",
+  protect,
+  requireSuperAdmin,
+  latestCertification,
+);
+router.post(
+  "/certifications/:id/revoke",
+  protect,
+  requireSuperAdmin,
+  revokeCertification,
+);
+
+router.get(
+  "/assignments/:id/activation-eligibility",
+  protect,
+  requireSuperAdmin,
+  async (req, res) => {
+    const result = await evaluateTemplateActivation(
+      routeParam(req.params.id),
+    );
+    return res.status(result.eligible ? 200 : 409).json({
+      success: result.eligible,
+      data: result,
+    });
+  },
+);
+
+router.post(
+  "/activate/:id",
+  protect,
+  requireSuperAdmin,
+  async (req, res) => {
+    const id = routeParam(req.params.id);
+    const eligibility = await evaluateTemplateActivation(id);
+
+    if (!eligibility.eligible) {
+      return res.status(409).json({
+        success: false,
+        code: eligibility.code,
+        message: eligibility.message,
+        data: eligibility,
+      });
+    }
+
+    const target = await prisma.storeTemplate.findUnique({
+      where: { id },
+      include: { template: true, store: true },
+    });
+    if (!target) {
+      return res.status(404).json({
+        success: false,
+        message: "Assignment was not found.",
+      });
+    }
+
+    const previous = await prisma.storeTemplate.findFirst({
+      where: {
+        storeId: target.storeId,
+        isActive: true,
+      },
+      include: { template: true },
+    });
+    const snapshotId = randomUUID();
+
+    await prisma.$transaction(async (tx) => {
+      await tx.storeTemplate.updateMany({
+        where: { storeId: target.storeId },
+        data: { isActive: false },
+      });
+      await tx.storeTemplate.update({
+        where: { id },
+        data: { isActive: true },
+      });
+      await tx.storeSetting.updateMany({
+        where: { singletonKey: `store:${target.storeId}` },
+        data: { activeTemplate: target.template.slug },
+      });
+    });
+
+    await prisma.templateActivationSnapshot.create({
+      data: {
+        id: snapshotId,
+        storeId: target.storeId,
+        previousAssignmentId: previous?.id || null,
+        nextAssignmentId: id,
+        previousTemplateSlug: previous?.template?.slug || null,
+        nextTemplateSlug: target.template.slug,
+        status: "READY",
+      },
+    });
+
+    await prisma.templateLifecycleEvent.create({
+      data: {
+        templateId: target.templateId,
+        storeId: target.storeId,
+        assignmentId: target.id,
+        action: "ACTIVATE",
+        status: "PASS",
+        actorId: req.user?.id || null,
+        metadata: {
+          snapshotId,
+          certificationId: eligibility.certification?.id,
+        } as any,
+      },
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        activeTemplate: target.template.slug,
+        previousTemplate: previous?.template?.slug || null,
+        snapshotId,
+        certification: eligibility.certification,
+      },
+    });
+  },
+);
+
+router.post(
+  "/rollback/:storeId",
+  protect,
+  requireSuperAdmin,
+  async (req, res) => {
+    const storeId = routeParam(req.params.storeId);
+    const snapshot =
+      await prisma.templateActivationSnapshot.findFirst({
+        where: { storeId, status: "READY" },
+        orderBy: { createdAt: "desc" },
+      });
+
+    if (!snapshot?.previousAssignmentId) {
+      return res.status(404).json({
+        success: false,
+        message: "No rollback snapshot is available.",
+      });
+    }
+
+    const previous = await prisma.storeTemplate.findUnique({
+      where: { id: snapshot.previousAssignmentId },
+      include: { template: true },
+    });
+    if (!previous) {
+      return res.status(409).json({
+        success: false,
+        message: "Previous assignment no longer exists.",
+      });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.storeTemplate.updateMany({
+        where: { storeId },
+        data: { isActive: false },
+      });
+      await tx.storeTemplate.update({
+        where: { id: previous.id },
+        data: { isActive: true },
+      });
+      await tx.storeSetting.updateMany({
+        where: { singletonKey: `store:${storeId}` },
+        data: { activeTemplate: previous.template.slug },
+      });
+    });
+
+    await prisma.templateActivationSnapshot.update({
+      where: { id: snapshot.id },
+      data: {
+        status: "RESTORED",
+        restoredAt: new Date(),
+      },
+    });
+
+    await prisma.templateLifecycleEvent.create({
+      data: {
+        templateId: previous.templateId,
+        storeId,
+        assignmentId: previous.id,
+        action: "ROLLBACK",
+        status: "PASS",
+        actorId: req.user?.id || null,
+        metadata: { snapshotId: snapshot.id } as any,
+      },
+    });
+
+    return res.json({
+      success: true,
+      data: { activeTemplate: previous.template.slug },
+    });
+  },
+);
 
 export default router;

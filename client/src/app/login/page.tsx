@@ -8,8 +8,8 @@ export default function LoginPage() {
   const storeName = String(brand.storeName || "ISRA LIFESTYLE").toUpperCase();
 
   return (
-    <main className="min-h-screen bg-[#050505] pt-[var(--ai-header-h-mobile)] text-white sm:pt-[var(--ai-header-h-tablet)] lg:pt-[var(--ai-header-h-desktop)]">
-      <section className="mx-auto flex min-h-[calc(100svh-var(--ai-header-h-mobile))] w-full max-w-[440px] items-center px-4 py-8">
+    <main className="min-h-[var(--ai-hero-viewport)] bg-[#050505] text-white">
+      <section className="mx-auto flex min-h-[var(--ai-hero-viewport)] w-full max-w-[440px] items-center px-4 py-8">
         <div className="w-full">
           <div className="mb-7 inline-flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3 ring-1 ring-white/10">
             {brand.appIconUrl ? (

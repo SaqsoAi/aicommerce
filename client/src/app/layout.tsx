@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
@@ -11,6 +11,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
 import SaqsoHeader from "@/templates/saqsobuild/components/SaqsoHeader";
 import PwaLifecycle from "@/components/pwa/PwaLifecycle";
+import ScrollLockLifecycle from "@/components/system/ScrollLockLifecycle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,9 +51,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const theme = localStorage.getItem("theme") || "light";
-                document.documentElement.classList.remove("light","dark");
+                const stored = localStorage.getItem("saqso-theme-mode") || localStorage.getItem("theme") || "system";
+                const theme = stored === "system"
+                  ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+                  : stored;
+                document.documentElement.classList.remove("light", "dark");
                 document.documentElement.classList.add(theme);
+                document.documentElement.dataset.theme = theme;
+                document.documentElement.dataset.themeMode = stored;
+                document.documentElement.style.colorScheme = theme;
               } catch {}
 
               try {
@@ -128,10 +135,11 @@ export default function RootLayout({
             <AuthProvider>
               <Toaster position="top-right" reverseOrder={false} />
 
+              <ScrollLockLifecycle />
               <SaqsoHeader />
               <PwaLifecycle />
 
-              <main className="min-h-[100dvh] overflow-x-hidden pb-[calc(4.25rem+env(safe-area-inset-bottom))] pt-[56px] sm:pt-[64px] md:pb-0 lg:pt-[72px]">
+              <main data-saqso-app-content="true" className="min-h-[100dvh] overflow-x-hidden pb-[calc(var(--ai-bottom-nav-h)+env(safe-area-inset-bottom))] pt-[calc(var(--ai-header-h)+env(safe-area-inset-top))] md:pb-0">
                 {children}
               </main>
             </AuthProvider>

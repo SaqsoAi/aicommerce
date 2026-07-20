@@ -46,7 +46,10 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
     return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
   };
 
-  const redirectTo = searchParams.get("returnUrl") || "/";
+  const requestedReturnUrl = searchParams.get("returnUrl");
+  const redirectTo = requestedReturnUrl?.startsWith("/") && !requestedReturnUrl.startsWith("//")
+    ? requestedReturnUrl
+    : "/account";
 
   const completeLogin = (data: any) => {
     if (!data?.token || !data?.user) {
@@ -55,12 +58,9 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
     }
 
     login(data.user, data.token);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    localStorage.setItem("role", data.user?.role || "CUSTOMER");
 
     toast.success("Welcome to SAQSO");
-    window.location.href = redirectTo;
+    window.location.assign(redirectTo);
   };
 
   const handleEmailLogin = async () => {
@@ -79,9 +79,7 @@ export default function AuthModal({ initialMode = "login" }: { initialMode?: Mod
   const handleRegister = async () => {
     try {
       setLoading(true);
-      await registerUser(name, email, password);
-      toast.success("Account created. Please login.");
-      setMode("login");
+      completeLogin(await registerUser(name, email, password));
     } catch (error) {
       console.error(error);
       toast.error("Registration failed");

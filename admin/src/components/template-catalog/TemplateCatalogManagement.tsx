@@ -240,6 +240,28 @@ export default function TemplateCatalogManagement(): React.ReactElement {
     );
   }
 
+  async function runCertification(
+    slug: string,
+    storeId?: string,
+  ): Promise<void> {
+    await perform(
+      () =>
+        request(`/template-lifecycle/templates/${slug}/certify`, {
+          method: "POST",
+          body: JSON.stringify({
+            storeId,
+            gates: [],
+            report: {
+              source: "TEMPLATE_CATALOG_BASELINE",
+              note:
+                "Build, responsive, visual, API and security evidence must be supplied by certification tooling.",
+            },
+          }),
+        }),
+      `${slug} baseline certification evaluated.`,
+    );
+  }
+
   async function assignTemplate(): Promise<void> {
     await perform(
       () =>
@@ -261,7 +283,7 @@ export default function TemplateCatalogManagement(): React.ReactElement {
     await perform(
       () =>
         request(
-          `/platform-tenancy/template-assignments/${assignmentId}/activate`,
+          `/template-lifecycle/activate/${assignmentId}`,
           { method: "PATCH" },
         ),
       "Active template switched successfully.",
@@ -571,6 +593,13 @@ export default function TemplateCatalogManagement(): React.ReactElement {
                 onClick={() => void runHealth(item.slug)}
               >
                 Run Health Check
+              </button>
+              <button
+                style={{ ...compactButton, marginLeft: 8 }}
+                disabled={busy}
+                onClick={() => void runCertification(item.slug)}
+              >
+                Run Certification
               </button>
             </article>
           ))}

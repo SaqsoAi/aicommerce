@@ -7,6 +7,8 @@ import {
 
 import {
   useRouter,
+  usePathname,
+  useSearchParams,
 } from "next/navigation";
 
 import {
@@ -22,8 +24,10 @@ export default function ProtectedRoute({
   const router =
     useRouter();
 
-  const { token } =
+  const { ready, isAuthenticated } =
     useAuth();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [mounted, setMounted] =
     useState(false);
@@ -34,29 +38,24 @@ export default function ProtectedRoute({
 
   useEffect(() => {
 
-    if (!mounted) return;
+    if (!mounted || !ready) return;
 
-    const savedToken =
-      localStorage.getItem(
-        "token"
-      );
-
-    if (
-      !token &&
-      !savedToken
-    ) {
-      router.push(
-        "/login"
-      );
+    if (!isAuthenticated) {
+      const query = searchParams.toString();
+      const returnUrl = `${pathname}${query ? `?${query}` : ""}`;
+      router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
     }
 
   }, [
-    token,
+    ready,
+    isAuthenticated,
     mounted,
     router,
+    pathname,
+    searchParams,
   ]);
 
-  if (!mounted) {
+  if (!mounted || !ready) {
     return (
       <div className="p-10">
         Loading...
@@ -64,12 +63,7 @@ export default function ProtectedRoute({
     );
   }
 
-  if (
-    !token &&
-    !localStorage.getItem(
-      "token"
-    )
-  ) {
+  if (!isAuthenticated) {
     return (
       <div className="p-10">
         Redirecting...

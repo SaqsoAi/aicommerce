@@ -520,9 +520,27 @@ header img[src*="/uploads/branding/"] {
   --ai-small: clamp(0.78rem, 1vw, 0.9rem);
 
   --ai-touch: 44px;
-  --ai-header-h-mobile: 72px;
-  --ai-header-h-tablet: 82px;
-  --ai-header-h-desktop: 92px;
+  --ai-header-h-mobile: 68px;
+  --ai-header-h-tablet: 76px;
+  --ai-header-h-desktop: 82px;
+  --ai-header-h: var(--ai-header-h-mobile);
+  --ai-bottom-nav-h: 60px;
+  --ai-hero-viewport: calc(100svh - var(--ai-header-h) - var(--ai-bottom-nav-h) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  :root { --ai-header-h: var(--ai-header-h-tablet); }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ai-bottom-nav-h: 0px;
+    --ai-hero-viewport: calc(100svh - var(--ai-header-h) - env(safe-area-inset-top));
+  }
+}
+
+@media (min-width: 1024px) {
+  :root { --ai-header-h: var(--ai-header-h-desktop); }
 }
 
 html {
@@ -3258,50 +3276,155 @@ button { color: inherit; }
   .account-action-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
 }
 
-/* SF-1 certified foreground mapping. */
-button[class*="bg-white"], a[class*="bg-white"] { color:#09090b !important; }
-button[class*="bg-zinc-950"], button[class*="bg-black"], a[class*="bg-zinc-950"], a[class*="bg-black"] { color:#fff !important; }
-button[class*="bg-rose"], button[class*="bg-orange"], button[class*="bg-amber"] { color:#fff !important; }
-.dark button[class*="dark:bg-white"], .dark a[class*="dark:bg-white"] { color:#09090b !important; }
+/* 2026.40 Phase 1: single storefront shell geometry and contrast contract. */
+[data-saqso-header="true"] {
+  height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  min-height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  padding: env(safe-area-inset-top) 0 0 !important;
+}
 
+[data-saqso-header="true"] a,
+[data-saqso-header="true"] button {
+  line-height: 1 !important;
+}
+
+[data-saqso-app-content="true"] {
+  padding-top: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  padding-bottom: calc(var(--ai-bottom-nav-h) + env(safe-area-inset-bottom)) !important;
+}
+
+@media (min-width: 768px) {
+  [data-saqso-app-content="true"] { padding-bottom: 0 !important; }
+}
+
+@media (max-width: 1023px) {
+  .account-shell { padding-top: 1rem !important; }
+}
+
+@media (min-width: 1024px) {
+  .account-shell { padding-top: 1.5rem !important; }
+}
+
+/* 2026.42.1: Tailwind foreground utilities remain component-owned.
+   Do not select raw class tokens such as bg-white/bg-slate-950 because
+   dark:bg-* variants leave both tokens in the DOM and create blank buttons. */
 @media (max-width: 767px) {
-  header[class*="header"] aside a { color:#fff !important; }
-  header[class*="header"] aside a[class*="bg-white"] { color:#09090b !important; }
+  body { padding-bottom: 0 !important; }
+  [data-saqso-hero="true"] img { object-position: center center; }
 }
 
-/* 2026.39.5 storefront regression containment. */
-html { background:#000; color-scheme:dark; }
-html.dark, html.dark body { background:#000 !important; color:#fff; color-scheme:dark; }
-
-header[class*="header"] nav a,
-header[class*="header"] button,
-header[class*="header"] a[aria-label] { color:#fff !important; }
-header[class*="header"] a[class*="bg-white"] { color:#09090b !important; }
-header[class*="header"] svg { color:currentColor !important; stroke:currentColor !important; }
-
-[data-saqso-catalog-filter],
-[data-saqso-filter-group],
-[data-saqso-filter-options],
-[data-saqso-filter-options] > div {
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  align-content:start !important;
-  align-items:start !important;
+/* 2026.40.3 Phase 1 certification closure. */
+header[data-saqso-header="true"] {
+  box-sizing: border-box !important;
+  height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  min-height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  padding: env(safe-area-inset-top) 0 0 !important;
 }
-[data-saqso-filter-options] button {
-  position:static !important;
-  width:100% !important;
-  height:auto !important;
-  min-height:40px !important;
-  margin:0 !important;
+header[data-saqso-header="true"] > div {
+  height: var(--ai-header-h) !important;
+  min-height: var(--ai-header-h) !important;
+}
+main[data-saqso-app-content="true"] {
+  padding-top: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  padding-bottom: calc(var(--ai-bottom-nav-h) + env(safe-area-inset-bottom)) !important;
+}
+section[data-saqso-hero="true"] {
+  box-sizing: border-box !important;
+  height: var(--ai-hero-viewport) !important;
+  min-height: var(--ai-hero-viewport) !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+@media (min-width: 768px) {
+  main[data-saqso-app-content="true"] { padding-bottom: 0 !important; }
 }
 
-@media (max-width:767px) {
-  main { padding-top:var(--ai-header-h-mobile) !important; }
-  header[class*="header"] { padding-left:0 !important; padding-right:0 !important; }
-  header[class*="header"] aside a,
-  header[class*="header"] aside a span { color:#fff !important; }
-  header[class*="header"] aside a[class*="bg-white"],
-  header[class*="header"] aside a[class*="bg-white"] span { color:#09090b !important; }
+/* 2026.40.4 Phase 1 interaction polish. */
+html { scroll-padding-top: calc(var(--ai-header-h) + env(safe-area-inset-top)); background: #000; }
+body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+[data-saqso-header="true"] :is(a, button),
+[data-saqso-hero="true"] :is(a, button),
+nav[aria-label="Mobile navigation"] a { -webkit-user-select: none; user-select: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  [data-saqso-header="true"] *, [data-saqso-hero="true"] * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 2026.41.3 Phase 2 final certification closure. */
+html, body { min-height: 100%; overflow-x: clip; }
+html {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+body {
+  overflow-y: visible;
+}
+main[data-saqso-app-content="true"] { overflow: visible; }
+[data-saqso-button-tone="inverse"] { color: #09090b !important; }
+[data-saqso-button-tone="dark"] { color: #fff !important; }
+[data-saqso-catalog-filter], [data-saqso-filter-group], [data-saqso-filter-options] { height: auto !important; min-height: 0 !important; overflow: visible !important; }
+[data-saqso-filter-drawer] { touch-action: pan-y; }
+[data-saqso-filter-drawer] [data-saqso-catalog-filter] { border: 0 !important; background: transparent !important; box-shadow: none !important; }
+[data-saqso-filter-drawer] [data-saqso-filter-options] { -webkit-overflow-scrolling: touch; }
+.account-sidebar-utility, .account-signout { margin-top: 1rem !important; }
+@media (max-width: 767px) {
+  [data-saqso-filter-drawer] > aside { max-height: calc(100dvh - var(--ai-header-h-mobile) - env(safe-area-inset-top)) !important; }
+  [data-saqso-filter-drawer] aside > div:nth-child(2) { overflow-y: auto !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+  .account-sidebar { margin-top: 0 !important; }
+}
+
+
+/* SAQSO single-owner scroll lock manager */
+html[data-saqso-scroll-locked="true"],
+html[data-saqso-scroll-locked="true"] body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+
+/* 2026.42.1 product action contrast contract */
+[data-saqso-product-action="primary"] {
+  background: #0f172a;
+  color: #ffffff;
+}
+.dark [data-saqso-product-action="primary"] {
+  background: #ffffff;
+  color: #0f172a;
+}
+[data-saqso-product-action="secondary"] {
+  background: transparent;
+  color: inherit;
+}
+
+
+/* 2026.42.2 old-client root scroll behavior */
+html {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+body {
+  overflow-y: visible;
+}
+html[data-saqso-scroll-locked="true"],
+html[data-saqso-scroll-locked="true"] body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }

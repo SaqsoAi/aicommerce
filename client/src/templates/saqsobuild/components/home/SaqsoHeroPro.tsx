@@ -1,8 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useBrand } from "@/providers/BrandProvider";
 
 type Hero = {
@@ -31,38 +30,10 @@ function assetUrl(src?: string) {
   return src.startsWith("/") ? src : `/${src}`;
 }
 
-function pickImage(hero: Hero, width: number) {
-  if (width < 640)
-    return (
-      hero.mobileSrc || hero.tabletSrc || hero.desktopSrc || hero.src || ""
-    );
-  if (width < 1024)
-    return (
-      hero.tabletSrc || hero.laptopSrc || hero.desktopSrc || hero.src || ""
-    );
-  if (width < 1440) return hero.laptopSrc || hero.desktopSrc || hero.src || "";
-  return (
-    hero.desktopSrc ||
-    hero.laptopSrc ||
-    hero.tabletSrc ||
-    hero.mobileSrc ||
-    hero.src ||
-    ""
-  );
-}
-
 export default function SaqsoHeroPro() {
   const { brand } = useBrand();
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [active, setActive] = useState(0);
-  const [width, setWidth] = useState(390);
-
-  useEffect(() => {
-    setWidth(window.innerWidth);
-    const resize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -91,48 +62,48 @@ export default function SaqsoHeroPro() {
 
   useEffect(() => {
     if (heroes.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
-      setActive((v) => (v + 1) % heroes.length);
+      if (document.visibilityState === "visible") {
+        setActive((v) => (v + 1) % heroes.length);
+      }
     }, 6500);
     return () => window.clearInterval(timer);
   }, [heroes.length]);
 
   const hero = heroes[active];
-  const image = useMemo(
-    () => assetUrl(pickImage(hero || ({} as Hero), width)),
-    [hero, width],
+  const fallbackImage = assetUrl(
+    hero?.desktopSrc || hero?.laptopSrc || hero?.tabletSrc || hero?.mobileSrc || hero?.src,
   );
 
   if (!hero) return null;
 
   return (
-    <section className="relative h-[calc(100svh-var(--ai-header-h-mobile)-3.75rem-env(safe-area-inset-bottom))] overflow-hidden bg-black text-white sm:h-[calc(100svh-var(--ai-header-h-tablet))] lg:h-[calc(100svh-var(--ai-header-h-desktop))]">
-      {image ? (
-        <img
-          src={image}
-          alt={hero.alt || hero.headline || "Hero"}
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover brightness-[0.86] contrast-[1.04] saturate-[1.02]"
-        />
+    <section data-saqso-hero="true" className="relative h-[var(--ai-hero-viewport)] min-h-[520px] overflow-hidden bg-black text-white md:min-h-[620px]">
+      {fallbackImage ? (
+        <picture>
+          {hero.mobileSrc ? <source media="(max-width: 639px)" srcSet={assetUrl(hero.mobileSrc)} /> : null}
+          {hero.tabletSrc ? <source media="(max-width: 1023px)" srcSet={assetUrl(hero.tabletSrc)} /> : null}
+          {hero.laptopSrc ? <source media="(max-width: 1439px)" srcSet={assetUrl(hero.laptopSrc)} /> : null}
+          <img src={fallbackImage} alt={hero.alt || hero.headline || "Hero"} loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.86] contrast-[1.04] saturate-[1.02]" />
+        </picture>
       ) : null}
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/45" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/38 via-black/8 to-transparent" />
 
-      <div className="relative z-10 flex h-full min-h-full items-end px-5 pb-20 pt-12 sm:items-center sm:px-8 sm:py-12 lg:px-12">
+      <div className="relative z-10 flex h-full min-h-full items-end px-5 pb-[clamp(5.25rem,12vh,8rem)] pt-8 sm:items-center sm:px-8 sm:py-12 lg:px-12">
         <div className="w-full max-w-[min(92vw,640px)] md:max-w-2xl">
           <h1 className="max-w-3xl text-[36px] font-black leading-[0.98] tracking-[-0.04em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.42)] sm:text-5xl md:text-6xl lg:text-7xl">
             {hero.headline || `${brand.storeName} Essentials Are Here`}
           </h1>
 
-          <p className="mt-0 max-w-xl text-sm font-semibold leading-6 text-white/90 drop-shadow-[0_5px_18px_rgba(0,0,0,0.45)] sm:text-base">
+          <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-white/90 drop-shadow-[0_5px_18px_rgba(0,0,0,0.45)] sm:text-base">
             {hero.subheadline ||
               `Discover premium collections from ${brand.storeName}`}
           </p>
 
-          <div className="mt-0 flex w-full max-w-xl flex-col gap-3 sm:w-auto sm:flex-row">
+          <div className="mt-5 flex w-full max-w-xl flex-col gap-3 sm:w-auto sm:flex-row">
             <Link
               href={hero.primaryCtaLink || "/shop"}
               style={{ backgroundColor: brand.primaryColor }}
@@ -156,13 +127,15 @@ export default function SaqsoHeroPro() {
           {heroes.map((item, index) => (
             <button
               key={item.id || index}
+              type="button"
               onClick={() => setActive(index)}
               className={[
-                "h-3 w-3 rounded-full transition-all",
-                index === active ? "bg-white" : "bg-white/45",
+                "grid h-11 w-11 touch-manipulation place-items-center rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+                index === active ? "opacity-100" : "opacity-65 hover:opacity-100",
               ].join(" ")}
               aria-label={`Hero ${index + 1}`}
-            />
+              aria-current={index === active ? "true" : undefined}
+            ><span className={`block h-2.5 rounded-full bg-white transition-all ${index === active ? "w-6" : "w-2.5"}`} /></button>
           ))}
         </div>
       ) : null}

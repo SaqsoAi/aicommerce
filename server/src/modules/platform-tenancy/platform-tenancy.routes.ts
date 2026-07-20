@@ -2,6 +2,7 @@ import { Router, type NextFunction, type Response } from "express";
 import bcrypt from "bcryptjs";
 import prisma from "../../config/prisma";
 import { protect, type AuthRequest } from "../auth/auth.middleware";
+import { evaluateTemplateActivation } from "../template-lifecycle/template-lifecycle.service";
 
 const router = Router();
 
@@ -403,9 +404,26 @@ router.post("/template-assignments", async (req, res) => {
 });
 
 router.patch("/template-assignments/:id/activate", async (req, res) => {
-  const current = await prisma.storeTemplate.findUnique({ where: { id: req.params.id } });
+  const assignmentId = cleanText(req.params.id);
+  const eligibility = await evaluateTemplateActivation(assignmentId);
+
+  if (!eligibility.eligible) {
+    return res.status(409).json({
+      success: false,
+      code: eligibility.code,
+      message: eligibility.message,
+      data: eligibility,
+    });
+  }
+
+  const current = await prisma.storeTemplate.findUnique({
+    where: { id: assignmentId },
+  });
   if (!current) {
-    return res.status(404).json({ success: false, message: "Template assignment was not found." });
+    return res.status(404).json({
+      success: false,
+      message: "Template assignment was not found.",
+    });
   }
 
   const assignment = await prisma.$transaction(async (tx) => {
@@ -414,14 +432,30 @@ router.patch("/template-assignments/:id/activate", async (req, res) => {
       data: { isActive: false },
     });
 
-    return tx.storeTemplate.update({
+    const activated = await tx.storeTemplate.update({
       where: { id: current.id },
       data: { isActive: true },
-      include: { store: { include: { tenant: true } }, template: true },
+      include: {
+        store: { include: { tenant: true } },
+        template: true,
+      },
     });
+
+    await tx.storeSetting.updateMany({
+      where: { singletonKey: `store:${current.storeId}` },
+      data: { activeTemplate: activated.template.slug },
+    });
+
+    return activated;
   });
 
-  return res.json({ success: true, data: assignment });
+  return res.json({
+    success: true,
+    data: {
+      ...assignment,
+      certification: eligibility.certification,
+    },
+  });
 });
 
 router.delete("/template-assignments/:id", async (req, res) => {

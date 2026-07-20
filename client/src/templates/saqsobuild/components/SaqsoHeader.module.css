@@ -1,15 +1,15 @@
 .header {
-  height: var(--ai-header-h-mobile) !important;
-  min-height: var(--ai-header-h-mobile) !important;
+  height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
+  min-height: calc(var(--ai-header-h) + env(safe-area-inset-top)) !important;
   padding: env(safe-area-inset-top) 0 0 !important;
+  background: rgba(3, 3, 3, .88) !important;
 }
-.headerInner { min-width: 0; width: 100%; height: 100% !important; padding-top: 0 !important; padding-bottom: 0 !important; }
-@media (min-width: 640px) { .header { height: var(--ai-header-h-tablet) !important; min-height: var(--ai-header-h-tablet) !important; } }
-@media (min-width: 1024px) { .header { height: var(--ai-header-h-desktop) !important; min-height: var(--ai-header-h-desktop) !important; } }
-@media (max-width: 639px) {
-  .headerInner { padding-left: 14px !important; padding-right: 14px !important; gap: 8px !important; }
-  .headerInner > :first-child { flex: 1 1 auto; min-width: 0; }
-  .headerInner > :last-child { flex: 0 0 auto; }
+.headerInner {
+  width: min(100%, 1680px);
+  height: var(--ai-header-h) !important;
+  min-height: var(--ai-header-h) !important;
+  min-width: 0;
+  padding-inline: clamp(.75rem, 3vw, 3.5rem) !important;
 }
 .mobileBottomNav {
   display: grid !important;
@@ -18,8 +18,8 @@
   align-items: stretch !important;
   width: 100% !important;
   height: auto !important;
-  min-height: 60px !important;
-  max-height: calc(76px + env(safe-area-inset-bottom)) !important;
+  min-height: var(--ai-bottom-nav-h) !important;
+  max-height: calc(var(--ai-bottom-nav-h) + env(safe-area-inset-bottom)) !important;
   overflow: hidden !important;
   padding-bottom: max(.35rem, env(safe-area-inset-bottom)) !important;
 }

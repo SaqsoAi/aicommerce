@@ -7,11 +7,14 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { getMe, logoutUser } from "@/services/auth.service";
 
 type AuthContextType = {
   user: any;
   token: string | null;
   role: string;
+  ready: boolean;
+  isAuthenticated: boolean;
   setUser: (user: any) => void;
   setRole: (role: string) => void;
   login: (user: any, token: string) => void;
@@ -28,12 +31,13 @@ export default function AuthProvider({
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState("CUSTOMER");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token") || localStorage.getItem("customerToken") || localStorage.getItem("accessToken");
+    const savedToken = localStorage.getItem("token");
     const savedRole = localStorage.getItem("role");
 
     if (savedUser) {
@@ -46,6 +50,36 @@ export default function AuthProvider({
 
     if (savedToken) setToken(savedToken);
     if (savedRole) setRole(savedRole);
+
+    let cancelled = false;
+    getMe()
+      .then((response: any) => {
+        if (cancelled) return;
+        const sessionUser = response?.data?.user || response?.data || response?.user;
+        if (sessionUser?.id || sessionUser?.email) {
+          setUser(sessionUser);
+          setRole(sessionUser.role || savedRole || "CUSTOMER");
+          localStorage.setItem("user", JSON.stringify(sessionUser));
+          localStorage.setItem("role", sessionUser.role || savedRole || "CUSTOMER");
+        }
+      })
+      .catch(() => {
+        // A stale local session must never keep protected UI authenticated.
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("customerToken");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+      })
+      .finally(() => {
+        if (!cancelled) setReady(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = (userData: any, jwtToken: string) => {
@@ -57,8 +91,9 @@ export default function AuthProvider({
 
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", jwtToken);
-    localStorage.setItem("customerToken", jwtToken);
-    localStorage.setItem("accessToken", jwtToken);
+    // Remove historical aliases so all client code converges on one key.
+    localStorage.removeItem("customerToken");
+    localStorage.removeItem("accessToken");
     localStorage.setItem("role", userRole);
   };
 
@@ -72,6 +107,7 @@ export default function AuthProvider({
     localStorage.removeItem("customerToken");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("role");
+    void logoutUser().catch(() => undefined);
   };
 
   return (
@@ -80,6 +116,8 @@ export default function AuthProvider({
         user,
         token,
         role,
+        ready,
+        isAuthenticated: Boolean(user),
         setUser,
         setRole,
         login,
@@ -99,6 +137,8 @@ export const useAuth = () => {
       user: null,
       token: null,
       role: "CUSTOMER",
+      ready: true,
+      isAuthenticated: false,
       setUser: () => {},
       setRole: () => {},
       login: () => {},

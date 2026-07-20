@@ -47,10 +47,10 @@ export default function ProductCard({ product }: Props) {
       {totalStock <= 0 ? <div className="absolute inset-x-0 bottom-0 bg-black/75 px-2 py-2 text-center text-[10px] font-bold uppercase text-white">Out of stock</div> : null}
     </div>
 
-    <div className="flex flex-1 flex-col p-3 sm:p-4">
+    <div className="flex flex-1 flex-col p-3 sm:p-4" data-saqso-product-card-body>
       <p className="truncate text-[10px] font-bold uppercase text-zinc-500">{product.category?.name || "Collection"}{product.brand?.name ? ` · ${product.brand.name}` : ""}</p>
-      <Link href={productHref} className="mt-1 line-clamp-2 min-h-10 text-sm font-bold leading-5 text-zinc-900 hover:underline dark:text-white sm:text-base">{product.name}</Link>
-      <div className="mt-2 flex min-h-7 flex-wrap items-baseline gap-x-2">
+      <Link href={productHref} className="mt-1 line-clamp-2 min-h-0 text-sm font-bold leading-5 text-zinc-900 hover:underline dark:text-white sm:text-base">{product.name}</Link>
+      <div className="mt-1 flex min-h-7 flex-wrap items-baseline gap-x-2">
         <span className="text-base font-black text-zinc-950 dark:text-white sm:text-lg">Tk {salePrice.toLocaleString()}</span>
         {hasDiscount ? <span className="text-xs text-zinc-400 line-through">Tk {regularPrice.toLocaleString()}</span> : null}
       </div>
@@ -59,7 +59,7 @@ export default function ProductCard({ product }: Props) {
       <div className="mt-auto space-y-2 pt-3">
         {visibleSizes.length ? <div className="flex flex-wrap gap-1" aria-label="Available sizes">{visibleSizes.map((size) => <span key={size} className="rounded border border-zinc-300 bg-white px-1.5 py-0.5 text-[9px] font-black text-black dark:border-white/20 dark:bg-zinc-900 dark:text-white">{size}</span>)}</div> : null}
         <TryOnButton productId={product.id} variant="compact" />
-        <button type="button" onClick={addItem} disabled={totalStock <= 0} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-zinc-950 px-3 text-xs font-bold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-white dark:text-black dark:hover:bg-zinc-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500">
+        <button type="button" data-saqso-button-tone="inverse" onClick={addItem} disabled={totalStock <= 0} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-3 text-xs font-black text-white shadow-sm transition hover:-translate-y-px hover:bg-zinc-800 active:translate-y-0 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-white dark:text-black dark:hover:bg-zinc-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500">
           <ShoppingBag size={16} aria-hidden="true" /> {totalStock > 0 ? "Add to cart" : "Unavailable"}
         </button>
       </div>

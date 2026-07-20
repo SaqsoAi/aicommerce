@@ -60,7 +60,7 @@ export function AccountPageShell({
               })}
             </nav>
 
-            <div className="account-sidebar-bottom">
+            <div className="account-sidebar-bottom account-sidebar-utility">
               <div className="account-member-card">
                 <div className="flex items-center gap-2">
                   <span className="account-mini-crown"><AccountGlyph icon="gift" /></span>
@@ -93,7 +93,7 @@ export function AccountPageShell({
                   ["token", "customerToken", "accessToken", "user", "customer", "role"].forEach((key) => localStorage.removeItem(key));
                   window.location.assign("/login");
                 }}
-                className="mt-4 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-zinc-200 hover:bg-white/10"
+                className="account-signout mt-4 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-zinc-200 hover:bg-white/10"
               >
                 <span className="account-sidebar-icon"><AccountGlyph icon="signout" /></span>
                 <b>Sign Out</b>

@@ -8,112 +8,103 @@ datasource db {
 }
 
 model User {
-  customerActivities    CustomerActivity[]
-  customerStyleProfile  CustomerStyleProfile?
-  customerPreferences   CustomerPreference[]
-  recommendationHistory RecommendationHistory[]
-  savedLooks            SavedLook[]
-  virtualTryOnJobs      VirtualTryOnJob[]
   id                    String                  @id @default(cuid())
   name                  String
   email                 String                  @unique
   password              String
   createdAt             DateTime                @default(now())
   avatar                String?
-  firstName             String?
-  lastName              String?
-  dateOfBirth           DateTime?
-  gender                String?
-  bio                   String?
-  alternatePhone        String?
-  country               String?
-  state                 String?
-  city                  String?
-  postalCode            String?
+  phone                 String?                 @unique
+  updatedAt             DateTime                @updatedAt
+  role                  UserRole                @default(CUSTOMER)
+  permissions           Json?
+  emailVerified         Boolean                 @default(false)
+  provider              String?                 @default("LOCAL")
+  providerId            String?
   addressLine1          String?
   addressLine2          String?
+  alternatePhone        String?
+  bio                   String?
+  city                  String?
+  country               String?
+  dateOfBirth           DateTime?
+  emailOptIn            Boolean                 @default(true)
   facebookUrl           String?
+  firstName             String?
+  gender                String?
   instagramUrl          String?
-  twitterUrl            String?
+  lastName              String?
   linkedinUrl           String?
-  youtubeUrl            String?
+  marketingOptIn        Boolean                 @default(true)
+  postalCode            String?
+  preferredCurrency     String?                 @default("BDT")
+  preferredLanguage     String?                 @default("en")
+  smsOptIn              Boolean                 @default(false)
+  state                 String?
+  themeMode             String?                 @default("SYSTEM")
   tiktokUrl             String?
+  twitterUrl            String?
   websiteUrl            String?
-  rewardWallet          RewardWallet?           @relation(fields: [rewardWalletId], references: [id])
+  youtubeUrl            String?
+  rewardWalletId        String?
+  tenantId              String?
+  storeId               String?
+  cartItems             Cart[]
+  customerActivities    CustomerActivity[]
+  customerPreferences   CustomerPreference[]
+  customerStyleProfile  CustomerStyleProfile?
+  orders                Order[]
+  recommendationHistory RecommendationHistory[]
+  reviews               Review[]
+  savedLooks            SavedLook[]
   socialAccounts        SocialAccount[]
-
-  preferredLanguage String? @default("en")
-  preferredCurrency String? @default("BDT")
-
-  themeMode String? @default("SYSTEM")
-
-  marketingOptIn Boolean    @default(true)
-  smsOptIn       Boolean    @default(false)
-  emailOptIn     Boolean    @default(true)
-  phone          String?    @unique
-  provider       String?    @default("LOCAL")
-  providerId     String?
-  emailVerified  Boolean    @default(false)
-  updatedAt      DateTime   @updatedAt
-  role           UserRole   @default(CUSTOMER)
-  permissions    Json?
-  cartItems      Cart[]
-  orders         Order[]
-  reviews        Review[]
-  wishlist       Wishlist[]
-  rewardWalletId String?
-
-  tenantId        String?
-  storeId         String?
-  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-  store           Store?           @relation(fields: [storeId], references: [id], onDelete: SetNull)
-  userTenantRoles UserTenantRole[]
+  rewardWallet          RewardWallet?           @relation(fields: [rewardWalletId], references: [id])
+  store                 Store?                  @relation(fields: [storeId], references: [id])
+  tenant                Tenant?                 @relation(fields: [tenantId], references: [id])
+  userTenantRoles       UserTenantRole[]
+  virtualTryOnJobs      VirtualTryOnJob[]
+  wishlist              Wishlist[]
 
   @@index([tenantId])
   @@index([storeId])
 }
 
 model Category {
-  tenantId      String?
-  storeId       String?
   id            String        @id @default(cuid())
   name          String        @unique
   slug          String        @unique
   image         String?
   createdAt     DateTime      @default(now())
+  storeId       String?
+  tenantId      String?
   products      Product[]
   subcategories Subcategory[]
 }
 
 model Subcategory {
-  tenantId   String?
-  storeId    String?
   id         String    @id @default(cuid())
   name       String
   slug       String    @unique
   categoryId String
   createdAt  DateTime  @default(now())
+  storeId    String?
+  tenantId   String?
   products   Product[]
   category   Category  @relation(fields: [categoryId], references: [id])
 }
 
 model Brand {
-  tenantId String?
-  storeId  String?
   id       String    @id @default(cuid())
   name     String    @unique
   logo     String?
+  storeId  String?
+  tenantId String?
   products Product[]
 }
 
 model Product {
-  tenantId             String?
-  storeId              String?
-  lookbookLinks        LookbookProduct[]
-  virtualTryOnJobs     VirtualTryOnJob[]
   id                   String              @id @default(cuid())
   name                 String
-  groupName            String?
   description          String
   price                Float
   createdAt            DateTime            @default(now())
@@ -143,34 +134,37 @@ model Product {
   seoTitle             String?
   status               String              @default("DRAFT")
   visibility           String              @default("PUBLIC")
-  approvalStatus       String              @default("APPROVED")
-  approvalNote         String?
-  submittedForReviewAt DateTime?
-  approvedBy           String?
-  approvedAt           DateTime?
-  publishAt            DateTime?
-  unpublishAt          DateTime?
   attributes           Json?
   specifications       Json?
   condition            String              @default("NEW")
-  approvals            ProductApproval[]
+  groupName            String?
+  approvalNote         String?
+  approvalStatus       String              @default("APPROVED")
+  approvedAt           DateTime?
+  approvedBy           String?
+  publishAt            DateTime?
+  submittedForReviewAt DateTime?
+  unpublishAt          DateTime?
+  storeId              String?
+  tenantId             String?
   cartItems            Cart[]
+  inventoryMovements   InventoryMovement[]
+  lookbookLinks        LookbookProduct[]
   orderItems           OrderItem[]
   brand                Brand?              @relation(fields: [brandId], references: [id])
   category             Category            @relation(fields: [categoryId], references: [id])
   subcategory          Subcategory?        @relation(fields: [subcategoryId], references: [id])
+  productAiMeta        ProductAiMeta?
+  approvals            ProductApproval[]
   images               ProductImage[]
+  productSeo           ProductSeo?
   variants             ProductVariant[]
   reviews              Review[]
+  virtualTryOnJobs     VirtualTryOnJob[]
   wishlist             Wishlist[]
-  productSeo           ProductSeo?
-  productAiMeta        ProductAiMeta?
-  inventoryMovements   InventoryMovement[]
 }
 
 model ProductVariant {
-  tenantId          String?
-  storeId           String?
   id                String           @id @default(cuid())
   productId         String
   color             String
@@ -178,12 +172,6 @@ model ProductVariant {
   stock             Int              @default(0)
   price             Float?
   barcode           String?
-  styleNo           String?
-  systemBarcode     String?
-  fabric            String?
-  occasion          String?
-  costPrice         Float?
-  salesPrice        Float?
   createdAt         DateTime         @default(now())
   sku               String           @unique
   active            Boolean          @default(true)
@@ -193,6 +181,14 @@ model ProductVariant {
   reservedStock     Int              @default(0)
   supplierSku       String?
   warehouseLocation String?
+  costPrice         Float?
+  fabric            String?
+  occasion          String?
+  salesPrice        Float?
+  styleNo           String?
+  systemBarcode     String?
+  storeId           String?
+  tenantId          String?
   product           Product          @relation(fields: [productId], references: [id])
   supplierReturns   SupplierReturn[]
 }
@@ -216,8 +212,7 @@ model ProductApproval {
   note       String?
   actorId    String?
   createdAt  DateTime @default(now())
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@index([action])
@@ -226,62 +221,60 @@ model ProductApproval {
 }
 
 model Review {
-  tenantId         String?
-  storeId          String?
-  fitRating        String?
-  bodyType         String?
-  heightCm         Float?
-  weightKg         Float?
-  sizeOrdered      String?
-  reviewImages     Json?
-  verifiedPurchase Boolean  @default(false)
-  isApproved       Boolean  @default(false)
-  isFeatured       Boolean  @default(false)
   id               String   @id @default(cuid())
   rating           Int
   comment          String?
   userId           String
   productId        String
   createdAt        DateTime @default(now())
+  bodyType         String?
+  fitRating        String?
+  heightCm         Float?
+  isApproved       Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  reviewImages     Json?
+  sizeOrdered      String?
+  verifiedPurchase Boolean  @default(false)
+  weightKg         Float?
+  storeId          String?
+  tenantId         String?
   product          Product  @relation(fields: [productId], references: [id])
   user             User     @relation(fields: [userId], references: [id])
 }
 
 model Wishlist {
-  tenantId  String?
-  storeId   String?
   id        String   @id @default(cuid())
   userId    String
   productId String
   createdAt DateTime @default(now())
+  storeId   String?
+  tenantId  String?
   product   Product  @relation(fields: [productId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
 
 model Cart {
-  tenantId  String?
-  storeId   String?
   id        String  @id @default(cuid())
   quantity  Int
   userId    String
   productId String
+  storeId   String?
+  tenantId  String?
   product   Product @relation(fields: [productId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
 }
 
 model Coupon {
-  tenantId   String?
-  storeId    String?
   id         String   @id @default(cuid())
   code       String   @unique
   discount   Float
   active     Boolean  @default(true)
   expiryDate DateTime
+  storeId    String?
+  tenantId   String?
 }
 
 model Order {
-  tenantId        String?
-  storeId         String?
   id              String          @id @default(cuid())
   totalAmount     Float
   status          OrderStatus     @default(PENDING)
@@ -298,27 +291,27 @@ model Order {
   finalAmount     Float
   orderNumber     String          @unique
   paymentMethod   String
+  trackingCode    String?
+  shipmentStatus  String?         @default("PENDING")
+  invoiceNumber   String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  storeId         String?
+  tenantId        String?
   user            User            @relation(fields: [userId], references: [id])
   items           OrderItem[]
-  timelines       OrderTimeline[]
   notes           OrderNote[]
-
-  trackingCode   String?
-  shipmentStatus String? @default("PENDING")
-  invoiceNumber  String?
-
-  shippedAt   DateTime?
-  deliveredAt DateTime?
+  timelines       OrderTimeline[]
 }
 
 model OrderItem {
-  tenantId  String?
-  storeId   String?
   id        String  @id @default(cuid())
   quantity  Int
   price     Float
   orderId   String
   productId String
+  storeId   String?
+  tenantId  String?
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
 }
@@ -329,8 +322,7 @@ model OrderTimeline {
   status    OrderStatus
   message   String
   createdAt DateTime    @default(now())
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model OrderNote {
@@ -339,8 +331,7 @@ model OrderNote {
   note      String
   createdBy String?
   createdAt DateTime @default(now())
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model FraudLog {
@@ -362,7 +353,6 @@ model AILog {
 model Supplier {
   id               String            @id @default(cuid())
   name             String
-  supplierCode     String?           @unique
   email            String?
   phone            String?
   createdAt        DateTime          @default(now())
@@ -373,15 +363,14 @@ model Supplier {
   notes            String?
   updatedAt        DateTime          @updatedAt
   website          String?
+  supplierCode     String?           @unique
   purchaseOrders   PurchaseOrder[]
-  supplierReturns  SupplierReturn[]
   supplierLedgers  SupplierLedger[]
   supplierPayments SupplierPayment[]
+  supplierReturns  SupplierReturn[]
 }
 
 model Campaign {
-  tenantId      String?
-  storeId       String?
   id            String   @id @default(cuid())
   title         String
   type          String
@@ -389,6 +378,8 @@ model Campaign {
   startDate     DateTime
   endDate       DateTime
   discountValue Float?
+  storeId       String?
+  tenantId      String?
 }
 
 model Payment {
@@ -532,12 +523,11 @@ model Tenant {
   storefrontEnabled Boolean            @default(true)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  homepageSections  HomepageSection[]
   stores            Store[]
   domains           StorefrontDomain[]
-  homepageSections  HomepageSection[]
-
-  users           User[]
-  userTenantRoles UserTenantRole[]
+  users             User[]
+  userTenantRoles   UserTenantRole[]
 
   @@index([status, storefrontEnabled])
 }
@@ -547,18 +537,17 @@ model StorefrontDomain {
   hostname          String    @unique
   status            String    @default("ACTIVE")
   isPrimary         Boolean   @default(false)
+  tenantId          String
+  storeId           String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
   provider          String?   @default("MANUAL")
   verificationToken String?   @unique
   dnsStatus         String    @default("PENDING")
   sslStatus         String    @default("PENDING")
   lastVerifiedAt    DateTime?
-  tenantId          String
-  storeId           String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  store  Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  store             Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  tenant            Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, storeId])
   @@index([status])
@@ -567,19 +556,18 @@ model StorefrontDomain {
 model Store {
   id                String             @id @default(cuid())
   name              String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   tenantId          String?
   status            String             @default("ACTIVE")
   storefrontEnabled Boolean            @default(true)
   primaryDomain     String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  tenant            Tenant?            @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  homepageSections  HomepageSection[]
+  tenant            Tenant?            @relation(fields: [tenantId], references: [id])
   templates         StoreTemplate[]
   domains           StorefrontDomain[]
-  homepageSections  HomepageSection[]
-
-  users           User[]
-  userTenantRoles UserTenantRole[]
+  users             User[]
+  userTenantRoles   UserTenantRole[]
 
   @@index([tenantId])
   @@index([status, storefrontEnabled])
@@ -615,27 +603,27 @@ model PurchaseOrder {
   notes       String?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
+  grns        GoodsReceiveNote[]
   supplier    Supplier            @relation(fields: [supplierId], references: [id])
   items       PurchaseOrderItem[]
-  grns        GoodsReceiveNote[]
 }
 
 model PurchaseOrderItem {
   id              String        @id @default(cuid())
   purchaseOrderId String
   productId       String
-  variantId       String?
-  sku             String?
-  barcode         String?
-  styleNo         String?
-  color           String?
-  size            String?
   quantity        Int
-  receivedQty     Int           @default(0)
   costPrice       Float
-  salesPrice      Float?
   createdAt       DateTime      @default(now())
+  barcode         String?
+  color           String?
+  receivedQty     Int           @default(0)
+  salesPrice      Float?
+  size            String?
+  sku             String?
+  styleNo         String?
   updatedAt       DateTime      @default(now()) @updatedAt
+  variantId       String?
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
   @@index([purchaseOrderId])
@@ -741,19 +729,13 @@ model Notification {
 }
 
 model AuditLog {
-  id String @id @default(cuid())
-
-  userId String?
-
-  action String
-
-  module String
-
+  id          String   @id @default(cuid())
+  action      String
+  userId      String?
+  createdAt   DateTime @default(now())
   description String?
-
-  ipAddress String?
-
-  createdAt DateTime @default(now())
+  ipAddress   String?
+  module      String
 }
 
 model HomepageSection {
@@ -764,27 +746,26 @@ model HomepageSection {
   enabled   Boolean  @default(true)
   sortOrder Int      @default(0)
   data      Json?
-  tenantId  String?
-  storeId   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-  store  Store?  @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  tenantId  String?
+  storeId   String?
+  store     Store?   @relation(fields: [storeId], references: [id])
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId, storeId, enabled, sortOrder])
   @@index([storeId, slug])
 }
 
 model StoreSetting {
-  id             String  @id @default(cuid())
-  singletonKey   String  @unique @default("main")
-  storeName      String  @default("AI Commerce")
+  id             String   @id @default(cuid())
+  singletonKey   String   @unique @default("main")
+  storeName      String   @default("AI Commerce")
   storeTagline   String?
   logoUrl        String?
   faviconUrl     String?
-  primaryColor   String  @default("#111827")
-  secondaryColor String  @default("#6D28D9")
+  primaryColor   String   @default("#111827")
+  secondaryColor String   @default("#6D28D9")
   phone          String?
   email          String?
   address        String?
@@ -795,140 +776,108 @@ model StoreSetting {
   instagramUrl   String?
   tiktokUrl      String?
   youtubeUrl     String?
-
-  themeMode      String @default("SYSTEM")
-  headerStyle    String @default("GLASS")
-  heroStyle      String @default("PREMIUM")
-  buttonStyle    String @default("LUXURY")
-  footerStyle    String @default("PREMIUM")
-  activeTemplate String @default("saqsobuild")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  themeMode      String   @default("SYSTEM")
+  headerStyle    String   @default("GLASS")
+  heroStyle      String   @default("PREMIUM")
+  buttonStyle    String   @default("LUXURY")
+  footerStyle    String   @default("PREMIUM")
+  activeTemplate String   @default("saqsobuild")
 }
 
 model SocialAccount {
-  id String @id @default(cuid())
-
-  userId String
-
-  provider String
-
+  id         String   @id @default(cuid())
+  userId     String
+  provider   String
   providerId String
-
-  verified Boolean @default(false)
-
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model OtpVerification {
-  id String @id @default(cuid())
-
-  phone String
-
-  otp String
-
-  verified Boolean @default(false)
-
+  id        String   @id @default(cuid())
+  phone     String
+  otp       String
+  verified  Boolean  @default(false)
   expiresAt DateTime
-
   createdAt DateTime @default(now())
 }
 
 model CustomerProfileField {
-  id String @id @default(cuid())
-
-  name String
-
-  label String
-
-  type String
-
+  id          String   @id @default(cuid())
+  name        String
+  label       String
+  type        String
   placeholder String?
-
-  required Boolean @default(false)
-
-  visible Boolean @default(true)
-
-  enabled Boolean @default(true)
-
-  isSystem Boolean @default(false)
-
-  sortOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  required    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  enabled     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isSystem    Boolean  @default(false)
 }
 
 model CustomerProfileValue {
-  id String @id @default(cuid())
-
-  userId String
-
-  fieldId String
-
-  value String?
-
+  id        String   @id @default(cuid())
+  userId    String
+  fieldId   String
+  value     String?
   createdAt DateTime @default(now())
-
   updatedAt DateTime @updatedAt
 }
 
 model MembershipTier {
-  id              String   @id @default(cuid())
+  id              String            @id @default(cuid())
   name            String
-  supplierCode    String?  @unique
   minOrderAmount  Float
-  discountPercent Float    @default(0)
-  active          Boolean  @default(true)
-  sortOrder       Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  cards  MembershipCard[]
-  claims MembershipClaim[]
+  discountPercent Float             @default(0)
+  active          Boolean           @default(true)
+  sortOrder       Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  supplierCode    String?           @unique
+  cards           MembershipCard[]
+  claims          MembershipClaim[]
 }
 
 model MembershipCard {
-  id             String    @id @default(cuid())
-  cardNumber     String    @unique
-  qrCodeUrl      String?
-  cardImageUrl   String?
-  activationNote String?
+  id             String         @id @default(cuid())
+  cardNumber     String         @unique
   pinCode        String
-  status         String    @default("AVAILABLE")
+  status         String         @default("AVAILABLE")
   tierId         String
   assignedUserId String?
   activatedAt    DateTime?
   expiresAt      DateTime?
   sentToWhatsapp String?
   sentAt         DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  tier MembershipTier @relation(fields: [tierId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  activationNote String?
+  cardImageUrl   String?
+  qrCodeUrl      String?
+  tier           MembershipTier @relation(fields: [tierId], references: [id])
 }
 
 model MembershipClaim {
-  id               String   @id @default(cuid())
+  id               String         @id @default(cuid())
   userId           String
   tierId           String
   orderId          String?
   invoiceAmount    Float
-  status           String   @default("PENDING")
+  status           String         @default("PENDING")
   note             String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  adminInstruction String?
   customerName     String?
   customerPhone    String?
   customerWhatsapp String?
   profileSnapshot  Json?
-  adminInstruction String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  tier MembershipTier @relation(fields: [tierId], references: [id])
+  tier             MembershipTier @relation(fields: [tierId], references: [id])
 }
 
 model RewardPointRule {
@@ -960,10 +909,10 @@ model RewardWallet {
   id             String   @id @default(cuid())
   userId         String   @unique
   points         Int      @default(0)
-  lifetimeEarned Int      @default(0)
-  lifetimeUsed   Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  lifetimeEarned Int      @default(0)
+  lifetimeUsed   Int      @default(0)
   users          User[]
 }
 
@@ -974,8 +923,8 @@ model RewardTransaction {
   type         String
   points       Int
   reason       String
-  balanceAfter Int?
   createdAt    DateTime @default(now())
+  balanceAfter Int?
 }
 
 model MembershipDiscountLog {
@@ -1013,230 +962,138 @@ model MembershipCartRecommendationSetting {
 }
 
 model HomepageHeroContent {
-  id          String  @id @default(cuid())
-  type        String  @default("image")
-  src         String
-  alt         String?
-  headline    String
-  subheadline String?
-
-  primaryCtaLabel String?
-  primaryCtaLink  String?
-
+  id                String   @id @default(cuid())
+  type              String   @default("image")
+  src               String
+  alt               String?
+  headline          String
+  subheadline       String?
+  primaryCtaLabel   String?
+  primaryCtaLink    String?
   secondaryCtaLabel String?
   secondaryCtaLink  String?
-
-  sliderEffect String @default("fade")
-
-  cropMode    String @default("SYSTEM")
-  qualityMode String @default("HD")
-
-  recommendedWidth  Int? @default(3840)
-  recommendedHeight Int? @default(2160)
-
-  customCropData Json?
-
-  desktopSrc String?
-  tabletSrc  String?
-  mobileSrc  String?
-
-  active    Boolean @default(true)
-  sortOrder Int     @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  sliderEffect      String   @default("fade")
+  cropMode          String   @default("SYSTEM")
+  qualityMode       String   @default("HD")
+  recommendedWidth  Int?     @default(3840)
+  recommendedHeight Int?     @default(2160)
+  customCropData    Json?
+  desktopSrc        String?
+  tabletSrc         String?
+  mobileSrc         String?
+  active            Boolean  @default(true)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model HomepageSocialFeedSetting {
-  id           String @id @default(cuid())
-  singletonKey String @unique @default("main")
-
-  facebookEnabled  Boolean @default(true)
-  instagramEnabled Boolean @default(true)
-
-  facebookPageUrl String?
-  instagramUrl    String?
-
-  displayMode String @default("GRID")
-  maxItems    Int    @default(8)
-
-  active Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum UserRole {
-  SUPER_ADMIN
-  ADMIN
-  MANAGER
-  INVENTORY
-  MARKETING
-  SUPPORT
-  WAREHOUSE_MANAGER
-  DELIVERY_MANAGER
-  FINANCE_MANAGER
-  CUSTOMER
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  RETURNED
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
+  id               String   @id @default(cuid())
+  singletonKey     String   @unique @default("main")
+  facebookEnabled  Boolean  @default(true)
+  instagramEnabled Boolean  @default(true)
+  facebookPageUrl  String?
+  instagramUrl     String?
+  displayMode      String   @default("GRID")
+  maxItems         Int      @default(8)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model OrderTracking {
-  id String @id @default(cuid())
-
-  orderId String
-
-  trackingCode String
-
-  courierName String
-
-  currentStatus String @default("PENDING")
-
-  trackingUrl String?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  orderId       String
+  trackingCode  String
+  courierName   String
+  currentStatus String   @default("PENDING")
+  trackingUrl   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model CourierAssignment {
-  id String @id @default(cuid())
-
-  orderId String
-
-  courierName String
-
+  id           String   @id @default(cuid())
+  orderId      String
+  courierName  String
   courierPhone String?
-
   courierEmail String?
-
-  assignedAt DateTime @default(now())
-
-  assignedBy String?
-
-  notes String?
+  assignedAt   DateTime @default(now())
+  assignedBy   String?
+  notes        String?
 }
 
 model ReturnRequest {
-  id String @id @default(cuid())
-
-  orderId String
-
-  userId String
-
-  reason String
-
+  id          String    @id @default(cuid())
+  orderId     String
+  userId      String
+  reason      String
   description String?
-
-  status String @default("PENDING")
-
-  approvedBy String?
-
-  approvedAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  status      String    @default("PENDING")
+  approvedBy  String?
+  approvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model RefundRequest {
-  id String @id @default(cuid())
-
-  orderId String
-
-  userId String
-
-  amount Float
-
-  reason String?
-
-  status String @default("PENDING")
-
+  id          String    @id @default(cuid())
+  orderId     String
+  userId      String
+  amount      Float
+  reason      String?
+  status      String    @default("PENDING")
   processedBy String?
-
   processedAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model OrderInvoice {
-  id String @id @default(cuid())
-
-  orderId String @unique
-
-  invoiceNumber String @unique
-
-  subtotal Float
-
-  discount Float @default(0)
-
-  deliveryCharge Float @default(0)
-
-  total Float
-
-  generatedAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  orderId        String   @unique
+  invoiceNumber  String   @unique
+  subtotal       Float
+  discount       Float    @default(0)
+  deliveryCharge Float    @default(0)
+  total          Float
+  generatedAt    DateTime @default(now())
 }
 
 model Role {
-  id          String  @id @default(cuid())
-  name        String  @unique
+  id          String           @id @default(cuid())
+  name        String           @unique
   description String?
-
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   permissions RolePermission[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Permission {
-  id          String  @id @default(cuid())
-  code        String  @unique
+  id          String           @id @default(cuid())
+  code        String           @unique
   name        String
   description String?
-
-  roles RolePermission[]
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime         @default(now())
+  roles       RolePermission[]
 }
 
 model RolePermission {
-  id String @id @default(cuid())
-
+  id           String     @id @default(cuid())
   roleId       String
   permissionId String
-
-  role       Role       @relation(fields: [roleId], references: [id])
-  permission Permission @relation(fields: [permissionId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
 
   @@unique([roleId, permissionId])
 }
 
 model AdminPermission {
-  id String @id @default(cuid())
-
-  userId String
-
+  id             String   @id @default(cuid())
+  userId         String
   permissionCode String
-
-  allowed Boolean @default(true)
-
-  createdAt DateTime @default(now())
+  allowed        Boolean  @default(true)
+  createdAt      DateTime @default(now())
 }
 
 model SettingDefinition {
@@ -1278,36 +1135,21 @@ model DiscountPolicySetting {
   updatedAt                     DateTime @updatedAt
 }
 
-enum VirtualTryOnStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-}
-
 model VirtualTryOnJob {
-  id String @id @default(cuid())
-
-  userId    String
-  productId String
-
-  personImage  String
-  garmentImage String
-
-  resultImage String?
-
-  provider      String  @default("FAL_FASHN")
+  id            String             @id @default(cuid())
+  userId        String
+  productId     String
+  personImage   String
+  garmentImage  String
+  resultImage   String?
+  provider      String             @default("FAL_FASHN")
   providerJobId String?
-
-  status VirtualTryOnStatus @default(PENDING)
-
-  error String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  status        VirtualTryOnStatus @default(PENDING)
+  error         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  product       Product            @relation(fields: [productId], references: [id])
+  user          User               @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([productId])
@@ -1315,41 +1157,38 @@ model VirtualTryOnJob {
 }
 
 model Lookbook {
-  savedBy     SavedLook[]
-  id          String      @id @default(cuid())
+  id          String         @id @default(cuid())
   title       String
-  slug        String      @unique
+  slug        String         @unique
   description String?
   coverImage  String?
-  featured    Boolean     @default(false)
-  published   Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  items LookbookItem[]
+  featured    Boolean        @default(false)
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  items       LookbookItem[]
+  savedBy     SavedLook[]
 }
 
 model LookbookItem {
-  id         String   @id @default(cuid())
+  id         String            @id @default(cuid())
   lookbookId String
   image      String
   title      String?
   caption    String?
-  sortOrder  Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  lookbook Lookbook          @relation(fields: [lookbookId], references: [id], onDelete: Cascade)
-  products LookbookProduct[]
+  sortOrder  Int               @default(0)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  lookbook   Lookbook          @relation(fields: [lookbookId], references: [id], onDelete: Cascade)
+  products   LookbookProduct[]
 }
 
 model LookbookProduct {
-  id        String @id @default(cuid())
+  id        String       @id @default(cuid())
   itemId    String
   productId String
-
-  item    LookbookItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  product Product      @relation(fields: [productId], references: [id])
+  item      LookbookItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  product   Product      @relation(fields: [productId], references: [id])
 
   @@unique([itemId, productId])
 }
@@ -1361,9 +1200,8 @@ model SavedLook {
   name       String?
   notes      String?
   createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lookbook Lookbook @relation(fields: [lookbookId], references: [id], onDelete: Cascade)
+  lookbook   Lookbook @relation(fields: [lookbookId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lookbookId])
 }
@@ -1376,8 +1214,7 @@ model CustomerActivity {
   metadata  Json?
   source    String?
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([type])
@@ -1397,8 +1234,7 @@ model CustomerStyleProfile {
   metadata             Json?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CustomerPreference {
@@ -1410,8 +1246,7 @@ model CustomerPreference {
   source    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, key, value])
   @@index([userId])
@@ -1428,8 +1263,7 @@ model RecommendationHistory {
   source     String?
   metadata   Json?
   createdAt  DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([productId])
@@ -1451,53 +1285,50 @@ model ThemeSetting {
 }
 
 model LandingPage {
-  id             String    @id @default(cuid())
+  id             String                  @id @default(cuid())
   name           String
-  slug           String    @unique
+  slug           String                  @unique
   campaignId     String?
   title          String
   description    String?
   seoTitle       String?
   seoDescription String?
   seoKeywords    String?
-  template       String    @default("fashion")
-  status         String    @default("DRAFT")
-  isPublished    Boolean   @default(false)
+  template       String                  @default("fashion")
+  status         String                  @default("DRAFT")
+  isPublished    Boolean                 @default(false)
   publishedAt    DateTime?
   createdBy      String?
   updatedBy      String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  sections       LandingSection[]
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
   publishHistory LandingPublishHistory[]
+  sections       LandingSection[]
 }
 
 model LandingSection {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   landingPageId String
   type          String
   title         String?
   subtitle      String?
-  sortOrder     Int      @default(0)
+  sortOrder     Int         @default(0)
   configJson    Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  landingPage LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  landingPage   LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
 
   @@index([landingPageId])
 }
 
 model LandingPublishHistory {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   landingPageId String
   publishedBy   String?
   action        String
   note          String?
-  createdAt     DateTime @default(now())
-
-  landingPage LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  landingPage   LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
 
   @@index([landingPageId])
 }
@@ -1532,8 +1363,7 @@ model ProductSeo {
   ogImage         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
 }
@@ -1551,8 +1381,7 @@ model ProductAiMeta {
   lastGeneratedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
 }
@@ -1570,8 +1399,7 @@ model InventoryMovement {
   referenceId   String?
   createdBy     String?
   createdAt     DateTime @default(now())
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@index([variantId])
@@ -1739,36 +1567,34 @@ model TenantSubscription {
 }
 
 model IntegrationProvider {
-  id          String   @id @default(cuid())
-  key         String   @unique
+  id          String                  @id @default(cuid())
+  key         String                  @unique
   name        String
   category    String
-  enabled     Boolean  @default(false)
-  required    Boolean  @default(false)
+  enabled     Boolean                 @default(false)
+  required    Boolean                 @default(false)
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
   credentials IntegrationCredential[]
 }
 
 model IntegrationCredential {
-  id             String   @id @default(cuid())
+  id             String              @id @default(cuid())
   providerId     String
   key            String
   label          String
   encryptedValue String?
   maskedValue    String?
   last4          String?
-  isSet          Boolean  @default(false)
-  isEnabled      Boolean  @default(false)
-  isRequired     Boolean  @default(false)
-  source         String   @default("CONTROL_CENTER")
+  isSet          Boolean             @default(false)
+  isEnabled      Boolean             @default(false)
+  isRequired     Boolean             @default(false)
+  source         String              @default("CONTROL_CENTER")
   updatedBy      String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  provider IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  provider       IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, key])
   @@index([key])
@@ -1818,67 +1644,63 @@ model StoreSettingGroup {
   label     String
   sortOrder Int                 @default(0)
   enabled   Boolean             @default(true)
-  fields    StoreSettingField[]
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
+  fields    StoreSettingField[]
 }
 
 model StoreSettingField {
-  id          String   @id @default(cuid())
+  id          String              @id @default(cuid())
   groupId     String
   key         String
   label       String
   type        String
-  required    Boolean  @default(false)
-  enabled     Boolean  @default(true)
-  sortOrder   Int      @default(0)
+  required    Boolean             @default(false)
+  enabled     Boolean             @default(true)
+  sortOrder   Int                 @default(0)
   optionsJson Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  group  StoreSettingGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  values StoreSettingValue[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  group       StoreSettingGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  values      StoreSettingValue[]
 
   @@unique([groupId, key])
 }
 
 model StoreSettingValue {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   fieldId   String
   storeId   String?
   valueJson Json?
   valueText String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  field StoreSettingField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  field     StoreSettingField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   @@unique([fieldId, storeId])
 }
 
 model AuthProvider {
-  id         String   @id @default(cuid())
-  key        String   @unique
+  id         String                @id @default(cuid())
+  key        String                @unique
   name       String
-  enabled    Boolean  @default(false)
-  required   Boolean  @default(false)
+  enabled    Boolean               @default(false)
+  required   Boolean               @default(false)
   configJson Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  settings AuthProviderSetting[]
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  settings   AuthProviderSetting[]
 }
 
 model AuthProviderSetting {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   providerId String
   key        String
   valueJson  Json?
-  enabled    Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  provider AuthProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  enabled    Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  provider   AuthProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, key])
 }
@@ -2004,18 +1826,17 @@ model MessagingAudience {
 }
 
 model MessagingEvent {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   eventKey    String
   entityType  String
   entityId    String?
   userId      String?
   channel     String?
-  status      String   @default("PENDING")
+  status      String           @default("PENDING")
   payloadJson Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  queues MessagingQueue[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  queues      MessagingQueue[]
 
   @@index([eventKey])
   @@index([entityType])
@@ -2025,25 +1846,24 @@ model MessagingEvent {
 }
 
 model MessagingQueue {
-  id          String    @id @default(cuid())
+  id          String                     @id @default(cuid())
   eventId     String?
   channel     String
   receiver    String
   templateKey String?
   message     String?
-  status      String    @default("PENDING")
-  priority    Int       @default(5)
-  attempts    Int       @default(0)
-  maxAttempts Int       @default(3)
+  status      String                     @default("PENDING")
+  priority    Int                        @default(5)
+  attempts    Int                        @default(0)
+  maxAttempts Int                        @default(3)
   scheduledAt DateTime?
   processedAt DateTime?
   lastError   String?
   payloadJson Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  event       MessagingEvent?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
   attemptsLog MessagingDeliveryAttempt[]
+  event       MessagingEvent?            @relation(fields: [eventId], references: [id])
 
   @@index([eventId])
   @@index([channel])
@@ -2053,7 +1873,7 @@ model MessagingQueue {
 }
 
 model MessagingDeliveryAttempt {
-  id                String   @id @default(cuid())
+  id                String         @id @default(cuid())
   queueId           String
   attemptNo         Int
   status            String
@@ -2063,9 +1883,8 @@ model MessagingDeliveryAttempt {
   providerMessageId String?
   error             String?
   rawResponse       Json?
-  createdAt         DateTime @default(now())
-
-  queue MessagingQueue @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  createdAt         DateTime       @default(now())
+  queue             MessagingQueue @relation(fields: [queueId], references: [id], onDelete: Cascade)
 
   @@index([queueId])
   @@index([status])
@@ -2120,29 +1939,26 @@ model EnterpriseProductSequence {
   updatedAt  DateTime @updatedAt
 }
 
-// PHASE_4_0I_O_WORKFLOW_AUTOMATION_STUDIO
-
 model Workflow {
-  id          String   @id @default(cuid())
+  id          String               @id @default(cuid())
   name        String
-  slug        String   @unique
+  slug        String               @unique
   description String?
-  status      String   @default("DRAFT")
-  triggerType String   @default("MANUAL")
+  status      String               @default("DRAFT")
+  triggerType String               @default("MANUAL")
   category    String?
-  isActive    Boolean  @default(false)
+  isActive    Boolean              @default(false)
   createdById String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  versions    WorkflowVersion[]
-  nodes       WorkflowNode[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
   connections WorkflowConnection[]
-  variables   WorkflowVariable[]
   executions  WorkflowExecution[]
+  histories   WorkflowHistory[]
+  nodes       WorkflowNode[]
   schedules   WorkflowSchedule[]
   triggers    WorkflowTrigger[]
-  histories   WorkflowHistory[]
+  variables   WorkflowVariable[]
+  versions    WorkflowVersion[]
 
   @@index([status])
   @@index([triggerType])
@@ -2158,8 +1974,7 @@ model WorkflowVersion {
   notes        String?
   createdById  String?
   createdAt    DateTime @default(now())
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow     Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@unique([workflowId, version])
   @@index([workflowId])
@@ -2177,8 +1992,7 @@ model WorkflowNode {
   positionY  Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@unique([workflowId, nodeKey])
   @@index([workflowId])
@@ -2192,8 +2006,7 @@ model WorkflowConnection {
   targetKey     String
   conditionJson Json?
   createdAt     DateTime @default(now())
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow      Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@index([workflowId])
   @@index([sourceKey])
@@ -2208,29 +2021,27 @@ model WorkflowVariable {
   isSecret   Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@unique([workflowId, key])
   @@index([workflowId])
 }
 
 model WorkflowExecution {
-  id          String    @id @default(cuid())
+  id          String                 @id @default(cuid())
   workflowId  String
-  status      String    @default("PENDING")
+  status      String                 @default("PENDING")
   triggerType String
   inputJson   Json?
   outputJson  Json?
   error       String?
   startedAt   DateTime?
   completedAt DateTime?
-  createdAt   DateTime  @default(now())
-
-  workflow  Workflow               @relation(fields: [workflowId], references: [id], onDelete: Cascade)
-  logs      WorkflowExecutionLog[]
-  retries   WorkflowRetry[]
-  rollbacks WorkflowRollback[]
+  createdAt   DateTime               @default(now())
+  workflow    Workflow               @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  logs        WorkflowExecutionLog[]
+  retries     WorkflowRetry[]
+  rollbacks   WorkflowRollback[]
 
   @@index([workflowId])
   @@index([status])
@@ -2238,15 +2049,14 @@ model WorkflowExecution {
 }
 
 model WorkflowExecutionLog {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   executionId String
   nodeKey     String?
-  level       String   @default("INFO")
+  level       String            @default("INFO")
   message     String
   dataJson    Json?
-  createdAt   DateTime @default(now())
-
-  execution WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  execution   WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
 
   @@index([executionId])
   @@index([level])
@@ -2275,8 +2085,7 @@ model WorkflowSchedule {
   nextRunAt  DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow   Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@index([workflowId])
   @@index([isActive])
@@ -2290,37 +2099,34 @@ model WorkflowTrigger {
   configJson Json?
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@index([workflowId])
   @@index([eventName])
 }
 
 model WorkflowRetry {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   executionId String
   attempt     Int
-  status      String   @default("PENDING")
+  status      String            @default("PENDING")
   error       String?
-  createdAt   DateTime @default(now())
-
-  execution WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  execution   WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
 
   @@index([executionId])
   @@index([status])
 }
 
 model WorkflowRollback {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   executionId String
   nodeKey     String?
-  status      String   @default("PENDING")
+  status      String            @default("PENDING")
   reason      String?
   dataJson    Json?
-  createdAt   DateTime @default(now())
-
-  execution WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  execution   WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
 
   @@index([executionId])
   @@index([status])
@@ -2334,14 +2140,11 @@ model WorkflowHistory {
   dataJson    Json?
   createdById String?
   createdAt   DateTime @default(now())
-
-  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow    Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@index([workflowId])
   @@index([action])
 }
-
-// PHASE_4_0I_P_ENTERPRISE_AUTH_IDENTITY_PLATFORM
 
 model AuthSession {
   id               String    @id @default(cuid())
@@ -2569,32 +2372,30 @@ model HeroDraft {
   @@map("hero_drafts")
 }
 
-// ================= PHASE 8.10 ACCOUNT DATABASE =================
 model AccountProfile {
-  id          String    @id @default(cuid())
-  userId      String    @unique
+  id          String                  @id @default(cuid())
+  userId      String                  @unique
   displayName String?
   avatarUrl   String?
   phone       String?
   dateOfBirth DateTime?
   gender      String?
-  joinedAt    DateTime  @default(now())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
+  joinedAt    DateTime                @default(now())
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
   addresses   AccountAddress[]
   membership  AccountMembership?
-  preferences AccountStylePreference?
   rewards     AccountRewardLedger[]
+  preferences AccountStylePreference?
 
   @@index([userId])
 }
 
 model AccountAddress {
-  id         String   @id @default(cuid())
+  id         String          @id @default(cuid())
   userId     String
   profileId  String?
-  label      String   @default("Home")
+  label      String          @default("Home")
   fullName   String?
   phone      String?
   line1      String
@@ -2602,46 +2403,43 @@ model AccountAddress {
   city       String?
   state      String?
   postalCode String?
-  country    String   @default("Bangladesh")
-  isDefault  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  country    String          @default("Bangladesh")
+  isDefault  Boolean         @default(false)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  profile    AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([profileId])
 }
 
 model AccountMembership {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  profileId   String?   @unique
-  tier        String    @default("Bronze")
-  stylePoints Int       @default(0)
-  status      String    @default("ACTIVE")
-  startedAt   DateTime  @default(now())
+  id          String          @id @default(cuid())
+  userId      String          @unique
+  profileId   String?         @unique
+  tier        String          @default("Bronze")
+  stylePoints Int             @default(0)
+  status      String          @default("ACTIVE")
+  startedAt   DateTime        @default(now())
   expiresAt   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tier])
 }
 
 model AccountRewardLedger {
-  id          String   @id @default(cuid())
+  id          String          @id @default(cuid())
   userId      String
   profileId   String?
   points      Int
   type        String
   reason      String?
   referenceId String?
-  createdAt   DateTime @default(now())
-
-  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  profile     AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([profileId])
@@ -2649,40 +2447,19 @@ model AccountRewardLedger {
 }
 
 model AccountStylePreference {
-  id             String   @id @default(cuid())
-  userId         String   @unique
-  profileId      String?  @unique
+  id             String          @id @default(cuid())
+  userId         String          @unique
+  profileId      String?         @unique
   preferredFit   String?
   sizesJson      String?
   colorsJson     String?
   categoriesJson String?
   notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  profile AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  profile        AccountProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-}
-
-enum PluginStatus {
-  DISCOVERED
-  VALIDATED
-  INSTALLED
-  ACTIVE
-  INACTIVE
-  FAILED
-  ROLLBACK_REQUIRED
-  UNINSTALLED
-}
-
-enum PluginInstallationStatus {
-  PLANNED
-  APPROVED
-  INSTALLING
-  SUCCEEDED
-  FAILED
-  ROLLED_BACK
 }
 
 model Plugin {
@@ -2697,20 +2474,20 @@ model Plugin {
   manifest           Json
   createdAt          DateTime                   @default(now())
   updatedAt          DateTime                   @updatedAt
-  versions           PluginVersion[]
-  installations      PluginInstallation[]
-  dependencies       PluginDependency[]         @relation("PluginDependencies")
+  auditEvents        PluginAuditEvent[]
   dependants         PluginDependency[]         @relation("PluginDependants")
+  dependencies       PluginDependency[]         @relation("PluginDependencies")
+  files              PluginFile[]
+  healthChecks       PluginHealthCheck[]
+  transactions       PluginInstallTransaction[]
+  installations      PluginInstallation[]
+  marketplaceEntries PluginMarketplaceEntry[]
+  migrations         PluginMigration[]
   permissions        PluginPermission[]
   settings           PluginSetting[]
-  tenantAccess       PluginTenantAccess[]
-  files              PluginFile[]
-  migrations         PluginMigration[]
-  healthChecks       PluginHealthCheck[]
   settingValues      PluginSettingValue[]
-  auditEvents        PluginAuditEvent[]
-  transactions       PluginInstallTransaction[]
-  marketplaceEntries PluginMarketplaceEntry[]
+  tenantAccess       PluginTenantAccess[]
+  versions           PluginVersion[]
 }
 
 model PluginVersion {
@@ -2721,9 +2498,9 @@ model PluginVersion {
   packageSha256      String
   signatureKeyId     String?
   createdAt          DateTime                 @default(now())
-  plugin             Plugin                   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
   installations      PluginInstallation[]
   marketplaceEntries PluginMarketplaceEntry[]
+  plugin             Plugin                   @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
   @@unique([pluginId, version])
   @@index([pluginId])
@@ -2743,11 +2520,11 @@ model PluginInstallation {
   errorCode       String?
   errorMessage    String?
   createdAt       DateTime                   @default(now())
-  plugin          Plugin                     @relation(fields: [pluginId], references: [id], onDelete: Cascade)
-  pluginVersion   PluginVersion              @relation(fields: [pluginVersionId], references: [id], onDelete: Restrict)
   backups         PluginBackup[]
-  rollbacks       PluginRollback[]
   transactions    PluginInstallTransaction[]
+  plugin          Plugin                     @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  pluginVersion   PluginVersion              @relation(fields: [pluginVersionId], references: [id])
+  rollbacks       PluginRollback[]
 
   @@index([pluginId, createdAt])
 }
@@ -2759,8 +2536,8 @@ model PluginDependency {
   versionRange       String
   optional           Boolean @default(false)
   mustBeActive       Boolean @default(true)
+  dependency         Plugin  @relation("PluginDependants", fields: [dependencyPluginId], references: [id])
   plugin             Plugin  @relation("PluginDependencies", fields: [pluginId], references: [id], onDelete: Cascade)
-  dependency         Plugin  @relation("PluginDependants", fields: [dependencyPluginId], references: [id], onDelete: Restrict)
 
   @@unique([pluginId, dependencyPluginId])
 }
@@ -2768,26 +2545,24 @@ model PluginDependency {
 model PluginPermission {
   id             String  @id @default(cuid())
   pluginId       String
-  permissionCode String
+  permissionCode String  @unique
   name           String
   description    String?
   plugin         Plugin  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
   @@unique([pluginId, permissionCode])
-  @@unique([permissionCode])
 }
 
 model PluginSetting {
   id           String @id @default(cuid())
   pluginId     String
-  settingKey   String
+  settingKey   String @unique
   scope        String
   schema       Json
   defaultValue Json?
   plugin       Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
   @@unique([pluginId, settingKey])
-  @@unique([settingKey])
 }
 
 model PluginTenantAccess {
@@ -2866,7 +2641,7 @@ model PluginAuditEvent {
   metadata  Json?
   ipAddress String?
   createdAt DateTime @default(now())
-  plugin    Plugin?  @relation(fields: [pluginId], references: [id], onDelete: SetNull)
+  plugin    Plugin?  @relation(fields: [pluginId], references: [id])
 
   @@index([pluginId, createdAt])
   @@index([actorId, createdAt])
@@ -2903,20 +2678,6 @@ model PluginSettingValue {
   @@index([pluginId, tenantId])
 }
 
-enum PluginTransactionStatus {
-  PREPARING
-  VALIDATING
-  BACKING_UP
-  APPLYING_FILES
-  MIGRATION_REVIEW_REQUIRED
-  VERIFYING
-  COMMITTING
-  SUCCEEDED
-  FAILED
-  ROLLING_BACK
-  ROLLED_BACK
-}
-
 model PluginInstallTransaction {
   id              String                  @id @default(cuid())
   pluginId        String
@@ -2935,9 +2696,9 @@ model PluginInstallTransaction {
   completedAt     DateTime?
   createdAt       DateTime                @default(now())
   updatedAt       DateTime                @updatedAt
-  plugin          Plugin                  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
-  installation    PluginInstallation      @relation(fields: [installationId], references: [id], onDelete: Cascade)
   fileOperations  PluginFileOperation[]
+  installation    PluginInstallation      @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  plugin          Plugin                  @relation(fields: [pluginId], references: [id], onDelete: Cascade)
   logs            PluginTransactionLog[]
 
   @@index([pluginId, createdAt])
@@ -2978,43 +2739,6 @@ model PluginTransactionLog {
   @@index([transactionId, createdAt])
 }
 
-enum PluginVendorStatus {
-  PENDING
-  TRUSTED
-  SUSPENDED
-  REVOKED
-}
-
-enum PluginTrustLevel {
-  UNTRUSTED
-  VERIFIED
-  TRUSTED
-  PLATFORM
-}
-
-enum PluginRepositoryStatus {
-  ACTIVE
-  DISABLED
-  REVOKED
-}
-
-enum PluginReleaseChannel {
-  STABLE
-  LTS
-  BETA
-  PREVIEW
-  DEVELOPMENT
-}
-
-enum PluginPackageTrustDecision {
-  TRUSTED
-  TRUSTED_WITH_WARNING
-  UNTRUSTED
-  REVOKED
-  UNSUPPORTED
-  INCOMPATIBLE
-}
-
 model PluginVendor {
   id            String                   @id @default(cuid())
   vendorKey     String                   @unique
@@ -3029,8 +2753,8 @@ model PluginVendor {
   revokedReason String?
   createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
-  signingKeys   PluginSigningKey[]
   entries       PluginMarketplaceEntry[]
+  signingKeys   PluginSigningKey[]
 
   @@index([status, trustLevel])
 }
@@ -3041,18 +2765,17 @@ model PluginSigningKey {
   keyId         String
   algorithm     String
   publicKeyPem  String
-  fingerprint   String
+  fingerprint   String                   @unique
   active        Boolean                  @default(true)
   expiresAt     DateTime?
   revokedAt     DateTime?
   revokedReason String?
   createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
-  vendor        PluginVendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   entries       PluginMarketplaceEntry[]
+  vendor        PluginVendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@unique([vendorId, keyId])
-  @@unique([fingerprint])
   @@index([vendorId, active])
 }
 
@@ -3069,8 +2792,8 @@ model PluginRepository {
   createdBy       String
   createdAt       DateTime                 @default(now())
   updatedAt       DateTime                 @updatedAt
-  entries         PluginMarketplaceEntry[]
   downloads       PluginDownloadHistory[]
+  entries         PluginMarketplaceEntry[]
 }
 
 model PluginMarketplaceEntry {
@@ -3102,12 +2825,12 @@ model PluginMarketplaceEntry {
   revokedReason          String?
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
-  plugin                 Plugin?                    @relation(fields: [pluginId], references: [id], onDelete: SetNull)
-  pluginVersion          PluginVersion?             @relation(fields: [pluginVersionId], references: [id], onDelete: SetNull)
-  vendor                 PluginVendor               @relation(fields: [vendorId], references: [id], onDelete: Restrict)
-  signingKey             PluginSigningKey?          @relation(fields: [signingKeyId], references: [id], onDelete: SetNull)
-  repository             PluginRepository           @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
   downloads              PluginDownloadHistory[]
+  plugin                 Plugin?                    @relation(fields: [pluginId], references: [id])
+  pluginVersion          PluginVersion?             @relation(fields: [pluginVersionId], references: [id])
+  repository             PluginRepository           @relation(fields: [repositoryId], references: [id])
+  signingKey             PluginSigningKey?          @relation(fields: [signingKeyId], references: [id])
+  vendor                 PluginVendor               @relation(fields: [vendorId], references: [id])
 
   @@unique([repositoryId, pluginKey, version, channel])
   @@index([pluginKey, channel, publishedAt])
@@ -3126,7 +2849,7 @@ model PluginDownloadHistory {
   metadata           Json?
   createdAt          DateTime                   @default(now())
   marketplaceEntry   PluginMarketplaceEntry     @relation(fields: [marketplaceEntryId], references: [id], onDelete: Cascade)
-  repository         PluginRepository           @relation(fields: [repositoryId], references: [id], onDelete: Restrict)
+  repository         PluginRepository           @relation(fields: [repositoryId], references: [id])
 
   @@index([actorId, createdAt])
   @@index([marketplaceEntryId, createdAt])
@@ -3162,10 +2885,9 @@ model UserTenantRole {
   updatedBy String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  store  Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  store     Store?   @relation(fields: [storeId], references: [id])
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId, storeId, role])
   @@index([tenantId, role, status])
@@ -3564,235 +3286,8 @@ model BusinessAiDecision {
   @@index([tenantId, storeId, status, createdAt])
 }
 
-model AiPromptRegistryEntry {
-  id          String   @id
-  registryKey String   @map("registry_key")
-  version     Int      @default(1)
-  category    String   @default("core")
-  title       String
-  template    String
-  variables   Json     @default("[]")
-  approved    Boolean  @default(false)
-  createdBy   String?  @map("created_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([registryKey, version], map: "ai_prompt_registry_key_version_key")
-  @@index([registryKey], map: "idx_ai_prompt_registry_key")
-  @@index([approved], map: "idx_ai_prompt_registry_approved")
-  @@map("ai_prompt_registry")
-}
-
-model AiModelRegistryEntry {
-  id          String   @id
-  registryKey String   @unique(map: "ai_model_registry_registry_key_key") @map("registry_key")
-  providerKey String   @map("provider_key")
-  modelId     String   @map("model_id")
-  modelType   String   @default("chat") @map("model_type")
-  displayName String   @map("display_name")
-  enabled     Boolean  @default(false)
-  priority    Int      @default(100)
-  config      Json     @default("{}")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([enabled, priority], map: "idx_ai_model_registry_enabled_priority")
-  @@index([providerKey], map: "idx_ai_model_registry_provider_key")
-  @@map("ai_model_registry")
-}
-
-model AiPolicyRegistryEntry {
-  id          String   @id
-  policyKey   String   @unique(map: "ai_policy_registry_policy_key_key") @map("policy_key")
-  title       String
-  description String   @default("")
-  enabled     Boolean  @default(false)
-  policy      Json     @default("{}")
-  updatedBy   String?  @map("updated_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([enabled], map: "idx_ai_policy_registry_enabled")
-  @@map("ai_policy_registry")
-}
-
-model AiEnterpriseSetting {
-  id          String   @id
-  settingKey  String   @unique(map: "ai_enterprise_settings_setting_key_key") @map("setting_key")
-  label       String
-  description String   @default("")
-  value       Json     @default("{}")
-  updatedBy   String?  @map("updated_by")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@map("ai_enterprise_settings")
-}
-
-// ================= ENTERPRISE MIGRATION PIPELINE =================
-model MigrationPipelineRun {
-  id           String   @id
-  tenantId     String?  @map("tenant_id")
-  storeId      String?  @map("store_id")
-  templateKey  String   @map("template_key")
-  sourceName   String   @map("source_name")
-  framework    String   @default("UNKNOWN")
-  status       String   @default("DRAFT")
-  currentStage String   @default("UPLOAD") @map("current_stage")
-  createdBy    String?  @map("created_by")
-  metadata     Json     @default("{}")
-  publishReady Boolean  @default(false) @map("publish_ready")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([tenantId, storeId], map: "idx_migration_pipeline_run_scope")
-  @@index([status, createdAt(sort: Desc)], map: "idx_migration_pipeline_run_status_created")
-  @@index([createdBy], map: "idx_migration_pipeline_run_created_by")
-  @@map("migration_pipeline_runs")
-}
-
-model MigrationPipelineEvent {
-  id        String   @id
-  runId     String   @map("run_id")
-  stage     String
-  status    String
-  actorId   String?  @map("actor_id")
-  details   Json     @default("{}")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_pipeline_event_run_created")
-  @@index([stage, status], map: "idx_migration_pipeline_event_stage_status")
-  @@map("migration_pipeline_events")
-}
-
-model MigrationArtifact {
-  id           String   @id
-  runId        String   @map("run_id")
-  artifactType String   @map("artifact_type")
-  path         String
-  contentType  String   @map("content_type")
-  metadata     Json     @default("{}")
-  status       String   @default("GENERATED")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_artifact_run_created")
-  @@index([artifactType, status], map: "idx_migration_artifact_type_status")
-  @@map("migration_artifacts")
-}
-
-model MigrationApiMapping {
-  id             String   @id
-  runId          String   @map("run_id")
-  sourceMethod   String   @map("source_method")
-  sourcePath     String   @map("source_path")
-  platformMethod String   @map("platform_method")
-  platformPath   String   @map("platform_path")
-  action         String
-  duplicateKey   String   @map("duplicate_key")
-  fieldMap       Json     @default("{}") @map("field_map")
-  authAdapter    Json     @default("{}") @map("auth_adapter")
-  status         String   @default("PLANNED")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([runId, duplicateKey], map: "migration_api_mappings_run_duplicate_key")
-  @@index([runId, createdAt], map: "idx_migration_api_mapping_run_created")
-  @@index([status], map: "idx_migration_api_mapping_status")
-  @@map("migration_api_mappings")
-}
-
-model MigrationEntityPlan {
-  id            String   @id
-  runId         String   @map("run_id")
-  entityKey     String   @map("entity_key")
-  sourceModel   String?  @map("source_model")
-  platformModel String?  @map("platform_model")
-  action        String
-  fields        Json     @default("[]")
-  permissionKey String?  @map("permission_key")
-  menuPath      String?  @map("menu_path")
-  formStatus    String   @default("DRAFT") @map("form_status")
-  gateResults   Json     @default("{}") @map("gate_results")
-  status        String   @default("PLANNED")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@unique([runId, entityKey], map: "migration_entity_plans_run_entity_key")
-  @@index([runId, createdAt], map: "idx_migration_entity_plan_run_created")
-  @@index([status, formStatus], map: "idx_migration_entity_plan_status_form")
-  @@map("migration_entity_plans")
-}
-
-model MigrationVisualResult {
-  id                 String   @id
-  runId              String   @map("run_id")
-  routePath          String   @map("route_path")
-  viewport           String
-  screenshotScore    Float    @default(0) @map("screenshot_score")
-  domScore           Float    @default(0) @map("dom_score")
-  computedStyleScore Float    @default(0) @map("computed_style_score")
-  geometryScore      Float    @default(0) @map("geometry_score")
-  overflow           Boolean  @default(false)
-  diffArtifact       String?  @map("diff_artifact")
-  status             String   @default("BLOCKED")
-  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_visual_result_run_created")
-  @@index([routePath, viewport], map: "idx_migration_visual_result_route_viewport")
-  @@index([status], map: "idx_migration_visual_result_status")
-  @@map("migration_visual_results")
-}
-
-model MigrationSecurityFinding {
-  id        String   @id
-  runId     String   @map("run_id")
-  severity  String
-  code      String
-  path      String
-  details   Json     @default("{}")
-  status    String   @default("OPEN")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_security_finding_run_created")
-  @@index([severity, status], map: "idx_migration_security_finding_severity_status")
-  @@map("migration_security_findings")
-}
-
-model MigrationCertificate {
-  id           String   @id
-  runId        String   @map("run_id")
-  status       String
-  score        Int
-  gates        Json     @default("{}")
-  failedGates  Json     @default("[]") @map("failed_gates")
-  publishReady Boolean  @default(false) @map("publish_ready")
-  report       Json     @default("{}")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt(sort: Desc)], map: "idx_migration_certificate_run_created")
-  @@index([status, publishReady], map: "idx_migration_certificate_status_publish")
-  @@map("migration_certificates")
-}
-
-model MigrationInstallationPlan {
-  id             String   @id
-  runId          String   @map("run_id")
-  status         String
-  checks         Json     @default("{}")
-  rollbackPlan   Json     @default("{}") @map("rollback_plan")
-  idempotencyKey String   @unique(map: "migration_installation_plans_idempotency_key_key") @map("idempotency_key")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@index([runId, createdAt], map: "idx_migration_installation_plan_run_created")
-  @@index([status], map: "idx_migration_installation_plan_status")
-  @@map("migration_installation_plans")
-}
-
 model TemplateRegistryEntry {
-  id           String    @id @default(cuid())
+  id           String    @id
   templateId   String?   @map("template_id")
   slug         String    @unique
   registryKey  String    @unique @map("registry_key")
@@ -3808,30 +3303,30 @@ model TemplateRegistryEntry {
   lastSyncedAt DateTime? @map("last_synced_at") @db.Timestamptz(6)
   lastHealthAt DateTime? @map("last_health_at") @db.Timestamptz(6)
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@index([status, health], map: "template_registry_status_idx")
   @@map("template_registry_entries")
 }
 
 model TemplateLifecycleEvent {
-  id           String   @id @default(cuid())
-  templateId   String?  @map("template_id")
-  storeId      String?  @map("store_id")
-  assignmentId String?  @map("assignment_id")
-  action       String
-  status       String
-  actorId      String?  @map("actor_id")
-  reason       String?
-  metadata     Json     @default("{}")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id            String   @id
+  template_id   String?
+  store_id      String?
+  assignment_id String?
+  action        String
+  status        String
+  actorId       String?  @map("actor_id")
+  reason        String?
+  metadata      Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@index([storeId, templateId, createdAt(sort: Desc)], map: "template_lifecycle_event_scope_idx")
+  @@index([store_id, template_id, createdAt(sort: Desc)], map: "template_lifecycle_event_scope_idx")
   @@map("template_lifecycle_events")
 }
 
 model TemplateActivationSnapshot {
-  id                   String    @id @default(cuid())
+  id                   String    @id
   storeId              String    @map("store_id")
   previousAssignmentId String?   @map("previous_assignment_id")
   nextAssignmentId     String?   @map("next_assignment_id")
@@ -3846,18 +3341,171 @@ model TemplateActivationSnapshot {
   @@map("template_activation_snapshots")
 }
 
-model TemplateCertification {
-  id           String   @id @default(cuid())
-  templateId   String?  @map("template_id")
-  templateSlug String   @map("template_slug")
+model MigrationPipelineRun {
+  id           String   @id
+  tenantId     String?  @map("tenant_id")
   storeId      String?  @map("store_id")
-  status       String
-  score        Int      @default(0)
-  gates        Json     @default("{}")
-  report       Json     @default("{}")
+  templateKey  String   @map("template_key")
+  sourceName   String   @map("source_name")
+  framework    String   @default("UNKNOWN")
+  status       String   @default("DRAFT")
+  currentStage String   @default("UPLOAD") @map("current_stage")
+  publishReady Boolean  @default(false) @map("publish_ready")
+  createdBy    String?  @map("created_by")
+  metadata     Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([tenantId, storeId, createdAt(sort: Desc)], map: "migration_run_scope_idx")
+  @@map("migration_pipeline_runs")
+}
+
+model MigrationPipelineEvent {
+  id        String   @id
+  runId     String   @map("run_id")
+  stage     String
+  status    String
+  actorId   String?  @map("actor_id")
+  details   Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([runId, createdAt], map: "migration_event_run_idx")
+  @@map("migration_pipeline_events")
+}
+
+model MigrationArtifact {
+  id           String   @id
+  runId        String   @map("run_id")
+  artifactType String   @map("artifact_type")
+  path         String
+  contentType  String?  @map("content_type")
+  sha256       String?
+  size_bytes   BigInt?
+  metadata     Json     @default("{}")
+  status       String   @default("GENERATED")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@index([templateSlug, createdAt(sort: Desc)], map: "template_certification_slug_idx")
-  @@index([storeId, templateSlug, createdAt(sort: Desc)], map: "template_certification_store_idx")
-  @@map("template_certifications")
+  @@index([runId, artifactType], map: "migration_artifact_run_idx")
+  @@map("migration_artifacts")
+}
+
+model template_certifications {
+  id            String   @id
+  template_id   String?
+  template_slug String
+  store_id      String?
+  status        String
+  score         Int      @default(0)
+  gates         Json     @default("{}")
+  report        Json     @default("{}")
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([template_slug, created_at(sort: Desc)], map: "template_certification_slug_idx")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  INVENTORY
+  MARKETING
+  SUPPORT
+  CUSTOMER
+  WAREHOUSE_MANAGER
+  DELIVERY_MANAGER
+  FINANCE_MANAGER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum VirtualTryOnStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum PluginStatus {
+  DISCOVERED
+  VALIDATED
+  INSTALLED
+  ACTIVE
+  INACTIVE
+  FAILED
+  ROLLBACK_REQUIRED
+  UNINSTALLED
+}
+
+enum PluginInstallationStatus {
+  PLANNED
+  APPROVED
+  INSTALLING
+  SUCCEEDED
+  FAILED
+  ROLLED_BACK
+}
+
+enum PluginTransactionStatus {
+  PREPARING
+  VALIDATING
+  BACKING_UP
+  APPLYING_FILES
+  MIGRATION_REVIEW_REQUIRED
+  VERIFYING
+  COMMITTING
+  SUCCEEDED
+  FAILED
+  ROLLING_BACK
+  ROLLED_BACK
+}
+
+enum PluginVendorStatus {
+  PENDING
+  TRUSTED
+  SUSPENDED
+  REVOKED
+}
+
+enum PluginTrustLevel {
+  UNTRUSTED
+  VERIFIED
+  TRUSTED
+  PLATFORM
+}
+
+enum PluginRepositoryStatus {
+  ACTIVE
+  DISABLED
+  REVOKED
+}
+
+enum PluginReleaseChannel {
+  STABLE
+  LTS
+  BETA
+  PREVIEW
+  DEVELOPMENT
+}
+
+enum PluginPackageTrustDecision {
+  TRUSTED
+  TRUSTED_WITH_WARNING
+  UNTRUSTED
+  REVOKED
+  UNSUPPORTED
+  INCOMPATIBLE
 }

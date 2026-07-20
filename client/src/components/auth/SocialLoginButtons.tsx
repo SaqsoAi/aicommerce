@@ -64,10 +64,12 @@ export default function SocialLoginButtons({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
 
-  const redirectTo =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("returnUrl") || "/account"
-      : "/account";
+  const requestedReturnUrl = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("returnUrl")
+    : null;
+  const redirectTo = requestedReturnUrl?.startsWith("/") && !requestedReturnUrl.startsWith("//")
+    ? requestedReturnUrl
+    : "/account";
 
   const completeLogin = (data: any) => {
     const token = data?.token || data?.data?.token;
@@ -79,10 +81,7 @@ export default function SocialLoginButtons({
     }
 
     login(user, token);
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("role", user?.role || "CUSTOMER");
-    window.location.href = redirectTo;
+    window.location.assign(redirectTo);
   };
 
   const clickHiddenGoogle = () => {

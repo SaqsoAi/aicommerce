@@ -2,10 +2,12 @@
 
 import { Check, ChevronDown, RotateCcw, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getProductCatalogFilters, getProductCatalogProducts, getProductCatalogRecommended, getProductCatalogStylistPicks } from "@/api/product-catalog.api";
 import ProductCard from "@/components/products/ProductCard";
 import { useBrand } from "@/providers/BrandProvider";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 type FilterState = { search: string; category: string; size: string; color: string; priceMin: string; priceMax: string; occasion: string; style: string; sustainability: string; sort: string };
 const initialFilters: FilterState = { search: "", category: "", size: "", color: "", priceMin: "", priceMax: "", occasion: "", style: "", sustainability: "", sort: "latest" };
@@ -15,6 +17,7 @@ function queryOf(filters: FilterState) { return Object.fromEntries(Object.entrie
 
 export default function ProductCatalogClient() {
   const { brand } = useBrand();
+  const pathname = usePathname();
   const [filtersData, setFiltersData] = useState<any>({});
   const [products, setProducts] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
@@ -23,6 +26,30 @@ export default function ProductCatalogClient() {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const requestId = useRef(0);
+
+  useScrollLock(filterOpen, "product-catalog-filter");
+
+  useEffect(() => {
+    setFilterOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!filterOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFilterOpen(false);
+    };
+    const closeAtDesktop = () => {
+      if (window.matchMedia("(min-width: 1024px)").matches) {
+        setFilterOpen(false);
+      }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("resize", closeAtDesktop, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("resize", closeAtDesktop);
+    };
+  }, [filterOpen]);
 
   const activeFilterCount = useMemo(() => Object.entries(filters).filter(([key, value]) => key !== "sort" && Boolean(value)).length, [filters]);
 
@@ -98,12 +125,12 @@ export default function ProductCatalogClient() {
       </div>
     </section>
 
-    {filterOpen ? <div className="fixed inset-0 z-[100] lg:hidden"><button type="button" aria-label="Close filters" onClick={()=>setFilterOpen(false)} className="absolute inset-0 bg-black/55"/><aside role="dialog" aria-label="Product filters" className="absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-y-auto rounded-t-lg bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-white"><div className="sticky top-0 z-10 -mx-4 -mt-4 mb-3 flex items-center justify-between border-b bg-white px-4 py-3 dark:border-white/10 dark:bg-zinc-950"><div><h2 className="font-black">Filters</h2><p className="text-xs text-zinc-500">{activeFilterCount} active</p></div><button type="button" onClick={()=>setFilterOpen(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-md border dark:border-white/15"><X size={18}/></button></div><FilterPanel {...filterProps}/><button type="button" onClick={()=>setFilterOpen(false)} className="sticky bottom-0 mt-4 min-h-12 w-full rounded-md bg-zinc-950 text-sm font-bold text-white dark:bg-white dark:text-black">Show {products.length} products</button></aside></div> : null}
+    {filterOpen ? <div className="fixed inset-0 z-[100] lg:hidden" data-saqso-filter-drawer data-open={filterOpen ? "true" : "false"}><button type="button" aria-label="Close filters" onClick={()=>setFilterOpen(false)} className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"/><aside role="dialog" aria-modal="true" aria-label="Product filters" className="absolute inset-x-0 bottom-0 flex max-h-[calc(100dvh-var(--ai-header-h-mobile))] flex-col overflow-hidden rounded-t-2xl bg-white text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-white"><div className="flex shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-zinc-950"><div><h2 className="text-lg font-black">Filters</h2><p className="text-xs text-zinc-500">{activeFilterCount ? `${activeFilterCount} selected` : "Choose what you need"}</p></div><button type="button" onClick={()=>setFilterOpen(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-full border border-zinc-300 bg-white text-black dark:border-white/20 dark:bg-black dark:text-white"><X size={18}/></button></div><div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2"><FilterPanel {...filterProps}/></div><div className="grid shrink-0 grid-cols-[auto_1fr] gap-2 border-t border-zinc-200 bg-white p-3 pb-[calc(.75rem+env(safe-area-inset-bottom))] dark:border-white/10 dark:bg-zinc-950">{activeFilterCount ? <button type="button" onClick={clearFilters} className="min-h-12 rounded-xl border border-zinc-300 px-4 text-sm font-bold dark:border-white/20">Clear</button> : null}<button type="button" onClick={()=>setFilterOpen(false)} className="min-h-12 rounded-xl bg-zinc-950 px-5 text-sm font-black text-white dark:bg-white dark:text-black">Show {products.length} products</button></div></aside></div> : null}
   </main>;
 }
 
 function FilterPanel({ activeFilterCount, clearFilters, categories, sizes, colors, priceRanges, occasions, styles, sustainability, filters, updateFilter, setPriceRange }: any) {
-  return <div data-saqso-catalog-filter className="h-auto self-start rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950"><div className="flex items-center justify-between px-1 py-2"><h2 className="font-black">Filter products</h2>{activeFilterCount?<button type="button" onClick={clearFilters} className="text-xs font-bold text-rose-600 dark:text-rose-400">Clear all</button>:null}</div><div className="mt-2 space-y-2">
+  return <div data-saqso-catalog-filter className="h-auto self-start rounded-lg border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-zinc-950"><div className="flex items-center justify-between px-1 py-2"><h2 className="font-black">Filter products</h2>{activeFilterCount?<button type="button" onClick={clearFilters} className="text-xs font-bold text-rose-600 dark:text-rose-400">Clear all</button>:null}</div><div className="mt-2 space-y-1">
     <FilterGroup title="Category" defaultOpen><OptionList items={categories} value={filters.category} label={(item:any)=>item.name} optionValue={(item:any)=>item.slug} onChange={(value)=>updateFilter("category",value)}/></FilterGroup>
     <FilterGroup title="Size"><ChipGrid items={sizes} value={filters.size} onChange={(value)=>updateFilter("size",value)}/></FilterGroup>
     <FilterGroup title="Color"><ColorSwatches items={colors} value={filters.color} onChange={(value)=>updateFilter("color",value)}/></FilterGroup>
@@ -118,6 +145,6 @@ function FilterGroup({ title, children, defaultOpen=false }: { title:string; chi
 function OptionList({items,value,label,optionValue,onChange}:{items:any[];value:string;label:(item:any)=>string;optionValue:(item:any)=>string;onChange:(value:string,item:any)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No options available</p>; return <div className="grid h-auto auto-rows-max content-start gap-1">{items.map((item,index)=>{const next=optionValue(item);const active=value===next;return <button key={item.id||next||index} type="button" onClick={()=>onChange(active?"":next,item)} className={cx("min-h-10 rounded-md px-3 text-left text-sm",active?"bg-zinc-950 font-bold text-white dark:bg-white dark:text-black":"hover:bg-zinc-100 dark:hover:bg-white/10")}>{label(item)}</button>})}</div>; }
 function ChipGrid({items,value,onChange}:{items:string[];value:string;onChange:(value:string)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No options available</p>; return <div className="flex flex-wrap gap-2">{items.map((item)=><button key={item} type="button" onClick={()=>onChange(value===item?"":item)} className={cx("min-h-9 rounded-md border px-3 text-xs font-bold",value===item?"border-zinc-950 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-black":"border-zinc-300 dark:border-white/15")}>{item}</button>)}</div>; }
 const COLOR_MAP:Record<string,string>={black:"#111111",white:"#ffffff",red:"#ef4444",blue:"#2563eb",navy:"#172554",green:"#16a34a",yellow:"#facc15",orange:"#f97316",pink:"#ec4899",purple:"#9333ea",brown:"#7c4a2d",beige:"#e8dcc4",cream:"#fffdd0",grey:"#9ca3af",gray:"#9ca3af",maroon:"#7f1d1d",gold:"#d4a017",silver:"#c0c0c0","off white":"#f8f3e7"};
-function ColorSwatches({items,value,onChange}:{items:Array<string|{name?:string;value?:string;hex?:string}>;value:string;onChange:(value:string)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No colors available</p>; return <div className="flex flex-wrap gap-3">{items.map((raw,index)=>{const name=typeof raw==="string"?raw:(raw.name||raw.value||`Color ${index+1}`);const color=typeof raw==="string"?(COLOR_MAP[raw.toLowerCase()]||raw):(raw.hex||COLOR_MAP[name.toLowerCase()]||raw.value||"#d4d4d8");const active=value===name;return <button key={`${name}-${index}`} type="button" title={name} aria-label={`Filter by ${name}`} aria-pressed={active} onClick={()=>onChange(active?"":name)} className={cx("relative grid h-9 w-9 place-items-center rounded-full border-2 shadow-sm transition hover:scale-110 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:ring-offset-black",active?"border-rose-500":"border-white ring-1 ring-zinc-300 dark:border-zinc-950 dark:ring-white/30")} style={{backgroundColor:color}}>{active?<Check size={16} className="rounded-full bg-black/60 p-0.5 text-white"/>:null}</button>})}</div>; }
+function ColorSwatches({items,value,onChange}:{items:Array<string|{name?:string;value?:string;hex?:string}>;value:string;onChange:(value:string)=>void}) { if(!items?.length)return <p className="text-xs text-zinc-500">No colors available</p>; return <div className="flex flex-wrap gap-3">{items.map((raw,index)=>{const name=typeof raw==="string"?raw:(raw.name||raw.value||`Color ${index+1}`);const color=typeof raw==="string"?(COLOR_MAP[raw.toLowerCase()]||raw):(raw.hex||COLOR_MAP[name.toLowerCase()]||raw.value||"#d4d4d8");const active=value===name;return <button key={`${name}-${index}`} type="button" title={name} aria-label={`Filter by ${name}`} aria-pressed={active} onClick={()=>onChange(active?"":name)} className={cx("relative grid h-11 w-11 shrink-0 place-items-center rounded-full border-[3px] shadow-sm transition active:scale-95 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:ring-offset-black",active?"border-rose-500 ring-2 ring-rose-500/25":"border-black/70 ring-1 ring-black/20 dark:border-white/85 dark:ring-white/30")} style={{backgroundColor:color}}>{active?<Check size={17} className={cx("rounded-full p-0.5", color.toLowerCase()==="#ffffff"||color.toLowerCase()==="#f8f3e7"?"bg-black text-white":"bg-white text-black")}/>:null}</button>})}</div>; }
 function ProductSkeleton(){return <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4 2xl:grid-cols-5">{Array.from({length:10}).map((_,index)=><div key={index} className="overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-950"><div className="aspect-[4/5] animate-pulse bg-zinc-200 dark:bg-zinc-800"/><div className="space-y-2 p-3"><div className="h-3 w-1/2 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/><div className="h-4 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/><div className="h-10 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800"/></div></div>)}</div>}
 function CatalogSection({title,subtitle,children}:{title:string;subtitle:string;children:ReactNode}) { return <section className="mt-10 border-t border-zinc-200 pt-7 dark:border-white/10"><div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase text-rose-600 dark:text-rose-400">{subtitle}</p><h2 className="mt-1 text-xl font-black sm:text-2xl">{title}</h2></div><Sparkles size={20} className="text-zinc-400"/></div>{children}</section>; }

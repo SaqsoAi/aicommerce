@@ -134,7 +134,7 @@ export default function CheckoutPage() {
   return (
     <ProtectedRoute>
       <main className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,#172033_0%,#070a12_42%,#030303_100%)] text-white">
-        <div className="mx-auto w-full max-w-[1480px] space-y-5 px-4 pb-12 pt-[calc(var(--ai-header-h-mobile)+1rem)] sm:space-y-7 sm:px-6 sm:pt-[calc(var(--ai-header-h-tablet)+1.4rem)] lg:px-10 lg:pt-[calc(var(--ai-header-h-desktop)+1.6rem)]">
+        <div className="mx-auto w-full max-w-[1480px] space-y-5 px-4 pb-12 pt-4 sm:space-y-7 sm:px-6 sm:pt-6 lg:px-10 lg:pt-8">
           <CheckoutHero />
           <div data-checkout-brand-panel className="rounded-[1.6rem] border border-slate-200 dark:border-white/10 bg-white/[0.08] p-4 text-white shadow-[0_20px_70px_rgba(0,0,0,.35)] backdrop-blur-2xl sm:rounded-[1.6rem] sm:p-5 transition-colors duration-200 motion-reduce:transition-none">
             <div className="enterprise-responsive-guard flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -173,7 +173,7 @@ export default function CheckoutPage() {
               <CheckoutTrustPanel />
             </section>
 
-            <aside className="min-w-0 space-y-5 lg:sticky lg:top-[calc(var(--ai-header-h-desktop)+1rem)]">
+            <aside className="min-w-0 space-y-5 lg:sticky lg:top-[calc(var(--ai-header-h)+1rem)]">
               <CheckoutAiInsights items={items} />
 
               <PaymentMethodSelector
