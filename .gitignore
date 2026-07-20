@@ -28,4 +28,3 @@ Thumbs.db
 build/
 *.pem
 *.key
-server/uploads/
