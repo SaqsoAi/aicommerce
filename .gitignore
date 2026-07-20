@@ -19,12 +19,10 @@ tests/
 .DS_Store
 Thumbs.db
 
-server/uploads/
 *.bak*
 *.before-root-fix
 
 server/uploads/
-*.bak
 
 
 
