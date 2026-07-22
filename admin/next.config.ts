@@ -9,11 +9,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/api/:path*",
-        destination: "http://localhost:5000/api/:path*",
+        destination: "https://onrender.com*",
       },
       {
         source: "/uploads/:path*",
-        destination: "http://localhost:5000/uploads/:path*",
+        destination: "https://onrender.com*",
       },
     ];
   },
