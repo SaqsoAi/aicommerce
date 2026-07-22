@@ -6,11 +6,14 @@ const config: Config = {
   ],
 
   theme: {
-    screens: {
-      tablet: "768px",
-      laptop: "1024px",
-      desktop: "1280px",
-    },
+  screens: {
+    'sm': '480px',     // Recommended mobile breakpoint
+    'tablet': '768px',
+    'laptop': '1024px',
+    'desktop': '1280px',
+  },
+}
+
 
     extend: {},
   },
