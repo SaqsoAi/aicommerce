@@ -1,4 +1,9 @@
-import type { NextConfig } from "next";
+﻿import type { NextConfig } from "next";
+
+const serverUrl = (
+  process.env.NEXT_PUBLIC_SERVER_URL ||
+  "https://ai-commerce-0zft.onrender.com"
+).replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
   async rewrites() {
@@ -9,11 +14,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/api/:path*",
-        destination: "https://onrender.com*",
+        destination: `${serverUrl}/api/:path*`,
       },
       {
         source: "/uploads/:path*",
-        destination: "https://onrender.com*",
+        destination: `${serverUrl}/uploads/:path*`,
       },
     ];
   },

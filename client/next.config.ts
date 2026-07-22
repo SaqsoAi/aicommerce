@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
-    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "https://ai-commerce-0zft.onrender.com";
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
     // Fallback rewrites run only after local App Router handlers. This keeps
     // /api/backend/[...path] on the storefront origin while still proxying all
